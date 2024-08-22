@@ -152,4 +152,5 @@ nav:  # The first entry in each section needs a hard-coded title to avoid being 
   - index.md
   - The Basics:
       - Basic Usage: basic_usage.md
+  - Advanced Topics: [advanced\writing_to_a_file.md]
   - API Reference: reference/
