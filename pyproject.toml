@@ -87,10 +87,10 @@ pre-commit = [
 ]
 pyclean = "^3.0.0"
 pylint = "3.2.6"
-pyright = "1.1.376"
+pyright = "1.1.377"
 pyroma = "^4.2"
 python-semantic-release = "^9.6.0"
-ruff = "0.6.0"
+ruff = "0.6.1"
 toml-sort = "^0.23.0"
 tomli-w = "^1.0.0"
 tox = "^4.0"
@@ -99,7 +99,7 @@ twine = "^5.0.0"
 types-python-dateutil = "^2.9"
 types-pyyaml = "^6.0"
 types-requests = "^2.31"
-wheel = "^0.43"
+wheel = "^0.44"
 yamlfix = "^1.16.0"
 
 [tool.poetry.group.docs.dependencies]
