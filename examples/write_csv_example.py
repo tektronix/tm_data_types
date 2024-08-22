@@ -1,3 +1,5 @@
+"""This script demonstrates writing an analog waveform to a CSV file using the WaveformFileCSVAnalog class."""
+
 from tm_data_types.files_and_formats.csv.data_formats.analog import WaveformFileCSVAnalog
 from tm_data_types import AnalogWaveform, AnalogWaveformMetaInfo
 import os

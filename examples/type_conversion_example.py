@@ -1,3 +1,5 @@
+"""This script demonstrates type conversion and normalization of analog waveform data using the tm_data_types module."""
+
 import numpy as np
 from tm_data_types import AnalogWaveformMetaInfo, AnalogWaveform, RawSample, Normalized
 from tm_data_types.datum.data_types import type_max, type_min
