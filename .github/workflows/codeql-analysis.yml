@@ -1,0 +1,16 @@
+---
+name: CodeQL
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: 17 16 * * 4
+jobs:
+  codeql-analysis:
+    uses: tektronix/tm_devices/.github/workflows/codeql-analysis.yml@main
+    permissions:
+      actions: read
+      contents: read
+      security-events: write

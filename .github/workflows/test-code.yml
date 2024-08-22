@@ -1,0 +1,17 @@
+---
+name: Test code
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+# Cancel running jobs for the same workflow and branch.
+concurrency:
+  group: ${{ github.workflow }}-caller-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+jobs:
+  test-code:
+    uses: tektronix/tm_devices/.github/workflows/test-code.yml@main
+    with:
+      repo-name: tm_data_types
+    secrets: inherit
