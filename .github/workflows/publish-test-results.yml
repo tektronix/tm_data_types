@@ -1,0 +1,12 @@
+---
+name: Publish Test Results
+on:
+  workflow_run:
+    workflows: [Test code]
+    types: [completed]
+jobs:
+  publish-test-results:
+    uses: tektronix/tm_devices/.github/workflows/check-api-for-breaking-changes.yml@main
+    permissions:
+      checks: write
+      pull-requests: write

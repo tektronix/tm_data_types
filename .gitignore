@@ -1,0 +1,90 @@
+# Temporary files
+temp*.*
+*.log
+
+# Poetry lock file
+poetry.lock
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist*/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+python_semantic_release_templates/.previous_changelog_for_template.md
+python_semantic_release_templates/.previous_release_notes_for_template.md
+
+# PyInstaller
+#  Usually these files are written by a python script from a template
+#  before PyInstaller builds the exe, so as to inject date/other infos into it.
+*.manifest
+*.spec
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage*
+.cache
+coverage.xml
+*.cover
+*.py,cover
+.pytest_cache/
+.results*/
+prof/
+
+# Sphinx documentation
+.docs*/
+docs/_build/
+docs/autoapi/
+docs/_autoapi/
+_readthedocs/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# pyenv
+.python-version
+
+# PEP 582; used by e.g. github.com/David-OConnor/pyflow
+__pypackages__/
+
+# Environments
+.env*/
+.venv*/
+env*/
+venv*/
+ENV*/
+env.bak/
+venv.bak/
+
+# ruff
+.ruff_cache/
+
+# PyCharm
+.idea/
+
+# VSCode
+.vscode/

@@ -1,0 +1,13 @@
+---
+name: Update python linting dependencies in-sync with pre-commit
+on:
+  pull_request:
+    branches: [main]
+jobs:
+  update-python-and-pre-commit-dependencies:
+    uses: tektronix/tm_devices/.github/workflows/update-python-and-pre-commit-dependencies.yml@main
+    with:
+      pre-commit-hook-skip-list: pylint,pyright,pyright-verifytypes,pyroma,poetry-audit
+    permissions:
+      contents: write
+    secrets: inherit
