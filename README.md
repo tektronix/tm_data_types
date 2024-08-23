@@ -31,9 +31,6 @@ Installed Library: \[datatime\]{.title-ref}, \[struct\]{.title-ref},
 pip install tm_data_types
 ```
 
-```python
-```
-
 ## Waveform Object Attributes
 
 - `._vertical_data` → An array of binary values.
