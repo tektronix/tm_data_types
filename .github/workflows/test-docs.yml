@@ -5,13 +5,13 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
-# Cancel running jobs for the same workflow and branch.
 concurrency:
-  group: ${{ github.workflow }}-caller-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 jobs:
   test-docs:
-    uses: tektronix/tm_devices/.github/workflows/test-docs.yml@main
+    uses: tektronix/python-package-ci-cd/.github/workflows/_reusable-test-docs.yml@v1.0.0
     with:
       node-version: 20  # The node version needs to stay in sync with .readthedocs.yml
       python-version: '3.11'  # This needs to stay in sync with .readthedocs.yml and the tox config in pyproject.toml
+      tox-env-array: '["docs", "doctests"]'

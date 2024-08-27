@@ -1,5 +1,5 @@
 write_file is a generic method which takes two arguments, the path to write to and the waveform
-to write. The method begins by utilizing a lookup table 
+to write. The method begins by utilizing a lookup table
 along with the waveform type to determine what type of behavior it will utilize to write.
 Following this, the waveform is formatted and written to the path specified.
 
@@ -10,7 +10,7 @@ distinct process for saving. The write process is identical to the standard writ
 
 This writing process is involved, and is distinctly different between each format and waveform type
 No transformations are done when saving to the .wfm format if the data is of the RawSample type.
-This done as the express purpose of this library is to save and load .wfm files as fast as possible. 
+This done as the express purpose of this library is to save and load .wfm files as fast as possible.
 However if the data type is Normalized, a transformed is performed, as .wfm files are required to contain
 digitized data with the spacing and offset being separate.
 
@@ -24,6 +24,6 @@ read_files_in_parallel handles the same way functionally as write_files_in_paral
 the two being what arguments are passed in and the queue of waveforms returned.
 
 Reading will reformat the waveform data to match what is required for the oscilloscope to display.
-Waveform files will all return the waveform in the RawSample format. This process takes some time 
+Waveform files will all return the waveform in the RawSample format. This process takes some time
 as the conversion utilizes mathematical transformations
 on the entire dataset, so the best way to utilize this library is to utilize the .wfm extension.
