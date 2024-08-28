@@ -5,9 +5,18 @@ on:
     branches: [main]
 jobs:
   update-python-and-pre-commit-dependencies:
-    uses: tektronix/tm_devices/.github/workflows/update-python-and-pre-commit-dependencies.yml@main
+    uses: tektronix/python-package-ci-cd/.github/workflows/_reusable-update-python-and-pre-commit-dependencies.yml@v1.0.0
     with:
+      commit-user-name: ${{ vars.TEK_OPENSOURCE_NAME }}
+      commit-user-email: ${{ vars.TEK_OPENSOURCE_EMAIL }}
+      dependency-dict: '{"dev": ["pylint", "pyright"]}'
+      update-pre-commit: true
+      run-pre-commit: true
       pre-commit-hook-skip-list: pylint,pyright,pyright-verifytypes,pyroma,poetry-audit
+      export-dependency-groups: docs,tests
     permissions:
       contents: write
-    secrets: inherit
+    secrets:
+      checkout-token: ${{ secrets.TEK_OPENSOURCE_TOKEN }}
+      gpg-signing-key-private: ${{ secrets.TEK_OPENSOURCE_GPG_SIGNING_KEY_PRIVATE }}
+      gpg-signing-key-passphrase: ${{ secrets.TEK_OPENSOURCE_GPG_SIGNING_KEY_PASSPHRASE }}

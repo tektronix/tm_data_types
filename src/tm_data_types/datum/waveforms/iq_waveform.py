@@ -102,7 +102,7 @@ class IQWaveform(Waveform):
     ################################################################################################
 
     @cached_property
-    def normalized_vertical_values(self) -> np.ndarray: # pyright: ignore [reportIncompatibleMethodOverride]
+    def normalized_vertical_values(self) -> np.ndarray:  # pyright: ignore [reportIncompatibleMethodOverride]
         """Cache the iq values with the extent and offset are applied.
 
         This is reset when iq values are changed.

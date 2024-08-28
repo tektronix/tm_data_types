@@ -1,5 +1,4 @@
 ---
-# Upload to Test PyPI on every push to main
 name: Publish to TestPyPI
 on:
   push:
@@ -8,9 +7,11 @@ concurrency:
   group: pypi
 jobs:
   package-testpypi:
-    uses: tektronix/tm_devices/.github/workflows/package-testpypi.yml@main
+    uses: tektronix/python-package-ci-cd/.github/workflows/_reusable-package-testpypi.yml@v1.0.0
     with:
       package-name: tm_data_types
+      repo-name: tektronix/tm_data_types
     permissions:
+      contents: read
       id-token: write
       attestations: write

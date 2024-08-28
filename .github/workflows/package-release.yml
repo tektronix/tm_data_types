@@ -1,13 +1,13 @@
 ---
-name: Package Release
+name: Publish to GitHub & PyPI
 on:
   workflow_dispatch:
     inputs:
-      release_level:
+      release-level:
         type: choice
         required: true
         description: |
-          Select the release level,
+          Select the release level:
           patch for backward compatible minor changes and bug fixes,
           minor for backward compatible larger changes,
           major for non-backward compatible changes.
@@ -16,11 +16,23 @@ concurrency:
   group: pypi
 jobs:
   package-release:
-    uses: tektronix/tm_devices/.github/workflows/package-release.yml@main
+    uses: tektronix/python-package-ci-cd/.github/workflows/_reusable-package-release.yml@v1.0.0
     with:
       package-name: tm_data_types
-      release_level: ${{ inputs.release_level }}
+      repo-name: tektronix/tm_data_types
+      commit-user-name: ${{ vars.TEK_OPENSOURCE_NAME }}
+      commit-user-email: ${{ vars.TEK_OPENSOURCE_EMAIL }}
+      release-level: ${{ inputs.release-level }}
+      build-and-publish-python-package: true
+      python-versions-array: '["3.8", "3.9", "3.10", "3.11", "3.12"]'  # when updating this, make sure to update all workflows that use this strategy
+      operating-systems-array: '["ubuntu", "windows", "macos"]'
+      previous-changelog-filepath: python_semantic_release_templates/.previous_changelog_for_template.md
+      previous-release-notes-filepath: python_semantic_release_templates/.previous_release_notes_for_template.md
     permissions:
-      id-token: write
       contents: write
-    secrets: inherit
+      id-token: write
+      attestations: write
+    secrets:
+      checkout-token: ${{ secrets.TEK_OPENSOURCE_TOKEN }}
+      ssh-signing-key-private: ${{ secrets.TEK_OPENSOURCE_SSH_SIGNING_KEY_PRIVATE }}
+      ssh-signing-key-public: ${{ secrets.TEK_OPENSOURCE_SSH_SIGNING_KEY_PUBLIC }}

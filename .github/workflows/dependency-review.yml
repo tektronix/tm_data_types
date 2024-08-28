@@ -3,9 +3,15 @@ name: Pull Request Dependency Review
 on:
   pull_request:
     branches: [main]
+permissions:
+  contents: read
+  pull-requests: write
 jobs:
   dependency-review:
-    uses: tektronix/tm_devices/.github/workflows/dependency-review.yml@main
-    permissions:
-      contents: read
-      pull-requests: write
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/dependency-review-action@v4
+        with:
+          fail-on-severity: low
+          comment-summary-in-pr: on-failure
