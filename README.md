@@ -13,7 +13,7 @@
 
 ---
 
-# tm_data_types: Test & measurement Data types
+# tm_data_types: Test & Measurement Data Types
 
 `tm_data_types` aids clients and development teams in parsing formats
 from Tektronix instruments and constructing Python objects with advanced features.
