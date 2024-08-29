@@ -156,6 +156,7 @@ def _read_files(file_paths: str, file_queue: multiprocessing.Queue) -> None:
 
     Args:
         file_paths: The file paths to read from.
+        file_queue: The queue to put the read data into.
     """
     for file_path in file_paths:
         file_queue.put((file_path, read_file(file_path)))

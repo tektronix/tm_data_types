@@ -27,7 +27,7 @@ def _check_type(
     Returns:
         The np dtype.
     """
-    # convert to the provided type, or it's a ndarray use the previous dtype
+    # convert to the provided type, or it's an ndarray use the previous dtype
     if isinstance(as_type, np.dtype):
         dtype = as_type
     elif as_type and np.issubdtype(as_type, np.floating) or np.issubdtype(as_type, np.integer):

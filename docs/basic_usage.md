@@ -5,7 +5,7 @@ project.
 
 ## Write Data
 
-`tm_data_types` can be used for writing data to a file using [`write_file`][tm_data_types.io_factory_methods.write_file].
+`tm_data_types` can be used for writing data to a file using [`write_file()`][tm_data_types.io_factory_methods.write_file].
 
 ```python
 # fmt: off
@@ -23,7 +23,7 @@ project.
 
 ## Write Analog Waveform to CSV file
 
-`tm_data_types` can be used to write an analog waveform to a CSV file using the [`WaveformFileCSVAnalog`][tm_data_types.files_and_formats.csv.data_formats.analog.WaveformFileCSVAnalog].
+`tm_data_types` can be used to write an analog waveform to a CSV file using the [`WaveformFileCSVAnalog`][tm_data_types.files_and_formats.csv.data_formats.analog.WaveformFileCSVAnalog] class.
 
 ```python
 # fmt: off

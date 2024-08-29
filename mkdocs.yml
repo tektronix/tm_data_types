@@ -150,11 +150,11 @@ plugins:
       strict_only: true
 nav:  # The first entry in each section needs a hard-coded title to avoid being folded in as the section index
   - index.md
-  - Usage Guide:
-      - Basic usage: basic_usage.md
+  - The Basics:
+      - Basic Usage: basic_usage.md
       - glossary.md
       - CHANGELOG.md
-  - Advanced usage:
+  - Advanced Topics:
       - Write to file: advanced\writing_to_a_file.md
   - Contributing:
       - Contributing Guidelines: CONTRIBUTING.md

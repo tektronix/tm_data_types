@@ -15,19 +15,18 @@
 
 # tm_data_types: Test & Measurement Data Types
 
-`tm_data_types` aids clients and development teams in parsing formats
-from Tektronix instruments and constructing Python objects with advanced features.
+`tm_data_types` provides tools to convert, edit, and write waveform data from Tektronix instruments.
+It simplifies handling waveform formats like CSV, WFM, and BIN in Python.
 
 `tm_data_types` can be used to:
 
 - **Convert** CSV, WFM, and BIN format into the waveform object format,
-- **Generate** analog waveforms with NRZ or PAM4 signal processes,
 - **Add or edit** waveform metadata,
 - **Write** a valid waveform object to a file.
 
 ## Supported File Formats
 
-<div markdown="1" class="custom-table-center-cells device-support-table">
+<div markdown="1" class="custom-table-center-cells support-table">
 
 | Interface | File formats                   |
 | --------- | ------------------------------ |
@@ -52,6 +51,15 @@ from tm_data_types import AnalogWaveform, write_file
 waveform = AnalogWaveform()
 file_path = "waveform_1.wfm"
 write_file(file_path, waveform)
+```
+
+### Read File
+
+```python
+from tm_data_types import read_file
+
+file_path = "waveform_1.wfm"
+waveform = read_file(file_path)
 ```
 
 ## Waveform Object Attributes
