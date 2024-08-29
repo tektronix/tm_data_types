@@ -154,10 +154,10 @@ nav:  # The first entry in each section needs a hard-coded title to avoid being 
       - Basic usage: basic_usage.md
       - glossary.md
       - CHANGELOG.md
+  - Advanced usage:
+      - Write to file: advanced\writing_to_a_file.md
   - Contributing:
       - Contributing Guidelines: CONTRIBUTING.md
       - CODE_OF_CONDUCT.md
       - LICENSE.md
-  - Advanced usage:
-      - Write to file: advanced\writing_to_a_file.md
   - API Reference: reference/

@@ -1,60 +1,75 @@
-# tm_data_types
+<div markdown="1" class="custom-badge-table">
 
-## Purpose
+|                   |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Testing**       | [![Code testing status](https://github.com/tektronix/tm_data_types/actions/workflows/test-code.yml/badge.svg?branch=main)](https://github.com/tektronix/tm_data_types/actions/workflows/test-code.yml) [![Docs testing status](https://github.com/tektronix/tm_data_types/actions/workflows/test-docs.yml/badge.svg?branch=main)](https://github.com/tektronix/tm_data_types/actions/workflows/test-docs.yml) [![Coverage status](https://codecov.io/gh/tektronix/tm_data_types/branch/main/graph/badge.svg)](https://codecov.io/gh/tektronix/tm_data_types)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| **Code Quality**  | [![CodeQL status](https://github.com/tektronix/tm_data_types/actions/workflows/codeql-analysis.yml/badge.svg?branch=main)](https://github.com/tektronix/tm_data_types/actions/workflows/codeql-analysis.yml) [![CodeFactor grade](https://www.codefactor.io/repository/github/tektronix/tm_data_types/badge)](https://www.codefactor.io/repository/github/tektronix/tm_data_types) [![pre-commit status](https://results.pre-commit.ci/badge/github/tektronix/tm_data_types/main.svg)](https://results.pre-commit.ci/latest/github/tektronix/tm_data_types/main)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| **Package**       | [![PyPI: Package status](https://img.shields.io/pypi/status/tm_data_types?logo=pypi)](https://pypi.org/project/tm_data_types/) [![PyPI: Latest release version](https://img.shields.io/pypi/v/tm_data_types?logo=pypi)](https://pypi.org/project/tm_data_types/) [![PyPI: Supported Python versions](https://img.shields.io/pypi/pyversions/tm_data_types?logo=python)](https://pypi.org/project/tm_data_types/) [![PyPI: Downloads](https://pepy.tech/badge/tm_data_types)](https://pepy.tech/project/tm_data_types) [![License: Apache 2.0](https://img.shields.io/pypi/l/tm_data_types)](https://github.com/tektronix/tm_data_types/blob/main/LICENSE.md) [![Package build status](https://github.com/tektronix/tm_data_types/actions/workflows/package-build.yml/badge.svg?branch=main)](https://github.com/tektronix/tm_data_types/actions/workflows/package-build.yml) [![PyPI upload status](https://github.com/tektronix/tm_data_types/actions/workflows/package-release.yml/badge.svg?branch=main)](https://github.com/tektronix/tm_data_types/actions/workflows/package-release.yml) |
+| **Documentation** | [![ReadtheDocs Status](https://img.shields.io/readthedocs/tm_data_types/stable?logo=readthedocs)](https://tm_data_types.readthedocs.io/stable)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| **Code Style**    | [![Test style: pytest](https://img.shields.io/badge/test%20style-pytest-blue)](https://github.com/pytest-dev/pytest) [![Code style: ruff](https://img.shields.io/badge/code%20style-ruff-black)](https://docs.astral.sh/ruff/formatter/) [![Docstring style: google](https://img.shields.io/badge/docstring%20style-google-tan)](https://google.github.io/styleguide/pyguide.html)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| **Linting**       | [![pre-commit enabled](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit)](https://github.com/pre-commit/pre-commit) [![Docstring formatter: docformatter](https://img.shields.io/badge/docstring%20formatter-docformatter-tan)](https://github.com/PyCQA/docformatter)[![Linter: pylint](https://img.shields.io/badge/linter-pylint-purple)](https://github.com/pylint-dev/pylint)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 
-Python Instrument IO can be used to:
+</div>
+
+---
+
+# tm_data_types: Test & measurement Data types
+
+`tm_data_types` aids clients and development teams in parsing formats
+from Tektronix instruments and constructing Python objects with advanced features.
+
+`tm_data_types` can be used to:
 
 - **Convert** CSV, WFM, and BIN format into the waveform object format,
 - **Generate** analog waveforms with NRZ or PAM4 signal processes,
 - **Add or edit** waveform metadata,
 - **Write** a valid waveform object to a file.
 
-This interface assists the client and development team in parsing the format from Tek instrument and construct a
-python object with features. The API is funneled into a single Python file, \[InstrumentIO\]{.title-ref}, which contains
-all the functions required to read, write, and generate various instrument data.
+## Supported File Formats
 
-For additional documentation, visit our Wiki page.
+<div markdown="1" class="custom-table-center-cells device-support-table">
 
-- Supported files for reader interface function include: '.wfm', '.bin', '.csv', '.awg_wfm'
-- Supported files for writer interface function include: '.wfm', '.csv', '.awg_wfm'
+| Interface | File formats                   |
+| --------- | ------------------------------ |
+| Reader    | **.wfm, .bin, .csv, .awg_wfm** |
+| Writer    | **.wfm, .csv, .awg_wfm**       |
 
-## Quick Start
+</div>
 
-```bash
+## Installation
+
+```shell
 pip install tm_data_types
+```
+
+## Basic Usage
+
+### Write File
+
+```python
+from tm_data_types import AnalogWaveform, write_file
+
+waveform = AnalogWaveform()
+file_path = "waveform_1.wfm"
+write_file(file_path, waveform)
 ```
 
 ## Waveform Object Attributes
 
-- `._vertical_data` → An array of binary values.
-- `._size` → The size of the vertical data. Read-only, must be an integer.
-- `._spacing` → The horizontal interval between two consecutive vertical data points. Must be an integer or float.
-- `._trigger_index` →
-- `.vertical_data` → vertical data
-- `.horizontal_data` → horizontal data
-- `.time_interval` → time intervals across vertical data
-- `.trigger_position` → trigger position
-
-## Examples
-
-- `read_file_channels(file_path)` → return lists of channels for csv file only
-- `read_file(file_path, channel (opt.))` → return waveform object
-- `write_file(waveform obj, file_path, instrument_type (opt.))` → write file with extension format
-- `initialize_waveform(size (opt.), sample_rate (opt.))` → return simple waveform with size and sample rate.
-- `create_unique_filepath(file_path, file_template)` → return unique file path for converted/created file
-- `random_bits(size)` → returns a random array of values 1 or 0 of user-inputted size.
-- `random_symbols(size)` → returns a random array of values between 0 and 3 of user-inputted size.
-- `nrz(bit_array, symbol_rate=1.0e9, sample_per_ui=10.12345, amplitude=1., offset=0.0, impairment=0.2, noise=0.01, repeats=1)`
-    → return NRZ waveform object based on user-inputted bit array. Array could be derived from InstrumentIO's \[random_bits\]{.title-ref} function, or from some other random number generator specified by the user (i.e. PBRS).
-- `pam4(symbol_arr, data_rate=1.0e9, sample_per_ui=10.12345, amplitude=1.0, offset=0.0, impairment=0.2, noise=0.01, repeats=1)`
-    → return PAM4 waveform object based on user-inputted symbol array. Array could be derived from InstrumentIO's \[random_symbols\]{.title-ref} function, or from some other random number generator specified by the user (i.e. PBRS).
-- `square(frequency=1000, repeat=5, amplitude=1, rec_length=1000)` → return square waveform object.
-- `sawtooth(frequency=1000, repeat=5, amplitude=1, rec_length=1000)` → return sawtooth waveform object.
-- `triangle(frequency=1000, repeat=5, amplitude=1, rec_length=1000)` → return triangle waveform object.
+- `.measured_data` → The y_axis values.
+- `.meta_info` → Metadata information for the waveform.
+- `.normalized_horizontal_values` → A numpy array with the x_axis_spacing and trigger index applied.
+- `.normalized_vertical_values` → The normalized vertical data values.
+- `.record_length` → The number of samples for the waveform data.
+- `.source_name` → The name of the source.
+- `.trigger_index` → The index of the trigger point. Must be a float.
+- `.x_axis_spacing` → The horizontal interval between two consecutive vertical data points. Must be a float.
+- `.x_axis_units` → The units of the x-axis. Must be a string.
+- `.x_axis_values` → The x-axis values of the waveform.
 
 ## Documentation
 
-See the full documentation at <https://tm-data-types.readthedocs.io/stable/>
+See the full documentation at <https://tm_data_types.readthedocs.io/stable/>
 
 ## Maintainers
 

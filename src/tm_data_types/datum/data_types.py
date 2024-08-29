@@ -27,7 +27,7 @@ def _check_type(
     Returns:
         The np dtype.
     """
-    # convert to the provided type, or it's an ndarray use the previous dtype
+    # convert to the provided type, or it's a ndarray use the previous dtype
     if isinstance(as_type, np.dtype):
         dtype = as_type
     elif as_type and np.issubdtype(as_type, np.floating) or np.issubdtype(as_type, np.integer):
@@ -43,7 +43,7 @@ def _check_type(
 
 
 def type_ratio(dtype_from: PossibleTypes, dtype_to: PossibleTypes) -> float:
-    """Calculate the ratio of ranges between two seperate types.
+    """Calculate the ratio of ranges between two separate types.
 
     Example:
         Converting from np.int16 to np.int8 will give you a ratio of 1/256.
@@ -469,7 +469,7 @@ class Normalized(MeasuredData):
 
 
 class Digitized(MeasuredData):
-    """Data that has been converted to seperate data streams along the 2nd axis."""
+    """Data that has been converted to separate data streams along the 2nd axis."""
 
     ################################################################################################
     # Public Methods

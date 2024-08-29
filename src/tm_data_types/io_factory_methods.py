@@ -155,7 +155,7 @@ def _read_files(file_paths: str, file_queue: multiprocessing.Queue) -> None:
     """Read a waveform from a provided file.
 
     Args:
-        file_path: The file paths to read from.
+        file_paths: The file paths to read from.
     """
     for file_path in file_paths:
         file_queue.put((file_path, read_file(file_path)))

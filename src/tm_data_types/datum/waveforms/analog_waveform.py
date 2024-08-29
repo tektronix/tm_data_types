@@ -38,7 +38,7 @@ class AnalogWaveformMetaInfo(WaveformMetaInfo):
 
 
 class AnalogWaveform(Waveform):
-    """Class which represents an analog waveform with a y and x axis."""
+    """Class which represents an analog waveform with a y-axis and x-axis."""
 
     ################################################################################################
     # Dunder Methods
@@ -72,7 +72,7 @@ class AnalogWaveform(Waveform):
             self.__dict__.pop("normalized_vertical_values", None)
 
         if key == "y_axis_values":
-            # y axis values need to be typecase when set.
+            # y-axis values need to be typecase when set.
             if not isinstance(value, MeasuredData):
                 super(Waveform, self).__setattr__("y_axis_values", RawSample(value))
             else:
@@ -139,7 +139,7 @@ class AnalogWaveform(Waveform):
 
     @property
     def y_axis_extent_magnitude(self) -> float:
-        """Get the magnitude extent of values that can be represented in the y axis units.
+        """Get the magnitude extent of values that can be represented in the y-axis units.
 
         Returns:
             A float value which represents the magnitude of what values which can be represented
@@ -151,7 +151,7 @@ class AnalogWaveform(Waveform):
 
     @y_axis_extent_magnitude.setter
     def y_axis_extent_magnitude(self, extent_magnitude: float) -> None:
-        """Set the spacing based on values that can be represented in the y axis units.
+        """Set the spacing based on values that can be represented in the y-axis units.
 
         Example:
             If the extent magnitude is 1.0 and the numpy type is a long, then it will

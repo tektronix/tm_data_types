@@ -30,7 +30,7 @@ class DigitalWaveformMetaInfo(WaveformMetaInfo):  # pylint: disable=too-many-ins
 
 
 class DigitalWaveform(Waveform):
-    """Class which represents an digital waveform with a y and x axis."""
+    """Class which represents a digital waveform with a y-axis and x-axis."""
 
     ################################################################################################
     # Dunder Methods

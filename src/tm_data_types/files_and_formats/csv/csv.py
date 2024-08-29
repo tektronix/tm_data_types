@@ -90,7 +90,7 @@ class CSVFile(AbstractedFile, Generic[DATUM_TYPE_VAR]):
                 except ValueError:
                     # otherwise the info is in the header
                     if len(row) > 1:
-                        # record length is special as it needs to be stored but it's not relevant
+                        # record length is special as it needs to be stored, but it's not relevant
                         # to the waveform values
                         if row[0] == "Record Length":
                             record_length = int(row[1])
@@ -168,7 +168,7 @@ class CSVFile(AbstractedFile, Generic[DATUM_TYPE_VAR]):
     ################################################################################################
     # Writing
     def _setup_generic_csv_header(self, waveform: Waveform) -> str:
-        """Setup the generic header values for the csv file during writing.
+        """Set up the generic header values for the csv file during writing.
 
         Args:
             waveform: The waveform used to get the generic header values.

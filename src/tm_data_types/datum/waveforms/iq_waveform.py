@@ -173,7 +173,7 @@ class IQWaveform(Waveform):
 
     @iq_axis_extent_magnitude.setter
     def iq_axis_extent_magnitude(self, extent_magnitude: float):
-        """Set the magnitude extent of values that can be represented in the y axis units.
+        """Set the magnitude extent of values that can be represented in the y-axis units.
 
         Args:
             extent_magnitude: A float value which represents the magnitude of what values which

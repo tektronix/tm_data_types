@@ -30,7 +30,7 @@ class AbstractedFile(Generic[DATUM_TYPE_VAR], ABC):
 
         Args:
             file_path: The path for the file to read/write from.
-            io_type: A file to represent what type of IO transferrence is occuring.
+            io_type: A file to represent what type of IO transference is occurring.
         """
         self.file_path = file_path
         self.io_type = io_type
@@ -74,7 +74,7 @@ class AbstractedFile(Generic[DATUM_TYPE_VAR], ABC):
 
     @staticmethod
     def update_bidict(original_bidict: bidict, operating_bidict: Dict[str, str]) -> bidict:
-        """Update a bi directional dict with new values.
+        """Update a bidirectional dict with new values.
 
         This may need to be a factory helper.
 

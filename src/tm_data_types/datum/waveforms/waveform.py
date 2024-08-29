@@ -83,7 +83,7 @@ class Waveform(Datum, ABC):
     def __init__(
         self,
     ) -> None:
-        """Initialize the waveform's meta info and x axis specifications."""
+        """Initialize the waveform's meta info and x-axis specifications."""
         self.meta_info: Optional[WaveformMetaInfo] = None
         self.trigger_index: float = 0.0
         self.source_name: Optional[str] = None
