@@ -1,5 +1,3 @@
-![Scio Logo](https://d347awuzx0kdse.cloudfront.net/vicomaus/content-image/Tek_Logo_RGB.png){width="50px"}
-
 # tm_data_types
 
 ## Purpose
@@ -21,11 +19,6 @@ For additional documentation, visit our Wiki page.
 - Supported files for writer interface function include: '.wfm', '.csv', '.awg_wfm'
 
 ## Quick Start
-
-Requirements: [Python 3.0 or above](https://www.python.org/download/releases/3.0/)
-
-Installed Library: \[datatime\]{.title-ref}, \[struct\]{.title-ref},
-\[numpy\]{.title-ref}, \[scipy\]{.title-ref}, \[pandas\]{.title-ref} (Test waveform plot with \[matplotlib\]{.title-ref})
 
 ```bash
 pip install tm_data_types
@@ -59,14 +52,23 @@ pip install tm_data_types
 - `sawtooth(frequency=1000, repeat=5, amplitude=1, rec_length=1000)` → return sawtooth waveform object.
 - `triangle(frequency=1000, repeat=5, amplitude=1, rec_length=1000)` → return triangle waveform object.
 
+## Documentation
+
+See the full documentation at <https://tm-data-types.readthedocs.io/stable/>
+
 ## Maintainers
 
-.. TODO: update email -  tmdevicessupport@tektronix.com - For technical support and questions.
+Before reaching out to any maintainers directly, please first check if
+your issue or question is already covered by any [open
+issues](https://github.com/tektronix/tm_data_types/issues). If the issue or
+question you have is not already covered, please [file a new
+issue](https://github.com/tektronix/tm_data_types/issues/new/choose) or
+start a
+[discussion](https://github.com/tektronix/tm_data_types/discussions) and
+the maintainers will review and respond there.
 
-- <opensource@tektronix.com> - For open-source policy and license questions.
-- Keith Rule <keith.d.rule@tektronix.com>
-
-For more information about this repository, you can leave a question/comment on the [repository's Discussion board](https://github.com/tektronix/PythonInstrumentIO/discussions).
+- <opensource@tektronix.com> - For open-source policy and license
+    questions.
 
 ## Contributing
 
@@ -90,10 +92,3 @@ The artifact attestations can also be directly downloaded from the
 ```shell
 gh attestation verify --owner tektronix <file>
 ```
-
-## Credits
-
-`tm_data_types` was created with
-[cookiecutter](https://cookiecutter.readthedocs.io/en/latest/README.html)
-and the `py-pkgs-cookiecutter`
-[template](https://py-pkgs-cookiecutter.readthedocs.io/en/latest/).

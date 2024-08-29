@@ -1,29 +1,64 @@
-write_file is a generic method which takes two arguments, the path to write to and the waveform
-to write. The method begins by utilizing a lookup table
-along with the waveform type to determine what type of behavior it will utilize to write.
-Following this, the waveform is formatted and written to the path specified.
+# Waveform File Operations
 
-Alternatively, write_files_in_parallel can be used instead. This method accepts two separate list for
-lists for file paths and waveforms, where each value in one list index will correspond to the other.
-Multiprocessing is leveraged by partitioning each list and sending them into their own
-distinct process for saving. The write process is identical to the standard write_file.
+## `write_file`
 
-This writing process is involved, and is distinctly different between each format and waveform type
-No transformations are done when saving to the .wfm format if the data is of the RawSample type.
-This done as the express purpose of this library is to save and load .wfm files as fast as possible.
-However if the data type is Normalized, a transformed is performed, as .wfm files are required to contain
-digitized data with the spacing and offset being separate.
+It is a generic function that takes two arguments:
 
-read_file is a generic method which takes one argument, the path in which a waveform file exists that
-should be read. The same lookup table for file extensions is used from write_file, however an additional
-step is used, which is looking through small sections of the files data to determine what the waveform type is.
-Following this, a waveform is provided from the read file, the type of which is dependant on how the data is
-formatted.
+- **path**: The file path to write to.
+- **waveform**: The waveform data to write.
 
-read_files_in_parallel handles the same way functionally as write_files_in_parallel, the main difference between
-the two being what arguments are passed in and the queue of waveforms returned.
+### Process Overview
 
-Reading will reformat the waveform data to match what is required for the oscilloscope to display.
-Waveform files will all return the waveform in the RawSample format. This process takes some time
-as the conversion utilizes mathematical transformations
-on the entire dataset, so the best way to utilize this library is to utilize the .wfm extension.
+1. **Lookup Table**: The method begins by using a lookup table to determine the behavior based on the waveform type.
+2. **Formatting**: The waveform is formatted according to its type.
+3. **Writing**: Finally, the formatted waveform is written to the specified file path.
+
+### Special Cases
+
+- **RawSample Type**: No transformations are applied when saving data in the `.wfm` format if the waveform is of the `RawSample` type. This is done to ensure that `.wfm` files are saved and loaded as quickly as possible.
+- **Normalized Type**: If the waveform is of the `Normalized` type, a transformation is performed because `.wfm` files must contain digitized data, with spacing and offset stored separately.
+
+## `write_files_in_parallel`
+
+This method offers a parallelized approach to writing multiple waveform files.
+
+### Parameters
+
+- **file_paths**: A list of file paths where each waveform will be saved.
+- **waveforms**: A list of waveforms to write, where each index corresponds to the matching file path.
+
+### Process Overview
+
+1. **Multiprocessing**: The lists of file paths and waveforms are partitioned and processed in parallel.
+2. **Writing**: Each process uses the same method as `write_file` to save its assigned waveforms.
+
+This method is particularly useful for saving multiple waveform files efficiently.
+
+## `read_file`
+
+This method is a generic function that takes one argument:
+
+- **path**: The file path from which the waveform should be read.
+
+### Process Overview
+
+1. **Lookup Table**: Similar to `write_file`, a lookup table is used to determine the file extension.
+2. **Type Detection**: The method reads small sections of the file to identify the waveform type.
+3. **Reformatting**: The waveform is read and returned in the appropriate format, depending on how the data is structured.
+
+### Special Cases
+
+- All waveforms are returned in the `RawSample` format. The data is reformatted for compatibility with the oscilloscope, which involves mathematical transformations on the entire dataset. This can be time-consuming, so using the `.wfm` format is recommended for efficiency.
+
+## `read_files_in_parallel`
+
+This method allows for the parallel reading of multiple waveform files.
+
+### Parameters
+
+- **file_paths**: A list of file paths to read from.
+
+### Process Overview
+
+1. **Multiprocessing**: Similar to `write_files_in_parallel`, the file paths are partitioned and processed in parallel.
+2. **Reading**: The waveforms are read using the same process as `read_file`, and a queue of waveforms is returned.
