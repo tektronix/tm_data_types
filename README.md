@@ -62,19 +62,6 @@ file_path = "waveform_1.wfm"
 waveform = read_file(file_path)
 ```
 
-## Waveform Object Attributes
-
-- `.measured_data` → The y_axis values.
-- `.meta_info` → Metadata information for the waveform.
-- `.normalized_horizontal_values` → A numpy array with the x_axis_spacing and trigger index applied.
-- `.normalized_vertical_values` → The normalized vertical data values.
-- `.record_length` → The number of samples for the waveform data.
-- `.source_name` → The name of the source.
-- `.trigger_index` → The index of the trigger point. Must be a float.
-- `.x_axis_spacing` → The horizontal interval between two consecutive vertical data points. Must be a float.
-- `.x_axis_units` → The units of the x-axis. Must be a string.
-- `.x_axis_values` → The x-axis values of the waveform.
-
 ## Documentation
 
 See the full documentation at <https://tm_data_types.readthedocs.io/stable/>
