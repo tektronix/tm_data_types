@@ -23,7 +23,7 @@ project.
 
 ## Write Analog Waveform to CSV file
 
-`tm_data_types` can be used to write an analog waveform to a CSV file using the [`WaveformFileCSVAnalog`][tm_data_types.WaveformFileCSVAnalog] class.
+`tm_data_types` can be used to write an analog waveform to a CSV file using the [`WaveformFileCSVAnalog`][tm_data_types.files_and_formats.csv.data_formats.analog.WaveformFileCSVAnalog] class.
 
 ```python
 # fmt: off

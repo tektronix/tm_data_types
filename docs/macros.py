@@ -13,7 +13,9 @@ import tomli
 from mkdocs_macros.plugin import MacrosPlugin  # pyright: ignore[reportMissingTypeStubs]
 
 HEADER_ONE_REGEX = re.compile(r"^#\s(.+)$", re.MULTILINE)
-PAGE_REPLACEMENTS = {}
+PAGE_REPLACEMENTS = {
+    "README.md": ((r"> [!NOTE]", "!!! note"),),
+}
 FILES_TO_REMOVE_BLACK_FORMATTER_DISABLE_COMMENT = {
     "basic_usage.md",
 }

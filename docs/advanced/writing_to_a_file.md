@@ -1,6 +1,6 @@
 # Waveform File Operations
 
-## [`write_file()`][tm_data_types.io_factory_methods.write_file]
+## [`write_file()`][tm_data_types.write_file]
 
 It is a generic function that takes two arguments:
 
@@ -15,10 +15,10 @@ It is a generic function that takes two arguments:
 
 ### Special Cases
 
-- **RawSample Type**: No transformations are applied when saving data in the `.wfm` format if the waveform is of the [`RawSample`][tm_data_types.datum.data_types.RawSample] type. This is done to ensure that `.wfm` files are saved and loaded as quickly as possible.
-- **Normalized Type**: If the waveform is of the [`Normalized`][tm_data_types.datum.data_types.Normalized] type, a transformation is performed because `.wfm` files must contain digitized data, with spacing and offset stored separately.
+- **RawSample Type**: No transformations are applied when saving data in the `.wfm` format if the waveform is of the [`RawSample`][tm_data_types.RawSample] type. This is done to ensure that `.wfm` files are saved and loaded as quickly as possible.
+- **Normalized Type**: If the waveform is of the [`Normalized`][tm_data_types.Normalized] type, a transformation is performed because `.wfm` files must contain digitized data, with spacing and offset stored separately.
 
-## [`write_files_in_parallel()`][tm_data_types.io_factory_methods.write_files_in_parallel]
+## [`write_files_in_parallel()`][tm_data_types.write_files_in_parallel]
 
 This method offers a parallelized approach to writing multiple waveform files.
 
@@ -30,11 +30,11 @@ This method offers a parallelized approach to writing multiple waveform files.
 ### Process Overview
 
 1. **Multiprocessing**: The lists of file paths and waveforms are partitioned and processed in parallel.
-2. **Writing**: Each process uses the same method as `write_file()` to save its assigned waveforms.
+2. **Writing**: Each process uses the same method as [`write_file()`][tm_data_types.write_file] to save its assigned waveforms.
 
 This method is particularly useful for saving multiple waveform files efficiently.
 
-## [`read_file()`][tm_data_types.io_factory_methods.read_file]
+## [`read_file()`][tm_data_types.read_file]
 
 This method is a generic function that takes one argument:
 
@@ -48,9 +48,9 @@ This method is a generic function that takes one argument:
 
 ### Special Cases
 
-- All waveforms are returned in the [`RawSample`][tm_data_types.datum.data_types.RawSample] format. The data is reformatted for compatibility with the oscilloscope, which involves mathematical transformations on the entire dataset. This can be time-consuming, so using the `.wfm` format is recommended for efficiency.
+- All waveforms are returned in the [`RawSample`][tm_data_types.RawSample] format. The data is reformatted for compatibility with the oscilloscope, which involves mathematical transformations on the entire dataset. This can be time-consuming, so using the `.wfm` format is recommended for efficiency.
 
-## [`read_files_in_parallel()`][tm_data_types.io_factory_methods.read_files_in_parallel]
+## [`read_files_in_parallel()`][tm_data_types.read_files_in_parallel]
 
 This method allows for the parallel reading of multiple waveform files.
 
@@ -60,5 +60,5 @@ This method allows for the parallel reading of multiple waveform files.
 
 ### Process Overview
 
-1. **Multiprocessing**: Similar to `write_files_in_parallel()`, the file paths are partitioned and processed in parallel.
-2. **Reading**: The waveforms are read using the same process as `read_file()`, and a queue of waveforms is returned.
+1. **Multiprocessing**: Similar to [`write_files_in_parallel()`][tm_data_types.write_files_in_parallel], the file paths are partitioned and processed in parallel.
+2. **Reading**: The waveforms are read using the same process as [`read_file()`][tm_data_types.read_file], and a queue of waveforms is returned.
