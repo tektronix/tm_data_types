@@ -15,12 +15,12 @@
 
 # tm_data_types: Test & Measurement Data Types
 
-`tm_data_types` provides tools to convert, edit, and write waveform data from Tektronix instruments.
+`tm_data_types` provides tools to convert, edit, and write waveform data from Test & Measurement devices.
 It simplifies handling waveform formats like CSV, WFM, and BIN in Python.
 
 `tm_data_types` can be used to:
 
-- **Convert** CSV, WFM, and BIN format into the waveform object format,
+- **Convert** CSV, WFM, and BIN format into a waveform object,
 - **Add or edit** waveform metadata,
 - **Write** a valid waveform object to a file.
 
