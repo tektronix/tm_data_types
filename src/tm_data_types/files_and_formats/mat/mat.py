@@ -181,9 +181,7 @@ class MATFile(AbstractedFile, Generic[DATUM_TYPE_VAR]):
         Returns:
             Returns an analog waveform created from the formatted dictionary.
         """
-        waveform: DATUM_TYPE_VAR = (
-            self.WAVEFORM_TYPE()
-        )  # pylist: disable=abstract-class-instantiated
+        waveform: DATUM_TYPE_VAR = self.WAVEFORM_TYPE()  # pylint: disable=abstract-class-instantiated
 
         for key in formatted_data:
             if key in self._WAVEFORM_PROPERTIES.inverse:

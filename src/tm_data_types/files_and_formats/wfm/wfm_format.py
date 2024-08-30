@@ -943,7 +943,7 @@ class WfmFormat:  # pylint: disable=too-many-instance-attributes
         for (
             attribute_name,
             attribute_type,
-        ) in WfmFormat.__annotations__.items():  # pylint: disable=no-member
+        ) in WfmFormat.__annotations__.items():
             attribute_value = getattr(self, attribute_name)
             if attribute_value is not None and attribute_name not in "meta_data":
                 if isinstance(attribute_value, np.ndarray):
