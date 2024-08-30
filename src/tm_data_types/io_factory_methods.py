@@ -24,35 +24,61 @@ DatumAlias = TypeVar("DatumAlias", bound=Datum, default=Datum)
 
 # pylint: disable=unused-argument
 def write_file(
-    file_path: str,
-    datum: Datum,
+    path: str,
+    waveform: Datum,
     product: InstrumentSeries = InstrumentSeries.TEKSCOPE,
     file_format: Optional[CSVFormats] = None,
 ) -> None:
     """Write a waveform to a provided file.
 
+    Process Overview:
+        1. Lookup Table: The method begins by using a lookup table to determine the behavior based on the
+                         waveform type.
+        2. Formatting: The waveform is formatted according to its type.
+        3. Writing: Finally, the formatted waveform is written to the specified file path.
+
+    Special Cases:
+        - RawSample Type: No transformations are applied when saving data in the `.wfm`
+                          format, if the waveform is of the [`RawSample`][tm_data_types.RawSample] type.
+                          This is done to ensure that `.wfm` files are saved and loaded as quickly as possible.
+        - Normalized Type: If the waveform is of the [`Normalized`][tm_data_types.datum.data_types.Normalized] type,
+                           a transformation is performed because `.wfm` files must contain digitized data,
+                           with spacing and offset stored separately.
+
     Args:
-        file_path: The path file to write to.
-        datum: The datum that is being written.
+        path: The path file to write to.
+        waveform: The waveform that is being written.
         product: The product being written to.
         file_format: A specialized file format we are writing as.
     """
-
-    _, path_extension = os.path.splitext(file_path)
+    _, path_extension = os.path.splitext(path)
     try:
         file_extension = FileExtensions[path_extension.replace(".", "").upper()]
     except KeyError as e:
         raise IOError(f"The {path_extension} extension cannot be written to.") from e
     # find the format based on the waveform extension
-    format_class: AbstractedFile = find_class_format(file_extension, type(datum))
+    format_class: AbstractedFile = find_class_format(file_extension, type(waveform))
     # using __init__ for instantiation due to pyright confusion
-    format_class = format_class(file_path, access_type(file_extension, write=True), product)
+    format_class = format_class(path, access_type(file_extension, write=True), product)
     with format_class as fd:
-        fd.write_datum(datum)
+        fd.write_datum(waveform)
 
 
 def read_file(file_path: str) -> DatumAlias:
     """Read a waveform from a provided file.
+
+    Process Overview:
+        1. Lookup Table: Similar to  [`write_file()`][tm_data_types.write_file], a lookup table is used to determine
+                         the file extension.
+        2. Type Detection: The method reads small sections of the file to identify the waveform type.
+        3. Reformatting: The waveform is read and returned in the appropriate format,
+                         depending on how the data is structured.
+
+    Special Cases:
+        - All waveforms are returned in the [`RawSample`][tm_data_types.RawSample] format.
+          The data is reformatted for compatibility with the oscilloscope, which involves
+          mathematical transformations on the entire dataset.
+          This can be time-consuming, so using the `.wfm` format is recommended for efficiency.
 
     Args:
         file_path: The path file to read from.
@@ -117,6 +143,15 @@ def write_files_in_parallel(
 ) -> None:
     """Write a list of waveforms to a list of provided files in parallel.
 
+    This method offers a parallelized approach to writing multiple waveform files.
+
+    Process Overview:
+        1. Multiprocessing: The lists of file paths and waveforms are partitioned and processed in parallel.
+        2. Writing: Each process uses the same method as  [`write_file()`][tm_data_types.write_file]
+                    to save its assigned waveforms.
+
+    This method is particularly useful for saving multiple waveform files efficiently.
+
     Args:
         file_paths: The path file to write to.
         datums: The datum that is being written.
@@ -155,7 +190,8 @@ def _read_files(file_paths: str, file_queue: multiprocessing.Queue) -> None:
     """Read a waveform from a provided file.
 
     Args:
-        file_path: The file paths to read from.
+        file_paths: The file paths to read from.
+        file_queue: The queue to put the read data into.
     """
     for file_path in file_paths:
         file_queue.put((file_path, read_file(file_path)))
@@ -164,8 +200,16 @@ def _read_files(file_paths: str, file_queue: multiprocessing.Queue) -> None:
 def read_files_in_parallel(file_paths: List[str], force_process_count: int = 4) -> List[Datum]:
     """Read a list of files in parallel.
 
+    This method allows for the parallel reading of multiple waveform files.
+
+    Process Overview:
+        1. Multiprocessing: Similar to [`write_files_in_parallel()`][tm_data_types.write_files_in_parallel],
+                            the file paths are partitioned and processed in parallel.
+        2. Reading: The waveforms are read using the same process as  [`read_file()`][tm_data_types.read_file],
+                    and a queue of waveforms is returned.
+
     Args:
-        file_paths: The file paths to read from.
+        file_paths: A list of file paths to read from.
         force_process_count: The number of processes that should be created for this operation.
     """
     process_count = min(force_process_count, len(file_paths))

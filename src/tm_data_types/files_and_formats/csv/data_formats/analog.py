@@ -63,7 +63,7 @@ class WaveformFileCSVAnalog(CSVFile[AnalogWaveform]):
 
         Args:
             waveform: The analog waveform which is being formatted.
-            values_matrix: A matrix containing the x and y axis values.
+            values_matrix: A matrix containing the x-axis and y-axis values.
         """
         normalized_vertical_values = Normalized(values_matrix[:, 1], as_type=np.float32)
         vertical_minimum = normalized_vertical_values.min()

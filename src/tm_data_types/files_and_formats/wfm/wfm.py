@@ -121,7 +121,7 @@ class WFMFile(AbstractedFile[DATUM_TYPE_VAR], ABC):
         formatted_data = WfmFormat()
         formatted_data.unpack_wfm_file(endian_prefix, version_number, self.fd)
 
-        waveform: DATUM_TYPE_VAR = self.DATUM_TYPE()  # pylist: disable=abstract-class-instantiated
+        waveform: DATUM_TYPE_VAR = self.DATUM_TYPE()  # pylint: disable=abstract-class-instantiated
         meta_data = self.META_DATA_TYPE(
             **self.META_DATA_TYPE.remap(self._META_DATA_LOOKUP.inverse, formatted_data.meta_data),
         )
@@ -152,10 +152,10 @@ class WFMFile(AbstractedFile[DATUM_TYPE_VAR], ABC):
 
         formatted_data = WfmFormat()
         if waveform.meta_info:
-            exlusive_meta_data = waveform.meta_info.operable_exclusive_metadata()
+            exclusive_meta_data = waveform.meta_info.operable_exclusive_metadata()
 
             formatted_data.meta_data = self.META_DATA_TYPE.remap(
-                self._META_DATA_LOOKUP, exlusive_meta_data
+                self._META_DATA_LOOKUP, exclusive_meta_data
             )
         else:
             formatted_data.meta_data = self.META_DATA_TYPE.remap(self._META_DATA_LOOKUP, {})
@@ -190,7 +190,7 @@ class WFMFile(AbstractedFile[DATUM_TYPE_VAR], ABC):
                 )
                 return True
             except TypeError as e:
-                # if have too many keywords, this format doesn't work
+                # if you have too many keywords, this format doesn't work
                 if "unexpected keyword" in str(e):
                     return False
                 # if we are missing some keywords, that is fine

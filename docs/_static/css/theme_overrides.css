@@ -3,7 +3,7 @@
     white-space: nowrap !important;
 }
 
-.rst-content table.device-support-table.docutils thead {
+.rst-content table.support-table.docutils thead {
     vertical-align: middle;
 
     .line-block {
@@ -11,29 +11,29 @@
     }
 }
 
-.device-support-table thead, .device-support-table tbody {
+.support-table thead, .support-table tbody {
     border: 2px solid black
 }
 
-.device-support-table table {
+.support-table table {
     width: auto !important;
     display: table !important;
     margin: auto !important;
 }
 
-.device-support-table.docutils tbody tr:has(th p),
-.device-support-table tr:has(td:first-child:not(:empty)) {
+.support-table.docutils tbody tr:has(th p),
+.support-table tr:has(td:first-child:not(:empty)) {
     border-top-width: 2px;
     border-top-color: black;
     border-top-style: solid;
 }
 
-.device-support-table tbody td[rowspan] {
+.support-table tbody td[rowspan] {
     background-color: transparent !important;
 }
 
-.device-support-table table td:first-child,
-.device-support-table table th:first-child {
+.support-table table td:first-child,
+.support-table table th:first-child {
     font-weight: bolder;
     background-color: transparent !important;
 }
