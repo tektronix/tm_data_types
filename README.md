@@ -28,15 +28,12 @@ It simplifies handling waveform formats like CSV, WFM, and BIN in Python.
 
 <div markdown="1" class="custom-table-center-cells support-table">
 
-| Interface | File formats         |
-| --------- | -------------------- |
-| Reader    | **.bin, .csv, .wfm** |
-| Writer    | **.csv, .wfm**       |
+| Interface | File formats       |
+| --------- | ------------------ |
+| Reader    | **.csv, .wfm[^1]** |
+| Writer    | **.csv, .wfm[^1]** |
 
 </div>
-
-Currently, `tm_data_types` only supports the [Tektronix proprietary](https://download.tek.com/manual/Waveform-File-Format-Manual-077022011.pdf) `.wfm` format.
-Support for other formats is planned for future releases.
 
 ## Installation
 
@@ -105,3 +102,5 @@ The artifact attestations can also be directly downloaded from the
 ```shell
 gh attestation verify --owner tektronix <file>
 ```
+
+[^1]: Currently, `tm_data_types` only supports the [Tektronix proprietary `.wfm`](https://download.tek.com/manual/Waveform-File-Format-Manual-077022011.pdf) format. Support for other formats is planned for future releases.
