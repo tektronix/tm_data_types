@@ -7,8 +7,8 @@ ci:
   skip:
     - check-poetry
     - pylint
-    - pyright
-    - pyright-verifytypes
+#    - pyright
+#    - pyright-verifytypes
     - pyroma
     - poetry-audit
 repos:
