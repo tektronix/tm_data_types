@@ -28,14 +28,14 @@ It simplifies handling waveform formats like CSV, WFM, and BIN in Python.
 
 <div markdown="1" class="custom-table-center-cells support-table">
 
-| Interface | File formats                                                                                                                          |
-| --------- | ------------------------------------------------------------------------------------------------------------------------------------- |
-| Reader    | **.bin, .csv, .wfm \[[Tektronix proprietary](https://download.tek.com/manual/Waveform-File-Format-Manual-077022011.pdf)\], .awg_wfm** |
-| Writer    | **.csv, .wfm \[[Tektronix proprietary](https://download.tek.com/manual/Waveform-File-Format-Manual-077022011.pdf)\], .awg_wfm**       |
+| Interface | File formats         |
+| --------- | -------------------- |
+| Reader    | **.bin, .csv, .wfm** |
+| Writer    | **.csv, .wfm**       |
 
 </div>
 
-proprietary
+Currently, `tm_data_types` supports the `.wfm` format, which is [Tektronix proprietary](https://download.tek.com/manual/Waveform-File-Format-Manual-077022011.pdf).
 
 ## Installation
 

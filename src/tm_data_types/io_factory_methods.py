@@ -39,10 +39,10 @@ def write_file(
 
     Special Cases:
         - RawSample Type: No transformations are applied when saving data in the `.wfm`
-                          format, if the waveform is of the `RawSample` type.
+                          format, if the waveform is of the [`RawSample`][tm_data_types.RawSample] type.
                           This is done to ensure that `.wfm` files are saved and loaded as quickly as possible.
-        - Normalized Type: If the waveform is of the `Normalized` type, a transformation
-                           is performed because `.wfm` files must contain digitized data,
+        - Normalized Type: If the waveform is of the [`Normalized`][tm_data_types.datum.data_types.Normalized] type,
+                           a transformation is performed because `.wfm` files must contain digitized data,
                            with spacing and offset stored separately.
 
     Args:
@@ -68,13 +68,14 @@ def read_file(file_path: str) -> DatumAlias:
     """Read a waveform from a provided file.
 
     Process Overview:
-        1. Lookup Table: Similar to `write_file()`, a lookup table is used to determine the file extension.
+        1. Lookup Table: Similar to  [`write_file()`][tm_data_types.write_file], a lookup table is used to determine
+                         the file extension.
         2. Type Detection: The method reads small sections of the file to identify the waveform type.
         3. Reformatting: The waveform is read and returned in the appropriate format,
                          depending on how the data is structured.
 
     Special Cases:
-        - All waveforms are returned in the `RawSample` format.
+        - All waveforms are returned in the [`RawSample`][tm_data_types.RawSample] format.
           The data is reformatted for compatibility with the oscilloscope, which involves
           mathematical transformations on the entire dataset.
           This can be time-consuming, so using the `.wfm` format is recommended for efficiency.
@@ -146,7 +147,8 @@ def write_files_in_parallel(
 
     Process Overview:
         1. Multiprocessing: The lists of file paths and waveforms are partitioned and processed in parallel.
-        2. Writing: Each process uses the same method as `write_file()` to save its assigned waveforms.
+        2. Writing: Each process uses the same method as  [`write_file()`][tm_data_types.write_file]
+                    to save its assigned waveforms.
 
     This method is particularly useful for saving multiple waveform files efficiently.
 
@@ -201,10 +203,10 @@ def read_files_in_parallel(file_paths: List[str], force_process_count: int = 4) 
     This method allows for the parallel reading of multiple waveform files.
 
     Process Overview:
-        1. Multiprocessing: Similar to `write_files_in_parallel()`, the file paths are partitioned
-                            and processed in parallel.
-        2. Reading: The waveforms are read using the same process as `read_file()`, and a queue
-                    of waveforms is returned.
+        1. Multiprocessing: Similar to [`write_files_in_parallel()`][tm_data_types.write_files_in_parallel],
+                            the file paths are partitioned and processed in parallel.
+        2. Reading: The waveforms are read using the same process as  [`read_file()`][tm_data_types.read_file],
+                    and a queue of waveforms is returned.
 
     Args:
         file_paths: A list of file paths to read from.

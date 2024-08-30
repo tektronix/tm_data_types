@@ -12,4 +12,4 @@ Scope
 : Oscilloscope
 
 WFM
-: Waveform format used by test & measurement devices.
+: Waveform format used by Test & Measurement devices.
