@@ -35,7 +35,8 @@ It simplifies handling waveform formats like CSV, WFM, and BIN in Python.
 
 </div>
 
-Currently, `tm_data_types` supports the `.wfm` format, which is [Tektronix proprietary](https://download.tek.com/manual/Waveform-File-Format-Manual-077022011.pdf).
+Currently, `tm_data_types` only supports the [Tektronix proprietary](https://download.tek.com/manual/Waveform-File-Format-Manual-077022011.pdf) `.wfm` format.
+Support for other formats is planned for future releases.
 
 ## Installation
 
