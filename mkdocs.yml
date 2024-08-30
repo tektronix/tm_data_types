@@ -154,8 +154,6 @@ nav:  # The first entry in each section needs a hard-coded title to avoid being 
       - Basic Usage: basic_usage.md
       - glossary.md
       - CHANGELOG.md
-  - Advanced Topics:
-      - Write to file: advanced\writing_to_a_file.md
   - Contributing:
       - Contributing Guidelines: CONTRIBUTING.md
       - CODE_OF_CONDUCT.md
