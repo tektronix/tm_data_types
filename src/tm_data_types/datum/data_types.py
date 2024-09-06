@@ -1,5 +1,6 @@
 """The different formats which are wrapped by a MeasuredData class."""
 
+import sys
 from abc import abstractmethod
 from decimal import Decimal
 from typing import Union, Optional, List, Type, Any
@@ -9,7 +10,10 @@ from numpy.typing import NDArray
 
 from tm_data_types.helpers.byte_data_types import ByteData, Double
 
-PossibleTypes = Union[np.integer[Any], np.floating[Any]]
+if sys.version_info >= (3, 9):
+    PossibleTypes = Union[np.integer[Any], np.floating[Any]]
+else:
+    PossibleTypes = Union[np.integer, np.floating]
 
 
 def _check_type(

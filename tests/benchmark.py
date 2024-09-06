@@ -151,7 +151,7 @@ class BenchMark:
         write_method: Callable,
         read_method: Callable,
         curve_lengths: List[int],
-        file_counts: list[int],
+        file_counts: List[int],
     ) -> None:
         """Measure the time for the provided range of curve lengths and file counts.
 

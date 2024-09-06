@@ -38,7 +38,7 @@ def convert_gfm_alerts_to_admonitions(content: str) -> str:
         The updated content with GFM alerts converted to markdown admonitions.
     """
 
-    def replace_match(match: re.Match[str]) -> str:
+    def replace_match(match: "re.Match[str]") -> str:
         """Replace the matched GFM alert with an admonition.
 
         Args:
