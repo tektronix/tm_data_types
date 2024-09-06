@@ -55,12 +55,13 @@ coverage.xml
 .results*/
 prof/
 
-# Sphinx documentation
+# Documentation
 .docs*/
 docs/_build/
 docs/autoapi/
 docs/_autoapi/
 _readthedocs/
+*site*/
 
 # Jupyter Notebook
 .ipynb_checkpoints

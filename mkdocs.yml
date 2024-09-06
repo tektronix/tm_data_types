@@ -3,9 +3,9 @@ site_name: tm_data_types
 repo_url: https://github.com/tektronix/tm_data_types
 edit_uri: ''
 site_author: Tektronix
-# site_description:  #  TODO: fill in
+site_description: Convert, edit, and write waveform data from Test & Measurement devices.
 copyright: © Copyright 2022, Tektronix
-strict: false  # TODO: set to true
+strict: true
 site_url: !ENV [READTHEDOCS_CANONICAL_URL, null]
 use_directory_urls: true
 exclude_docs: |
@@ -23,7 +23,7 @@ validation:
 theme:
   name: readthedocs
   analytics:
-    gtag: ''  # TODO: fill this in
+    gtag: G-SDPEX4WBKJ
   highlightjs: false
   custom_dir: docs/_templates/readthedocs
   include_homepage_in_sidebar: false
