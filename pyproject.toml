@@ -84,8 +84,8 @@ pre-commit = [
   {python = ">=3.9", version = "^3.7"},
   {python = "3.8", version = "^3.5"}
 ]
-pylint = "3.2.6"
-pyright = "1.1.377"
+pylint = "3.2.7"
+pyright = "1.1.379"
 pyroma = "^4.2"
 tox = "^4.0"
 tox-gh-actions = "^3.1.0"
