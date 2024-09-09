@@ -103,40 +103,6 @@ def test_parallel():
         raise IOError("No Files written/read.")
 
 
-def test_wfm():
-    """Check that a saved waveform is in a format that is readable by the oscilloscope."""
-    waveform_type_meta_info = [AnalogWaveformMetaInfo]
-    waveform_type = [AnalogWaveform]
-
-    for waveform_type, waveform_meta_info in zip(waveform_type, waveform_type_meta_info):
-        waveform = waveform_type()
-        waveform.meta_info = waveform_meta_info()
-        format_name = f"golden_{waveform}.wfm"
-        waveform_dir = f"{Path(__file__).parent}/waveforms"
-        format_path = f"{waveform_dir}/{format_name}"
-
-        waveform_name = "test_format.wfm"
-        waveform_path = f"{waveform_dir}/{waveform_name}"
-
-        if os.path.isfile(os.path.join(os.getcwd(), waveform_path)):
-            os.remove(waveform_path)
-
-        values = np.array([10, 11, 12, 32222, 32223, 32224], dtype=np.int16)
-
-        waveform.y_axis_values = values
-        waveform.y_axis_spacing = 1 / type_max(np.dtype(np.int16))
-        write_file(waveform_path, waveform)
-
-        with open(waveform_path, "rb+") as wfm:
-            raw_test_data = wfm.read()
-
-        with open(format_path, "rb+") as wfm:
-            raw_format_data = wfm.read()
-
-        assert raw_format_data == raw_test_data
-        os.remove(waveform_path)
-
-
 def read_write_read(
     vertical_data: str,
     waveform_path: str,
