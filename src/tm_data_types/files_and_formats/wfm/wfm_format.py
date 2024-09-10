@@ -962,6 +962,7 @@ class WfmFormat:  # pylint: disable=too-many-instance-attributes
             A tuple containing the byte length of the file and where the curve begins.
         """
         # starts at ten for version number and byte order verification
+        # eof might just be wrong in .wfm files, check saved waveform file for verification
         # TODO: calculate it instead
         eof_offset = -7
         byte_count = 10
