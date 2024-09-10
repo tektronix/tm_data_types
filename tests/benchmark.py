@@ -10,6 +10,7 @@ import numpy as np
 from numpy.typing import NDArray
 
 from tm_data_types.datum.data_types import RawSample
+from tm_data_types.datum.datum import Datum
 from tm_data_types.datum.waveforms.analog_waveform import AnalogWaveform
 from tm_data_types.io_factory_methods import (
     write_file,
@@ -148,8 +149,8 @@ class BenchMark:
     # pylint: disable=too-many-locals
     def measure_times(
         self,
-        write_method: Callable,
-        read_method: Callable,
+        write_method: Callable[[List[str], List[Datum]], None],
+        read_method: Callable[[List[str]], None],
         curve_lengths: List[int],
         file_counts: List[int],
     ) -> None:
