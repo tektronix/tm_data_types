@@ -502,8 +502,6 @@ def test_manipulations():
         data_test = (data * type_max(np_type)).astype(np_type)
         raw_sample = raw_sample.append(data_test)
 
-    raw_sample = []
-
 
 def test_transforms():
     """Check to make sure that a serial write can write a waveform and read the same waveform."""

@@ -2,6 +2,7 @@
 # pyright: reportArgumentType=false
 """A class which hosts a readable representation of the format information in a .wfm file."""
 
+import contextlib
 import struct
 from dataclasses import dataclass, replace
 from typing import (
@@ -181,10 +182,8 @@ class WfmFormat:  # pylint: disable=too-many-instance-attributes
         self.precharge_buffer, self.curve_buffer, self.postcharge_buffer = (
             self._get_curve_information(filestream)
         )
-        try:
+        with contextlib.suppress(struct.error):
             self.file_checksum = UnsignedLongLong.unpack(endian.struct, filestream)
-        except struct.error:
-            pass
         self.meta_data = self.parse_tekmeta(endian, filestream)
 
     @staticmethod
@@ -962,10 +961,8 @@ class WfmFormat:  # pylint: disable=too-many-instance-attributes
                     byte_count += attribute_type.get_cls_length()
                 except AttributeError:
                     byte_count += get_args(attribute_type)[0].get_cls_length()
-                    try:
+                    with contextlib.suppress(AttributeError):
                         byte_count += get_args(attribute_type)[1].get_cls_length()
-                    except AttributeError:
-                        pass
 
             if (
                 attribute_value is not None
