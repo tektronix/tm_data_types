@@ -6,10 +6,10 @@ import shutil
 import numpy as np
 
 from tm_data_types import (
-    write_file,
-    write_files_in_parallel,
     AnalogWaveform,
     AnalogWaveformMetaInfo,
+    write_file,
+    write_files_in_parallel,
 )
 
 if __name__ == "__main__":

@@ -1,8 +1,7 @@
 """All the dataclass which will host information about a .wfm's format."""
 
-from tm_data_types.helpers.byte_data_class import StructuredInfo, pydantic_dataclass
+from tm_data_types.helpers.byte_data_class import pydantic_dataclass, StructuredInfo
 from tm_data_types.helpers.byte_data_types import (
-    UnsignedChar,
     Double,
     Float,
     Int,
@@ -10,6 +9,7 @@ from tm_data_types.helpers.byte_data_types import (
     Short,
     String20,
     String32,
+    UnsignedChar,
     UnsignedLong,
     UnsignedLongLong,
     UnsignedShort,
@@ -135,7 +135,7 @@ class ExplicitDimensions(StructuredInfo):  # pylint: disable=too-many-instance-a
     low_range: Int
     """
     scale: The scale of the waveform data for the given dimension.
-    offset: The distance in units from the dimensions’ zero value.
+    offset: The distance in units from the dimensions' zero value.
     size: The size of the explicit dimension in terms of the base storage value.
     units: The units for the dimension.
     extent_min: The minimum attainable data value for the explicit dimension.

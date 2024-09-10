@@ -1,7 +1,8 @@
 """Data types for different classes that need to be saved as byte values."""
 
 import struct
-from typing import TypeVar, Type, TextIO, List, Optional, get_args, Any, Dict
+
+from typing import Any, Dict, get_args, List, Optional, TextIO, Type, TypeVar
 
 from pydantic import model_validator
 from pydantic.dataclasses import dataclass as pydantic_dataclass
@@ -36,7 +37,7 @@ def convert_to_type(field_type: T, value_to_convert: Any) -> Optional[T]:
         else:
             converted_value = field_type(value_to_convert)  # pyright: ignore [reportCallIssue]
         # no error means we are able to do it
-        return converted_value
+        return converted_value  # noqa: TRY300
     except TypeError:
         # type error means failed type conversion
         # we can't convert None, field type is needs to be used here as we can't isinstance None
@@ -52,7 +53,7 @@ def convert_to_type(field_type: T, value_to_convert: Any) -> Optional[T]:
                     return None
                 # return what the type that was returned
                 return recursed_type(value_to_convert)
-            except TypeError:
+            except TypeError:  # noqa: PERF203
                 pass
     except ValueError as e:
         raise error from e
@@ -69,7 +70,7 @@ class EnforcedTypeDataClass:
 
     # pylint: disable=too-few-public-methods
     @model_validator(mode="before")
-    def validate(cls, values) -> Dict[str, Any]:  # pylint: disable=no-self-argument
+    def validate(cls, values) -> Dict[str, Any]:  # pylint: disable=no-self-argument  # noqa: N805
         # pylint: disable=no-member
         """Pre-init enforced type cast."""
         new_values = {}
@@ -80,7 +81,7 @@ class EnforcedTypeDataClass:
                 break
             # if there is no class variables in the child
             try:
-                base.__annotations__
+                _ = base.__annotations__
             except AttributeError:
                 continue
 
@@ -92,7 +93,7 @@ class EnforcedTypeDataClass:
                     # if pre-defined as a "no_default" value, error if not provided
                     if (value_to_convert := getattr(base, field_name)) == "no_default":
                         raise TypeError(
-                            f"__init__ missing 1 required argument: {field_name}"
+                            f"__init__ missing 1 required argument: {field_name}",
                         ) from e
                 # type cast the vlue
                 new_values[field_name] = convert_to_type(field_type, value_to_convert)
@@ -139,7 +140,7 @@ class StructuredInfo(EnforcedTypeDataClass):
         if not in_order and not order:
             raise IndexError("Requested custom order unpacking, but order not provided")
 
-        if not in_order and order:
+        if not in_order and order:  # noqa: SIM108
             unpacking_order = order
         else:
             # this only works because dictionaries preserve order
@@ -151,9 +152,7 @@ class StructuredInfo(EnforcedTypeDataClass):
                 struct_repr_str += field.struct_repr
                 length += field.length
         info = struct.unpack(endian + struct_repr_str, filestream.read(length))
-        output_list = {}
-        for value, key in zip(info, unpacking_order):
-            output_list[key] = value
+        output_list = {key: value for value, key in zip(info, unpacking_order)}
         return cls(**output_list)
 
     # Writing
@@ -177,7 +176,7 @@ class StructuredInfo(EnforcedTypeDataClass):
         if not in_order and not order:
             raise IndexError("Requested custom order unpacking, but order not provided")
 
-        if not in_order and order:
+        if not in_order and order:  # noqa: SIM108
             packing = order
         else:
             # this only works because dictionaries preserve order

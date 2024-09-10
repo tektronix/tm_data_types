@@ -4,7 +4,7 @@ from typing import Tuple
 
 import numpy as np
 
-from tm_data_types.datum.data_types import Normalized, RawSample, type_min, type_max
+from tm_data_types.datum.data_types import Normalized, RawSample, type_max, type_min
 from tm_data_types.datum.waveforms.analog_waveform import AnalogWaveform, AnalogWaveformMetaInfo
 from tm_data_types.files_and_formats.csv.csv import CSVFile
 
@@ -48,9 +48,10 @@ class WaveformFileCSVAnalog(CSVFile[AnalogWaveform]):
 
             try:
                 float(row[0])
-                return False
             except ValueError:
                 pass
+            else:
+                return False
         return False
 
     # Reading

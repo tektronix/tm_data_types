@@ -1,7 +1,7 @@
 """The functionality to read and write to a csv file when the waveform is analog."""
 
 from tm_data_types.datum.data_types import RawSample
-from tm_data_types.datum.waveforms.analog_waveform import AnalogWaveformMetaInfo, AnalogWaveform
+from tm_data_types.datum.waveforms.analog_waveform import AnalogWaveform, AnalogWaveformMetaInfo
 from tm_data_types.files_and_formats.wfm.wfm import WFMFile
 from tm_data_types.files_and_formats.wfm.wfm_format import WfmFormat
 from tm_data_types.helpers.byte_data_types import Short
@@ -23,7 +23,9 @@ class WaveformFileWFMAnalog(WFMFile[AnalogWaveform]):
 
     # Reading
     def _format_to_waveform_vertical_values(  # pyright: ignore [reportIncompatibleMethodOverride]
-        self, waveform: AnalogWaveform, formatted_data: WfmFormat
+        self,
+        waveform: AnalogWaveform,
+        formatted_data: WfmFormat,
     ) -> None:
         """Convert the data from a formatted data class to an analog waveform class.
 
@@ -41,7 +43,9 @@ class WaveformFileWFMAnalog(WFMFile[AnalogWaveform]):
 
     # Writing
     def _waveform_vertical_values_to_format(  # pyright: ignore [reportIncompatibleMethodOverride]
-        self, waveform: AnalogWaveform, formatted_data: WfmFormat
+        self,
+        waveform: AnalogWaveform,
+        formatted_data: WfmFormat,
     ) -> None:
         """Convert the data from an analog waveform class to a formatted data class.
 
@@ -51,7 +55,6 @@ class WaveformFileWFMAnalog(WFMFile[AnalogWaveform]):
         Returns:
             Returns an analog waveform created from the formatted data.
         """
-
         if not isinstance(waveform.y_axis_values, RawSample):
             output_waveform = waveform.transform_to_type(Short)
         else:

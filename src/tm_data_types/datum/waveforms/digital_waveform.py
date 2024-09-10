@@ -4,9 +4,10 @@ from functools import cached_property
 from typing import Any
 
 import numpy as np
+
 from pydantic.dataclasses import dataclass as pydantic_dataclass
 
-from tm_data_types.datum.data_types import MeasuredData, RawSample, Digitized
+from tm_data_types.datum.data_types import Digitized, MeasuredData, RawSample
 from tm_data_types.datum.waveforms.waveform import Waveform, WaveformMetaInfo
 from tm_data_types.helpers.enums import SIBaseUnit
 
@@ -57,7 +58,7 @@ class DigitalWaveform(Waveform):
             key: The attribute name to set as a string.
             value: The value that the attribute is set to.
         """
-        if key in "y_axis_values" "y_axis_spacing" "y_axis_offset":
+        if key in "y_axis_valuesy_axis_spacingy_axis_offset":
             self.__dict__.pop("normalized_vertical_values", None)
 
         if key == "y_axis_byte_values":

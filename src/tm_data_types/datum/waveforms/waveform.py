@@ -1,11 +1,11 @@
 """Handles information pertaining to waveforms."""
 
-from abc import abstractmethod, ABC
+from abc import ABC, abstractmethod
 from functools import cached_property
-from typing import Dict, Any
-from typing import Optional
+from typing import Any, Dict, Optional
 
 import numpy as np
+
 from bidict import bidict
 from pydantic.dataclasses import dataclass as pydantic_dataclass
 
@@ -52,13 +52,15 @@ class WaveformMetaInfo(ExclusiveMetaInfo):
         data = {
             key: value
             for key, value in self.__dict__.items()
-            if value is not None and key not in ExclusiveMetaInfo.__annotations__.keys()
+            if value is not None and key not in ExclusiveMetaInfo.__annotations__
         }
         return data
 
     @staticmethod
     def remap(
-        lookup: bidict[str, str], data: Dict[str, Any], drop_non_existant: bool = False
+        lookup: bidict[str, str],
+        data: Dict[str, Any],
+        drop_non_existant: bool = False,
     ) -> Dict[str, Any]:
         """Remap the pythonic naming convention to tekmeta naming/ file format naming.
 

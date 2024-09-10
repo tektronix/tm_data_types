@@ -1,12 +1,12 @@
 """A base class which is an abstract representation of all information from a tektronix device."""
 
 from abc import ABC
+
 from typing_extensions import Self
 
 
 # pylint: disable=too-few-public-methods
-class Datum(ABC):
-    # pylist: disable=too-few-public-methods
+class Datum(ABC):  # noqa: B024
     """The base class for all data formats."""
 
     ################################################################################################

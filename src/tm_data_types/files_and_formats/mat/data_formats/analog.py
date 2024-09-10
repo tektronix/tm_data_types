@@ -1,6 +1,6 @@
 """The functionality to read and write to a mat file when the waveform is analog."""
 
-from tm_data_types.datum.data_types import Normalized, MeasuredData
+from tm_data_types.datum.data_types import MeasuredData, Normalized
 from tm_data_types.datum.waveforms.analog_waveform import AnalogWaveform
 from tm_data_types.files_and_formats.mat.mat import MATFile
 
@@ -46,7 +46,6 @@ class WaveformFileMATAnalog(MATFile[AnalogWaveform]):
             vertical_offset: The offset of the vertical axis.
             vertical_spacing: The spacing between each value on the vertical axis.
         """
-
         waveform.y_axis_values = vertical_values
         waveform.y_axis_offset = vertical_offset
         waveform.y_axis_spacing = vertical_spacing

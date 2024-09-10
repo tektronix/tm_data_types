@@ -1,18 +1,17 @@
 """Handles information pertaining to iq waveforms."""
 
+from dataclasses import field
 from functools import cached_property
-from typing import Optional, Any
+from typing import Any, Optional
 
 import numpy as np
-from pydantic.dataclasses import dataclass as pydantic_dataclass
-from dataclasses import field
 
-from tm_data_types.datum.data_types import MeasuredData
-from tm_data_types.datum.data_types import RawSample, Normalized, type_max, type_min
+from pydantic.dataclasses import dataclass as pydantic_dataclass
+
+from tm_data_types.datum.data_types import MeasuredData, Normalized, RawSample, type_max, type_min
 from tm_data_types.datum.waveforms.analog_waveform import AnalogWaveformMetaInfo
 from tm_data_types.datum.waveforms.waveform import Waveform
-from tm_data_types.helpers.enums import IQWindowTypes
-from tm_data_types.helpers.enums import SIBaseUnit
+from tm_data_types.helpers.enums import IQWindowTypes, SIBaseUnit
 
 
 @pydantic_dataclass(frozen=False)
@@ -111,10 +110,14 @@ class IQWaveform(Waveform):
             An np array with the iq_axis_extent_magnitude and y_axis_offset are applied.
         """
         normalized_i_values = Normalized(
-            self.i_axis_values, self.iq_axis_spacing, self.iq_axis_offset
+            self.i_axis_values,
+            self.iq_axis_spacing,
+            self.iq_axis_offset,
         )
         normalized_q_values = Normalized(
-            self.q_axis_values, self.iq_axis_spacing, self.iq_axis_offset
+            self.q_axis_values,
+            self.iq_axis_spacing,
+            self.iq_axis_offset,
         )
         return normalized_i_values + 1j * normalized_q_values
 
@@ -167,7 +170,7 @@ class IQWaveform(Waveform):
             by the waveform.
         """
         type_extent = type_max(self.interleaved_iq_axis_values.dtype) - type_min(
-            self.interleaved_iq_axis_values.dtype
+            self.interleaved_iq_axis_values.dtype,
         )
         return self.iq_axis_spacing * type_extent
 
@@ -180,7 +183,7 @@ class IQWaveform(Waveform):
             can be represented by the waveform.
         """
         type_extent = type_max(self.interleaved_iq_axis_values.dtype) - type_min(
-            self.interleaved_iq_axis_values.dtype
+            self.interleaved_iq_axis_values.dtype,
         )
         self.iq_axis_spacing = extent_magnitude / type_extent
 

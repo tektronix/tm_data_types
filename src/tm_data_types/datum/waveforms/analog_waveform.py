@@ -1,24 +1,25 @@
 """Handles information pertaining to analog waveforms."""
 
 from functools import cached_property
-from typing import Optional, Union, Any, Type
+from typing import Any, Optional, Type, Union
 
 import numpy as np
+
+from numpy.typing import NDArray
 from pydantic.dataclasses import dataclass as pydantic_dataclass
 
 from tm_data_types.datum.data_types import (
-    PossibleTypes,
-    MeasuredData,
-    RawSample,
-    Normalized,
     FeatureScaled,
+    MeasuredData,
+    Normalized,
+    PossibleTypes,
+    RawSample,
     type_max,
     type_min,
 )
 from tm_data_types.datum.waveforms.waveform import Waveform, WaveformMetaInfo
 from tm_data_types.helpers.byte_data_types import ByteData
 from tm_data_types.helpers.enums import SIBaseUnit
-from numpy.typing import NDArray
 
 
 @pydantic_dataclass(kw_only=True)
@@ -68,7 +69,7 @@ class AnalogWaveform(Waveform):
             key: The attribute name to set as a string.
             value: The value that the attribute is set to.
         """
-        if key in "y_axis_values" "y_axis_spacing" "y_axis_offset":
+        if key in "y_axis_valuesy_axis_spacingy_axis_offset":
             self.__dict__.pop("normalized_vertical_values", None)
 
         if key == "y_axis_values":
@@ -91,14 +92,17 @@ class AnalogWaveform(Waveform):
         ratio = float(1 / (self.y_axis_values.calculate_spacing() * new_spacing))
 
         copied_waveform.y_axis_values = Normalized(
-            self.y_axis_values, offset=self.y_axis_offset, spacing=self.y_axis_spacing
+            self.y_axis_values,
+            offset=self.y_axis_offset,
+            spacing=self.y_axis_spacing,
         )
         copied_waveform.y_axis_spacing *= ratio
         copied_waveform.y_axis_offset = 0.0
         return copied_waveform
 
     def transform_to_type(
-        self, as_type: Union[Type[ByteData], Type[PossibleTypes], PossibleTypes]
+        self,
+        as_type: Union[Type[ByteData], Type[PossibleTypes], PossibleTypes],
     ) -> "AnalogWaveform":
         """Convert the waveform to a new type.
 

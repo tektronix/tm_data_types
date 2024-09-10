@@ -1,7 +1,7 @@
 """Helpers used to find what type of format needs to be used to write to/read from the file."""
 
 from enum import Enum
-from typing import List, Type, Dict
+from typing import Dict, List, Type
 
 from tm_data_types.datum.datum import Datum
 from tm_data_types.datum.waveforms.analog_waveform import AnalogWaveform
@@ -10,10 +10,10 @@ from tm_data_types.datum.waveforms.iq_waveform import IQWaveform
 from tm_data_types.files_and_formats.csv.data_formats.analog import WaveformFileCSVAnalog
 from tm_data_types.files_and_formats.csv.data_formats.digital import WaveformFileCSVDigital
 from tm_data_types.files_and_formats.csv.data_formats.iq import WaveformFileCSVIQ
-from tm_data_types.files_and_formats.waveform_file import AbstractedFile
 from tm_data_types.files_and_formats.mat.data_formats.analog import WaveformFileMATAnalog
 from tm_data_types.files_and_formats.mat.data_formats.digital import WaveformFileMATDigital
 from tm_data_types.files_and_formats.mat.data_formats.iq import WaveformFileMATIQ
+from tm_data_types.files_and_formats.waveform_file import AbstractedFile
 from tm_data_types.files_and_formats.wfm.data_formats.analog import WaveformFileWFMAnalog
 from tm_data_types.files_and_formats.wfm.data_formats.digital import WaveformFileWFMDigital
 from tm_data_types.files_and_formats.wfm.data_formats.iq import WaveformFileWFMIQ
@@ -38,7 +38,7 @@ class FileExtensions(CustomStrEnum):
     CSV = "csv"  # Comma Seperated Values
     WFM = "wfm"  # Waveform Format
     MAT = "mat"  # MATLab File Format
-    WFMX = "wfmx"  #
+    WFMX = "wfmx"
 
 
 class CSVFormats(CustomFormatEnum):
@@ -81,9 +81,9 @@ def handle_extensions(
             FileExtensions.MAT: MATFormats,
         }
         format_lookup = extension_lookup[extension]
-        return format_lookup
     except KeyError as e:
         raise KeyError(f"Extension {extension} cannot be written or read from.") from e
+    return format_lookup
 
 
 def find_class_format(
@@ -114,7 +114,6 @@ def find_class_format_list(
     Args:
         extension: The extensions of the file that is being read from.
     """
-
     format_lookup = handle_extensions(extension)
 
     file_format = format_lookup.list_values()
@@ -129,10 +128,7 @@ def access_type(extension: FileExtensions, write: bool):
         extension: The extensions of the file that is being written to/read from.
         write: Whether the file is being written to or not.
     """
-    if write:
-        base_access = "w"
-    else:
-        base_access = "r"
+    base_access = "w" if write else "r"
     # wfm and mat files are accessed via a binary write, whereas csvs are text based
     access_type_lookup = {
         FileExtensions.CSV: base_access + "+",

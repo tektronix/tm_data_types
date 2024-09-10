@@ -1,10 +1,12 @@
-"""This script demonstrates writing an analog waveform to a CSV file using the WaveformFileCSVAnalog class."""
+"""This script demonstrates writing an analog waveform to a CSV file."""
 
-from tm_data_types.files_and_formats.csv.data_formats.analog import WaveformFileCSVAnalog
-from tm_data_types import AnalogWaveform, AnalogWaveformMetaInfo
 import os
 import shutil
+
 import numpy as np
+
+from tm_data_types import AnalogWaveform, AnalogWaveformMetaInfo
+from tm_data_types.files_and_formats.csv.data_formats.analog import WaveformFileCSVAnalog
 
 if __name__ == "__main__":
     WAVEFORM_DIR = "example_waveforms"

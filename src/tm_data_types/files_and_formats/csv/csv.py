@@ -1,10 +1,12 @@
 """The file formatting for a .csv file."""
 
 import csv
+
 from abc import abstractmethod
 from typing import Generic, Tuple
 
 import numpy as np
+
 from bidict import bidict
 
 from tm_data_types.datum.data_types import MeasuredData
@@ -32,7 +34,7 @@ class CSVFile(AbstractedFile, Generic[DATUM_TYPE_VAR]):
             "interpretor_factor": "interpFactor",
             "real_data_start_index": "realDataStartIndex",
             "waveform_label": "Label",
-        }
+        },
     )
 
     ################################################################################################
@@ -49,7 +51,7 @@ class CSVFile(AbstractedFile, Generic[DATUM_TYPE_VAR]):
         return self._check_file_contents()
 
     # Reading
-    def read_datum(self) -> WAVEFORM_TYPE:  # pylint: disable=too-many-branches
+    def read_datum(self) -> WAVEFORM_TYPE:  # pylint: disable=too-many-branches  # noqa: C901,PLR0912
         """Read the data from the csv file and process it into a waveform.
 
         Returns:
@@ -176,12 +178,12 @@ class CSVFile(AbstractedFile, Generic[DATUM_TYPE_VAR]):
         Returns:
             The values to append to the output.
         """
-        if self.product.name != "TEKSCOPE":
+        if self.product.name != "TEKSCOPE":  # noqa: SIM108
             model = self.product.name
         else:
-            model = "MSO54"
+            model = "MSO54"  # TODO: change this default model
         output = f"Model,{model}\n"
-        output += f"Waveform Type,{str(self)}\n"
+        output += f"Waveform Type,{self!s}\n"
         output += f"Zero Index,{waveform.trigger_index}\n"
         output += f"Sample Interval,{waveform.x_axis_spacing}\n"
         output += f"Record Length,{waveform.record_length}\n"
@@ -189,10 +191,12 @@ class CSVFile(AbstractedFile, Generic[DATUM_TYPE_VAR]):
 
         if waveform.meta_info is not None:
             operable_metadata = self.META_DATA_TYPE.remap(
-                self._META_DATA_LOOKUP, waveform.meta_info.operable_metainfo(), True
+                self._META_DATA_LOOKUP,
+                waveform.meta_info.operable_metainfo(),
+                True,
             )
             for key, item in operable_metadata.items():
-                output += f"{key},{str(item)}\n"
+                output += f"{key},{item!s}\n"
 
         return output
 

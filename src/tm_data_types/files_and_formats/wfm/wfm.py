@@ -1,27 +1,29 @@
 """The file formatting for a .wfm file."""
 
 import struct
-from abc import abstractmethod, ABC
-from typing import Dict, Union
+
+from abc import ABC, abstractmethod
+from typing import ClassVar, Dict, Union
 
 import numpy as np
+
 from bidict import bidict
 
-from tm_data_types.datum.waveforms.waveform import WaveformMetaInfo, Waveform
+from tm_data_types.datum.waveforms.waveform import Waveform, WaveformMetaInfo
 from tm_data_types.files_and_formats.waveform_file import AbstractedFile, DATUM_TYPE_VAR
-from tm_data_types.files_and_formats.wfm.wfm_format import WfmFormat, Endian
+from tm_data_types.files_and_formats.wfm.wfm_format import Endian, WfmFormat
 from tm_data_types.helpers.byte_data_types import (
-    String8,
-    Short,
+    Double,
+    Float,
     Long,
+    Short,
+    SignedChar,
+    String8,
+    UnsignedChar,
     UnsignedLong,
     UnsignedLongLong,
-    Float,
-    Double,
-    UnsignedChar,
-    SignedChar,
 )
-from tm_data_types.helpers.enums import ByteOrderFormat, VersionNumber, CurveFormatsVer3
+from tm_data_types.helpers.enums import ByteOrderFormat, CurveFormatsVer3, VersionNumber
 
 
 class WFMFile(AbstractedFile[DATUM_TYPE_VAR], ABC):
@@ -32,12 +34,16 @@ class WFMFile(AbstractedFile[DATUM_TYPE_VAR], ABC):
     ################################################################################################
 
     # a lookup for the byte formats provided by the .wfm file
-    _ENDIAN_PREFIX_LOOKUP = {
+    _ENDIAN_PREFIX_LOOKUP: ClassVar[Dict[str, Endian]] = {
         ByteOrderFormat.INTEL.value: Endian(
-            struct=">", from_byte="little", format=ByteOrderFormat.INTEL.value
+            struct=">",
+            from_byte="little",
+            format=ByteOrderFormat.INTEL.value,
         ),
         ByteOrderFormat.PPC.value: Endian(
-            struct="<", from_byte="big", format=ByteOrderFormat.PPC.value
+            struct="<",
+            from_byte="big",
+            format=ByteOrderFormat.PPC.value,
         ),
     }
 
@@ -52,7 +58,7 @@ class WFMFile(AbstractedFile[DATUM_TYPE_VAR], ABC):
             np.dtype(Double.np_repr): CurveFormatsVer3.EXPLICIT_FP64,
             np.dtype(UnsignedChar.np_repr): CurveFormatsVer3.EXPLICIT_UINT8,
             np.dtype(SignedChar.np_repr): CurveFormatsVer3.EXPLICIT_INT8,
-        }
+        },
     )
 
     # a lookup for the meta info class to what's provided by the .wfm file
@@ -64,7 +70,7 @@ class WFMFile(AbstractedFile[DATUM_TYPE_VAR], ABC):
             "clipping_initialized": "clippingInitialized",
             "interpreter_factor": "interpFactor",
             "real_data_start_index": "realDataStartIndex",
-        }
+        },
     )
     META_DATA_TYPE = WaveformMetaInfo
     DATUM_TYPE = Waveform
@@ -155,7 +161,8 @@ class WFMFile(AbstractedFile[DATUM_TYPE_VAR], ABC):
             exclusive_meta_data = waveform.meta_info.operable_exclusive_metadata()
 
             formatted_data.meta_data = self.META_DATA_TYPE.remap(
-                self._META_DATA_LOOKUP, exclusive_meta_data
+                self._META_DATA_LOOKUP,
+                exclusive_meta_data,
             )
         else:
             formatted_data.meta_data = self.META_DATA_TYPE.remap(self._META_DATA_LOOKUP, {})
@@ -186,20 +193,20 @@ class WFMFile(AbstractedFile[DATUM_TYPE_VAR], ABC):
         if meta_data:
             try:
                 self.META_DATA_TYPE(
-                    **self.META_DATA_TYPE.remap(self._META_DATA_LOOKUP.inverse, meta_data)
+                    **self.META_DATA_TYPE.remap(self._META_DATA_LOOKUP.inverse, meta_data),
                 )
-                return True
             except TypeError as e:
                 # if you have too many keywords, this format doesn't work
-                if "unexpected keyword" in str(e):
+                if "unexpected keyword" in str(e):  # noqa: SIM103
                     return False
                 # if we are missing some keywords, that is fine
                 return True
             except KeyError:
                 return False
-        else:
-            # if no tekmeta, the file is an analog waveform
             return True
+
+        # if no tekmeta, the file is an analog waveform
+        return True
 
     # Reading
     @abstractmethod

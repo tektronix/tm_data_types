@@ -2,30 +2,33 @@
 
 import datetime
 import struct
+
 from abc import abstractmethod
-from typing import Dict, Any, Tuple, Union, List
-from typing import Generic
+from typing import Any, ClassVar, Dict, Generic, List, Tuple, Union
 
 import numpy as np
 import scipy.io as sio
-from bidict import bidict
 
-from tm_data_types.datum.data_types import Normalized, RawSample, MeasuredData, type_max, type_min
+from bidict import bidict
+from dateutil.tz import tzlocal
+
+from tm_data_types.datum.data_types import MeasuredData, Normalized, RawSample, type_max, type_min
 from tm_data_types.datum.waveforms.waveform import Waveform
 from tm_data_types.files_and_formats.waveform_file import AbstractedFile, DATUM_TYPE_VAR
 from tm_data_types.files_and_formats.wfm.wfm_format import Endian
 from tm_data_types.helpers.byte_data_types import (
-    String,
-    Short,
+    ByteData,
+    Double,
+    Float,
     Long,
     LongLong,
-    UnsignedShort,
+    Short,
+    SignedChar,
+    String,
+    UnsignedChar,
     UnsignedLong,
     UnsignedLongLong,
-    Float,
-    Double,
-    UnsignedChar,
-    SignedChar,
+    UnsignedShort,
 )
 
 Matrix = object
@@ -40,12 +43,12 @@ class MATFile(AbstractedFile, Generic[DATUM_TYPE_VAR]):
 
     WAVEFORM_TYPE = Waveform
     # a lookup for the byte formats provided by the .wfm file
-    _ENDIAN_PREFIX_LOOKUP = {
+    _ENDIAN_PREFIX_LOOKUP: ClassVar[Dict[bytes, Endian]] = {
         b"MI": Endian(struct=">", from_byte="little", format=b"MI"),
         b"IM": Endian(struct="<", from_byte="big", format=b"IM"),
     }
 
-    _MAT_VALUE_LOOKUP = {
+    _MAT_VALUE_LOOKUP: ClassVar[Dict[int, ByteData]] = {
         1: SignedChar,
         2: UnsignedChar,
         3: Short,
@@ -68,7 +71,7 @@ class MATFile(AbstractedFile, Generic[DATUM_TYPE_VAR]):
             "x_axis_units": "verticalUnits",
             "trigger_index": "zeroIndex",
             "x_axis_spacing": "sampleInterval",
-        }
+        },
     )
 
     ################################################################################################
@@ -221,17 +224,17 @@ class MATFile(AbstractedFile, Generic[DATUM_TYPE_VAR]):
         formatted_data = {}
         version = 1.0
         # create the header of the .mat file
-        now = datetime.datetime.now()
-        if self.product.name != "TEKSCOPE":
+        now = datetime.datetime.now(tz=tzlocal())
+        if self.product.name != "TEKSCOPE":  # noqa: SIM108
             model = self.product.name
         else:
-            model = "MSO54"
+            model = "MSO54"  # TODO: change this default model
         formatted_data["__header__"] = (
             f"MATLAB 5.0 MAT-file. Tek Waveform Writer Version: {version}\n"
             f"Platform: {model}\n"
             f'Created on {now.strftime("%A")[0:3]} {now.strftime("%B")} '
             f"{now.hour}:{now.minute}:{now.second} {now.year}"
-        ).encode("utf-8")
+        ).encode()
         formatted_data["__version__"] = 1.0
         formatted_data["__globals__"] = []
 
@@ -240,7 +243,7 @@ class MATFile(AbstractedFile, Generic[DATUM_TYPE_VAR]):
         for key, value in self._WAVEFORM_PROPERTIES.items():
             try:
                 formatted_data[value] = float(getattr(waveform, key))
-            except ValueError:
+            except ValueError:  # noqa: PERF203
                 formatted_data[value] = str(getattr(waveform, key))
             except TypeError:
                 # if None

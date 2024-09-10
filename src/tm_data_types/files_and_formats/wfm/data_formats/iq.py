@@ -2,7 +2,7 @@
 """The functionality to read and write to a csv file when the waveform is complex."""
 
 from tm_data_types.datum.data_types import RawSample
-from tm_data_types.datum.waveforms.iq_waveform import IQWaveformMetaInfo, IQWaveform
+from tm_data_types.datum.waveforms.iq_waveform import IQWaveform, IQWaveformMetaInfo
 from tm_data_types.files_and_formats.wfm.wfm import WFMFile
 from tm_data_types.files_and_formats.wfm.wfm_format import WfmFormat
 from tm_data_types.helpers.byte_data_types import Short
@@ -17,7 +17,7 @@ class WaveformFileWFMIQ(WFMFile[IQWaveform]):
     ################################################################################################
 
     _META_DATA_LOOKUP = WFMFile.update_bidict(
-        WFMFile._META_DATA_LOOKUP,
+        WFMFile._META_DATA_LOOKUP,  # noqa: SLF001
         {
             "iq_center_frequency": "IQ_centerFrequency",
             "iq_fft_length": "IQ_fftLength",
@@ -36,7 +36,9 @@ class WaveformFileWFMIQ(WFMFile[IQWaveform]):
 
     # Reading
     def _format_to_waveform_vertical_values(
-        self, waveform: IQWaveform, formatted_data: WfmFormat
+        self,
+        waveform: IQWaveform,
+        formatted_data: WfmFormat,
     ) -> None:
         """Convert the data from a formatted data class to an iq waveform class.
 
@@ -46,7 +48,6 @@ class WaveformFileWFMIQ(WFMFile[IQWaveform]):
         Returns:
             Returns an iq waveform created from the formatted data.
         """
-
         waveform.interleaved_iq_axis_values = formatted_data.curve_buffer
         if formatted_data.explicit_dimensions is not None:
             waveform.iq_axis_offset = formatted_data.explicit_dimensions.first.offset
@@ -55,7 +56,9 @@ class WaveformFileWFMIQ(WFMFile[IQWaveform]):
 
     # Writing
     def _waveform_vertical_values_to_format(
-        self, waveform: IQWaveform, formatted_data: WfmFormat
+        self,
+        waveform: IQWaveform,
+        formatted_data: WfmFormat,
     ) -> None:
         """Convert the data from an iq waveform class to a formatted data class.
 

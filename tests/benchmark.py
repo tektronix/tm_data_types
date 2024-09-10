@@ -1,26 +1,29 @@
 """Test the benchmark of how well the system performs reading and writing files."""
 
+# TODO: remove this file?
+
 import os
 import shutil
 import timeit
-from typing import Union, Tuple, Callable, List, Optional
+
+from dataclasses import asdict, dataclass
+from typing import Callable, List, Optional, Tuple, Union
 
 import matplotlib.pyplot as plt
 import numpy as np
+
 from numpy.typing import NDArray
 
 from tm_data_types.datum.data_types import RawSample
 from tm_data_types.datum.datum import Datum
 from tm_data_types.datum.waveforms.analog_waveform import AnalogWaveform
-from tm_data_types.io_factory_methods import (
-    write_file,
-    read_file,
-    write_files_in_parallel,
-    read_files_in_parallel,
-)
 from tm_data_types.helpers.byte_data_types import Short
-
-from dataclasses import dataclass, asdict
+from tm_data_types.io_factory_methods import (
+    read_file,
+    read_files_in_parallel,
+    write_file,
+    write_files_in_parallel,
+)
 
 
 @dataclass
@@ -31,7 +34,7 @@ class Performance:
     reads_per_second: NDArray
 
 
-def write_files_serial(self, file_paths: List[str], datums: List[AnalogWaveform]) -> None:
+def write_files_serial(file_paths: List[str], datums: List[AnalogWaveform]) -> None:
     """Write to the provided file paths using the waveforms serially.
 
     Args:
@@ -42,7 +45,7 @@ def write_files_serial(self, file_paths: List[str], datums: List[AnalogWaveform]
         write_file(file_path, datum)
 
 
-def read_files_serial(self, file_paths: List[str]) -> None:
+def read_files_serial(file_paths: List[str]) -> None:
     """Read the provided file paths serially.
 
     Args:
@@ -82,7 +85,8 @@ class BenchMark:
         """
         # create a grid for the scatter plot
         mesh_curve_length, mesh_file_count = np.meshgrid(
-            np.arange(curve_lengths.shape[0]), np.arange(file_counts.shape[0])
+            np.arange(curve_lengths.shape[0]),
+            np.arange(file_counts.shape[0]),
         )
 
         fig = plt.figure()
@@ -201,7 +205,7 @@ class BenchMark:
                 time_summation = end_time - start_time
                 print(
                     f"Finished {self.name} write File Count: {count} Curve Length: {buffer_length} "
-                    f"time: {time_summation} file_per_second: {count / time_summation}"
+                    f"time: {time_summation} file_per_second: {count / time_summation}",
                 )
                 total_write_times[length_index][count_index] = time_summation
                 writes_per_second[length_index][count_index] = count / time_summation
@@ -211,11 +215,11 @@ class BenchMark:
                 time_summation = end_time - start_time
                 print(
                     f"Finished {self.name} read File Count: {count} Curve Length: {buffer_length} "
-                    f"time: {time_summation} file_per_second: {count / time_summation}"
+                    f"time: {time_summation} file_per_second: {count / time_summation}",
                 )
                 print(f"Verify number of files in directory: {len(os.listdir(waveform_directory))}")
                 print(
-                    f"Verify datum length with one waveform: {np.shape(sin_wave.y_axis_values)[0]}"
+                    f"Verify datum length with one waveform: {np.shape(sin_wave.y_axis_values)[0]}",
                 )
                 total_read_times[length_index][count_index] = time_summation
                 reads_per_second[length_index][count_index] = count / time_summation
@@ -269,9 +273,9 @@ def run_benchmark():
                 fmt="%10.3e",
                 comments="",
             )
-    WAVEFORM_DIR = "../../waveforms"
-    if os.path.exists(os.path.join(os.getcwd(), WAVEFORM_DIR)):
-        shutil.rmtree(WAVEFORM_DIR)
+    waveform_dir = "../../waveforms"
+    if os.path.exists(os.path.join(os.getcwd(), waveform_dir)):
+        shutil.rmtree(waveform_dir)
 
 
 if __name__ == "__main__":

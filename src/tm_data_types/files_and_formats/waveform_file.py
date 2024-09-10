@@ -1,15 +1,13 @@
 """The base file type which abstracts all file formats."""
 
 from abc import ABC, abstractmethod
-from typing import TextIO, Optional, Dict, TypeVar, Generic
+from typing import Dict, Generic, Optional, TextIO, TypeVar
 
 from bidict import bidict
-
 
 from tm_data_types.datum.datum import Datum
 from tm_data_types.helpers.instrument_series import InstrumentSeries
 
-# pylist: disable=invalid-name
 DATUM_TYPE_VAR = TypeVar("DATUM_TYPE_VAR", bound=Datum)
 
 
