@@ -74,11 +74,11 @@ class AnalogWaveform(Waveform):
         if key == "y_axis_values":
             # y-axis values need to be typecase when set.
             if not isinstance(value, MeasuredData):
-                super(Waveform, self).__setattr__("y_axis_values", RawSample(value))
+                super().__setattr__("y_axis_values", RawSample(value))
             else:
-                super(Waveform, self).__setattr__("y_axis_values", value)
+                super().__setattr__("y_axis_values", value)
         else:
-            super(Waveform, self).__setattr__(key, value)
+            super().__setattr__(key, value)
 
     ################################################################################################
     # Public Methods

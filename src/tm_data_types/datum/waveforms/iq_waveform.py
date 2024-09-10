@@ -91,11 +91,11 @@ class IQWaveform(Waveform):
             # if hasattr(self, "normalized_y_values"):
             # del self.normalized_y_values
             if not isinstance(value, MeasuredData):
-                super(Waveform, self).__setattr__("interleaved_iq_axis_values", RawSample(value))
+                super().__setattr__("interleaved_iq_axis_values", RawSample(value))
             else:
-                super(Waveform, self).__setattr__("interleaved_iq_axis_values", value)
+                super().__setattr__("interleaved_iq_axis_values", value)
         else:
-            super(Waveform, self).__setattr__(key, value)
+            super().__setattr__(key, value)
 
     ################################################################################################
     # Properties
