@@ -43,5 +43,3 @@ Things to be included in the next release go here.
 ### Added
 
 - First release of `tm_data_types`!
-
----
