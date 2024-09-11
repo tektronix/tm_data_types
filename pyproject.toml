@@ -47,7 +47,7 @@ maintainers = ["Tektronix <opensource@tektronix.com>"]
 name = "tm_data_types"
 readme = "README.md"
 repository = "https://github.com/tektronix/tm_data_types"
-version = "0.1.0"
+version = "0.1.1"
 
 [tool.poetry.dependencies]
 bidict = "^0.23.1"
