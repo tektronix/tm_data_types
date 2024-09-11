@@ -60,6 +60,7 @@ prof/
 docs/_build/
 docs/autoapi/
 docs/_autoapi/
+docs/reference/
 _readthedocs/
 *site*/
 
