@@ -266,7 +266,7 @@ def run_benchmark():
     for benchmark in benchmark_serial, benchmark_parallel:
         for key, item in asdict(benchmark.results).items():
             np.savetxt(
-                f"{benchmark.name}_{key}",
+                f"temp_{benchmark.name}_{key}.txt",
                 item,
                 delimiter=",",
                 fmt="%10.3e",

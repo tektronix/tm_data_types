@@ -114,6 +114,7 @@ def test_wfm(
 
     waveform.y_axis_values = values
     waveform.y_axis_spacing = 1 / type_max(np.dtype(np.int16))
+    waveform.trigger_index = values.size / 2
     write_file(waveform_path.as_posix(), waveform)
 
     with open(waveform_path, "rb+") as wfm:
