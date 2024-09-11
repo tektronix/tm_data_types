@@ -392,7 +392,7 @@ class WfmFormat:  # pylint: disable=too-many-instance-attributes
             # find the length of the file, along with the curve position
             eof_offset, curve_offset = self._find_offsets()
 
-            # byte offset can be calculated by ignoring the pre-charge buffer
+            # byte offset can be calculated by ignoring the precharge buffer
             # number of frames can be calculated by checking the length of the curve specs
             # bytes per point is just the size of each item in the curve buffer
             self.file_info = WaveformStaticFileInfo(
@@ -986,7 +986,7 @@ class WfmFormat:  # pylint: disable=too-many-instance-attributes
                 else:
                     byte_count += len(attribute_value)
             # if attribute is undefined, then we check the length of the type to get a static length
-            elif attribute_name not in "meta_datafile_checksum":
+            elif attribute_name not in {"meta_data", "file_checksum"}:
                 try:
                     byte_count += attribute_type.get_cls_length()
                 except AttributeError:
@@ -996,7 +996,7 @@ class WfmFormat:  # pylint: disable=too-many-instance-attributes
 
             if (
                 attribute_value is not None
-                and attribute_name not in "file_checksummeta_data"
+                and attribute_name not in {"file_checksum", "meta_data"}
                 and not isinstance(attribute_value, np.ndarray)
             ):
                 curve_offset = byte_count

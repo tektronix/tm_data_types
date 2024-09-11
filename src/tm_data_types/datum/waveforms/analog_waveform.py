@@ -69,7 +69,7 @@ class AnalogWaveform(Waveform):
             key: The attribute name to set as a string.
             value: The value that the attribute is set to.
         """
-        if key in "y_axis_valuesy_axis_spacingy_axis_offset":
+        if key in {"y_axis_values", "y_axis_spacing", "y_axis_offset"}:
             self.__dict__.pop("normalized_vertical_values", None)
 
         if key == "y_axis_values":
