@@ -93,18 +93,15 @@ class MATFile(AbstractedFile, Generic[DATUM_TYPE_VAR]):
             endian_prefix = self._ENDIAN_PREFIX_LOOKUP[byte_order]
         else:
             raise ValueError("Endian Format in wfm invalid.")
-        keep_running = True
         values = []
         # keep running through the file
-        while keep_running:
+        all_conditionals_true = False
+        while not all_conditionals_true:
             _, read_values = self._unpack_data(endian_prefix)
             values.extend(read_values)
-            all_conditionals_true = True
-            all_conditionals_true = all_conditionals_true and str(self).encode("utf_8") in values
+            all_conditionals_true = str(self).encode("utf_8") in values
 
-            if all_conditionals_true:
-                return True
-        return False
+        return all_conditionals_true
 
     # Reading
     def read_datum(self) -> WAVEFORM_TYPE:
