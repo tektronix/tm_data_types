@@ -1,9 +1,10 @@
-"""This script demonstrates type conversion and normalization of analog waveform data using the tm_data_types module."""
+"""This script demonstrates type conversion and normalization of analog waveform data."""
 
 import numpy as np
-from tm_data_types import AnalogWaveformMetaInfo, AnalogWaveform, RawSample, Normalized
+
+from tm_data_types import AnalogWaveform, AnalogWaveformMetaInfo, Normalized, RawSample
 from tm_data_types.datum.data_types import type_max, type_min
-from tm_data_types.helpers.byte_data_types import Short, Long, LongLong, Float
+from tm_data_types.helpers.byte_data_types import Float, Long, LongLong, Short
 
 if __name__ == "__main__":
     values_int8 = RawSample(np.array([1, 2, 4, 8, 16, 32, 64, 127], dtype=np.int8))
@@ -21,7 +22,7 @@ if __name__ == "__main__":
             waveform_int8.normalized_vertical_values,
             waveform_int16.normalized_vertical_values,
             atol=0.0015,
-        )
+        ),
     )
 
     values_int16 = RawSample(values_int8, as_type=Short)
@@ -30,19 +31,29 @@ if __name__ == "__main__":
     values_float32 = RawSample(values_int8, as_type=Float)
 
     normalized_values_int8 = Normalized(
-        values_int8, spacing=1 / (type_max(np.int8) - type_min(np.int8)), offset=0.0
+        values_int8,
+        spacing=1 / (type_max(np.int8) - type_min(np.int8)),
+        offset=0.0,
     )
     normalized_values_int16 = Normalized(
-        values_int16, spacing=1 / (type_max(np.int16) - type_min(np.int16)), offset=0.0
+        values_int16,
+        spacing=1 / (type_max(np.int16) - type_min(np.int16)),
+        offset=0.0,
     )
     normalized_values_int32 = Normalized(
-        values_int32, spacing=1 / (type_max(np.int32) - type_min(np.int32)), offset=0.0
+        values_int32,
+        spacing=1 / (type_max(np.int32) - type_min(np.int32)),
+        offset=0.0,
     )
     normalized_values_int64 = Normalized(
-        values_int64, spacing=1 / (type_max(np.int64) - type_min(np.int64)), offset=0.0
+        values_int64,
+        spacing=1 / (type_max(np.int64) - type_min(np.int64)),
+        offset=0.0,
     )
     normalized_values_float32 = Normalized(
-        values_float32, spacing=1 / (type_max(np.float32) - type_min(np.float32)), offset=0.0
+        values_float32,
+        spacing=1 / (type_max(np.float32) - type_min(np.float32)),
+        offset=0.0,
     )
 
     assert any(
@@ -50,5 +61,5 @@ if __name__ == "__main__":
             normalized_values_int8,
             normalized_values_int16,
             atol=0.0015,
-        )
+        ),
     )

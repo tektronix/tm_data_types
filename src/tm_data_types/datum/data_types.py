@@ -1,11 +1,13 @@
 """The different formats which are wrapped by a MeasuredData class."""
 
 import sys
+
 from abc import abstractmethod
 from decimal import Decimal
-from typing import Union, Optional, List, Type, Any
+from typing import Any, List, Optional, Type, Union
 
 import numpy as np
+
 from numpy.typing import NDArray
 
 from tm_data_types.helpers.byte_data_types import ByteData, Double
@@ -149,7 +151,8 @@ class MeasuredData(np.ndarray):
     # Public Methods
     ################################################################################################
     def append(
-        self, new_measured_data: Union["MeasuredData", NDArray[PossibleTypes]]
+        self,
+        new_measured_data: Union["MeasuredData", NDArray[PossibleTypes]],
     ) -> "MeasuredData":
         """Append new values to the waveform which are automatically type converted.
 
@@ -159,7 +162,7 @@ class MeasuredData(np.ndarray):
         if isinstance(new_measured_data, np.ndarray):
             new_measured_data = RawSample(new_measured_data)
         return type(self)(
-            np.append(self, self._convert_data_to_type(new_measured_data, dtype=self.dtype))
+            np.append(self, self._convert_data_to_type(new_measured_data, dtype=self.dtype)),
         )
 
     @abstractmethod
@@ -189,7 +192,9 @@ class MeasuredData(np.ndarray):
 
     @classmethod
     def _convert_data_to_type(
-        cls, measured_data: "MeasuredData", dtype: PossibleTypes
+        cls,
+        measured_data: "MeasuredData",
+        dtype: PossibleTypes,
     ) -> NDArray[PossibleTypes]:
         """Convert the passed data to the numpy dtype specified.
 
@@ -201,8 +206,9 @@ class MeasuredData(np.ndarray):
         np_measured_data = np.asarray(measured_data)
 
         if not issubclass(previous_data_type, cls) or measured_data.dtype != dtype:
-            raw_sample_data = previous_data_type._this_format_to_raw_sample_format(
-                np_measured_data, dtype
+            raw_sample_data = previous_data_type._this_format_to_raw_sample_format(  # noqa: SLF001
+                np_measured_data,
+                dtype,
             )
 
             return cls._raw_sample_format_to_this_format(raw_sample_data)
@@ -212,7 +218,9 @@ class MeasuredData(np.ndarray):
     @classmethod
     @abstractmethod
     def _this_format_to_raw_sample_format(
-        cls, measured_data: NDArray[PossibleTypes], dtype: PossibleTypes
+        cls,
+        measured_data: NDArray[PossibleTypes],
+        dtype: PossibleTypes,
     ) -> NDArray[PossibleTypes]:
         """Abstracted method that converts whatever the current type is to FeatureScaled.
 
@@ -225,7 +233,8 @@ class MeasuredData(np.ndarray):
     @classmethod
     @abstractmethod
     def _raw_sample_format_to_this_format(
-        cls, raw_sample_data: NDArray[PossibleTypes]
+        cls,
+        raw_sample_data: NDArray[PossibleTypes],
     ) -> NDArray[PossibleTypes]:
         """Abstracted method that converts whatever the current type is to a provided dtype.
 
@@ -267,7 +276,9 @@ class RawSample(MeasuredData):
 
     @classmethod
     def _this_format_to_raw_sample_format(  # pyright: ignore [reportIncompatibleMethodOverride]
-        cls, measured_data: NDArray[PossibleTypes], dtype: PossibleTypes
+        cls,
+        measured_data: NDArray[PossibleTypes],
+        dtype: PossibleTypes,
     ) -> NDArray[PossibleTypes]:
         """Convert MeasuredData data to RawSample data.
 
@@ -280,11 +291,13 @@ class RawSample(MeasuredData):
             # ideally, this could be done with math, but unfortunately, precision on float64
             # and Decimal causes there to be rounding errors
             if not np.issubdtype(measured_data.dtype.type, np.unsignedinteger) and np.issubdtype(
-                dtype.type, np.unsignedinteger
+                dtype.type,
+                np.unsignedinteger,
             ):
                 offset = type_min(measured_data.dtype) * ratio
             elif np.issubdtype(measured_data.dtype.type, np.unsignedinteger) and not np.issubdtype(
-                dtype.type, np.unsignedinteger
+                dtype.type,
+                np.unsignedinteger,
             ):
                 offset = -type_min(dtype)
             else:
@@ -296,7 +309,8 @@ class RawSample(MeasuredData):
 
     @classmethod
     def _raw_sample_format_to_this_format(
-        cls, raw_sample_data: NDArray[PossibleTypes]
+        cls,
+        raw_sample_data: NDArray[PossibleTypes],
     ) -> NDArray[PossibleTypes]:  # pyright: ignore [reportIncompatibleMethodOverride]
         """Convert FeatureScaled data to RawSample data.
 
@@ -338,7 +352,9 @@ class FeatureScaled(MeasuredData):
 
     @classmethod
     def _this_format_to_raw_sample_format(
-        cls, measured_data: NDArray[PossibleTypes], dtype: PossibleTypes
+        cls,
+        measured_data: NDArray[PossibleTypes],
+        dtype: PossibleTypes,
     ) -> NDArray[PossibleTypes]:  # pyright: ignore [reportIncompatibleMethodOverride]
         """Return passed data as the type is already FeatureScaled.
 
@@ -351,7 +367,8 @@ class FeatureScaled(MeasuredData):
 
     @classmethod
     def _raw_sample_format_to_this_format(
-        cls, raw_sample_data: NDArray[PossibleTypes]
+        cls,
+        raw_sample_data: NDArray[PossibleTypes],
     ) -> NDArray[PossibleTypes]:  # pyright: ignore [reportIncompatibleMethodOverride]
         """Return passed data as the type is already FeatureScaled.
 
@@ -446,7 +463,9 @@ class Normalized(MeasuredData):
 
     @classmethod
     def _this_format_to_raw_sample_format(
-        cls, measured_data: NDArray[PossibleTypes], dtype: PossibleTypes
+        cls,
+        measured_data: NDArray[PossibleTypes],
+        dtype: PossibleTypes,
     ) -> NDArray[PossibleTypes]:
         """Return passed data as the type is already FeatureScaled.
 
@@ -462,7 +481,8 @@ class Normalized(MeasuredData):
 
     @classmethod
     def _raw_sample_format_to_this_format(
-        cls, raw_sample_data: NDArray[PossibleTypes]
+        cls,
+        raw_sample_data: NDArray[PossibleTypes],
     ) -> NDArray[PossibleTypes]:  # pyright: ignore [reportIncompatibleMethodOverride]
         """Return passed data as the type is already FeatureScaled.
 
@@ -486,7 +506,7 @@ class Digitized(MeasuredData):
         """
         return 1.0
 
-    def calculate_offset(self, known_offset: float = 0.0) -> float:
+    def calculate_offset(self, known_offset: float = 0.0) -> float:  # noqa: ARG002
         """Return 0.0, as this information is redundant.
 
         Args:
@@ -503,7 +523,9 @@ class Digitized(MeasuredData):
 
     @classmethod
     def _this_format_to_raw_sample_format(
-        cls, measured_data: NDArray[PossibleTypes], dtype: PossibleTypes
+        cls,
+        measured_data: NDArray[PossibleTypes],
+        dtype: PossibleTypes,  # noqa: ARG003
     ) -> NDArray[PossibleTypes]:
         """Return passed data as the type is already FeatureScaled.
 
@@ -515,7 +537,8 @@ class Digitized(MeasuredData):
 
     @classmethod
     def _raw_sample_format_to_this_format(
-        cls, raw_sample_data: NDArray[PossibleTypes]
+        cls,
+        raw_sample_data: NDArray[PossibleTypes],
     ) -> NDArray[PossibleTypes]:
         """Return passed data as the type is already FeatureScaled.
 

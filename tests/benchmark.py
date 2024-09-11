@@ -1,25 +1,27 @@
 """Test the benchmark of how well the system performs reading and writing files."""
 
 import os
-import shutil
+import tempfile
 import timeit
-from typing import Union, Tuple, Callable, List, Optional
+
+from dataclasses import asdict, dataclass
+from typing import Callable, List, Optional, Tuple, Union
 
 import matplotlib.pyplot as plt
 import numpy as np
+
 from numpy.typing import NDArray
 
 from tm_data_types.datum.data_types import RawSample
+from tm_data_types.datum.datum import Datum
 from tm_data_types.datum.waveforms.analog_waveform import AnalogWaveform
-from tm_data_types.io_factory_methods import (
-    write_file,
-    read_file,
-    write_files_in_parallel,
-    read_files_in_parallel,
-)
 from tm_data_types.helpers.byte_data_types import Short
-
-from dataclasses import dataclass, asdict
+from tm_data_types.io_factory_methods import (
+    read_file,
+    read_files_in_parallel,
+    write_file,
+    write_files_in_parallel,
+)
 
 
 @dataclass
@@ -30,7 +32,7 @@ class Performance:
     reads_per_second: NDArray
 
 
-def write_files_serial(self, file_paths: List[str], datums: List[AnalogWaveform]) -> None:
+def write_files_serial(file_paths: List[str], datums: List[AnalogWaveform]) -> None:
     """Write to the provided file paths using the waveforms serially.
 
     Args:
@@ -41,7 +43,7 @@ def write_files_serial(self, file_paths: List[str], datums: List[AnalogWaveform]
         write_file(file_path, datum)
 
 
-def read_files_serial(self, file_paths: List[str]) -> None:
+def read_files_serial(file_paths: List[str]) -> None:
     """Read the provided file paths serially.
 
     Args:
@@ -81,7 +83,8 @@ class BenchMark:
         """
         # create a grid for the scatter plot
         mesh_curve_length, mesh_file_count = np.meshgrid(
-            np.arange(curve_lengths.shape[0]), np.arange(file_counts.shape[0])
+            np.arange(curve_lengths.shape[0]),
+            np.arange(file_counts.shape[0]),
         )
 
         fig = plt.figure()
@@ -148,8 +151,8 @@ class BenchMark:
     # pylint: disable=too-many-locals
     def measure_times(
         self,
-        write_method: Callable,
-        read_method: Callable,
+        write_method: Callable[[List[str], List[Datum]], None],
+        read_method: Callable[[List[str]], None],
         curve_lengths: List[int],
         file_counts: List[int],
     ) -> None:
@@ -161,63 +164,64 @@ class BenchMark:
             curve_lengths: The range of powers that will be used to determine curve lengths.
             file_counts: The range of powers that will be used to determine file counts.
         """
-        waveform_directory = "../../waveforms"
         x_length = len(curve_lengths)
         y_length = len(file_counts)
-        curve_lengths = np.empty(x_length)
-        file_counts = np.empty(y_length)
         total_write_times = np.empty((x_length, y_length))
         writes_per_second = np.empty((x_length, y_length))
         total_read_times = np.empty((x_length, y_length))
         reads_per_second = np.empty((x_length, y_length))
 
-        for length_index, buffer_length in enumerate(curve_lengths):
-            curve_lengths[length_index] = buffer_length
-            x_points = np.linspace(0, 1, buffer_length)
-            sin_data: NDArray[np.float64] = np.sin(2 * np.pi * x_points)
+        with tempfile.TemporaryDirectory() as waveform_directory:
+            for length_index, buffer_length in enumerate(curve_lengths):
+                x_points = np.linspace(0, 1, buffer_length)
+                sin_data: NDArray[np.float64] = np.sin(2 * np.pi * x_points)
 
-            sin_wave = AnalogWaveform()
-            sin_wave.y_axis_values = sin_data
-            sin_wave.y_axis_extent_magnitude = 0.1
-            sin_wave.y_axis_offset = 0.0
-            sin_wave.x_axis_spacing = 1.0e-7
+                sin_wave = AnalogWaveform()
+                sin_wave.y_axis_values = sin_data
+                sin_wave.y_axis_extent_magnitude = 0.1
+                sin_wave.y_axis_offset = 0.0
+                sin_wave.x_axis_spacing = 1.0e-7
 
-            sin_wave.measured_data = RawSample(sin_wave.y_axis_values, as_type=Short)
+                sin_wave.measured_data = RawSample(sin_wave.y_axis_values, as_type=Short)
 
-            for count_index, count in enumerate(file_counts):
-                if os.path.exists(os.path.join(os.getcwd(), waveform_directory)):
-                    shutil.rmtree(waveform_directory)
-                os.mkdir(waveform_directory)
-                file_counts[count_index] = count
-                file_names = [f"{waveform_directory}/index_{index}.wfm" for index in range(count)]
+                for count_index, count in enumerate(file_counts):
+                    file_names = [
+                        f"{waveform_directory}/index_{index}.wfm" for index in range(count)
+                    ]
 
-                datums = [sin_wave] * count
+                    datums = [sin_wave] * count
 
-                start_time = timeit.default_timer()
-                write_method(file_names, datums)
+                    start_time = timeit.default_timer()
+                    write_method(file_names, datums)
 
-                end_time = timeit.default_timer()
-                time_summation = end_time - start_time
-                print(
-                    f"Finished {self.name} write File Count: {count} Curve Length: {buffer_length} "
-                    f"time: {time_summation} file_per_second: {count / time_summation}"
-                )
-                total_write_times[length_index][count_index] = time_summation
-                writes_per_second[length_index][count_index] = count / time_summation
-                start_time = timeit.default_timer()
-                read_method(file_names)
-                end_time = timeit.default_timer()
-                time_summation = end_time - start_time
-                print(
-                    f"Finished {self.name} read File Count: {count} Curve Length: {buffer_length} "
-                    f"time: {time_summation} file_per_second: {count / time_summation}"
-                )
-                print(f"Verify number of files in directory: {len(os.listdir(waveform_directory))}")
-                print(
-                    f"Verify datum length with one waveform: {np.shape(sin_wave.y_axis_values)[0]}"
-                )
-                total_read_times[length_index][count_index] = time_summation
-                reads_per_second[length_index][count_index] = count / time_summation
+                    end_time = timeit.default_timer()
+                    time_summation = end_time - start_time
+                    print(
+                        f"Finished {self.name} write File Count: {count} "
+                        f"Curve Length: {buffer_length} "
+                        f"time: {time_summation} file_per_second: {count / time_summation}",
+                    )
+                    total_write_times[length_index][count_index] = time_summation
+                    writes_per_second[length_index][count_index] = count / time_summation
+                    start_time = timeit.default_timer()
+                    read_method(file_names)
+                    end_time = timeit.default_timer()
+                    time_summation = end_time - start_time
+                    print(
+                        f"Finished {self.name} read File Count: {count} "
+                        f"Curve Length: {buffer_length} "
+                        f"time: {time_summation} file_per_second: {count / time_summation}",
+                    )
+                    print(
+                        f"Verify number of files in directory: "
+                        f"{len(os.listdir(waveform_directory))}"
+                    )
+                    print(
+                        f"Verify datum length with one waveform: "
+                        f"{np.shape(sin_wave.y_axis_values)[0]}",
+                    )
+                    total_read_times[length_index][count_index] = time_summation
+                    reads_per_second[length_index][count_index] = count / time_summation
 
         self.results = Performance(
             total_write_times=total_write_times,
@@ -260,17 +264,14 @@ def run_benchmark():
     )
 
     for benchmark in benchmark_serial, benchmark_parallel:
-        for key, item in asdict(benchmark.results):
+        for key, item in asdict(benchmark.results).items():
             np.savetxt(
-                f"{benchmark.name}_{key}",
+                f"temp_{benchmark.name}_{key}.txt",
                 item,
                 delimiter=",",
                 fmt="%10.3e",
                 comments="",
             )
-    WAVEFORM_DIR = "../../waveforms"
-    if os.path.exists(os.path.join(os.getcwd(), WAVEFORM_DIR)):
-        shutil.rmtree(WAVEFORM_DIR)
 
 
 if __name__ == "__main__":

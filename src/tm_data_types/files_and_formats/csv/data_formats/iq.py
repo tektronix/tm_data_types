@@ -2,7 +2,7 @@
 
 import numpy as np
 
-from tm_data_types.datum.data_types import Normalized, RawSample, type_min, type_max
+from tm_data_types.datum.data_types import Normalized, RawSample, type_max, type_min
 from tm_data_types.datum.waveforms.iq_waveform import IQWaveform, IQWaveformMetaInfo
 from tm_data_types.files_and_formats.csv.csv import CSVFile
 
@@ -18,7 +18,7 @@ class WaveformFileCSVIQ(CSVFile[IQWaveform]):
     META_DATA_TYPE = IQWaveformMetaInfo
 
     _IQ_META_DATA_LOOKUP = CSVFile.update_bidict(
-        CSVFile._META_DATA_LOOKUP,
+        CSVFile._META_DATA_LOOKUP,  # noqa: SLF001
         {
             "iq_center_frequency": "IQ_centerFrequency",
             "iq_fft_length": "IQ_fftLength",

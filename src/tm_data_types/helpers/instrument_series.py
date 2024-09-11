@@ -1,24 +1,24 @@
 """A file which provides a series of instruments and values that are unique to them."""
 
+# TODO: add docstrings to all classes, and enum members
+
 from enum import Enum
-from typing import NamedTuple, Literal
+from typing import Literal, NamedTuple
 
 from tm_data_types.helpers.enums import ByteOrderFormat, VersionNumber
 
-InstrumentSeriesDataStyle = NamedTuple(
-    "InstrumentSeriesDataStyle",
-    [
-        ("byte_order", ByteOrderFormat),
-        ("version", VersionNumber),
-        ("slot_ids", int),
-        ("gen_purpose_default", int),
-    ],
-)
 
-Endian = NamedTuple(
-    "Endian",
-    [("struct", str), ("from_byte", Literal["little", "big"]), ("format", bytes)],
-)
+class InstrumentSeriesDataStyle(NamedTuple):
+    byte_order: ByteOrderFormat
+    version: VersionNumber
+    slot_ids: int
+    gen_purpose_default: int
+
+
+class Endian(NamedTuple):
+    struct: str
+    from_byte: Literal["little", "big"]
+    format: bytes
 
 
 class InstrumentSeries(Enum):
@@ -31,9 +31,9 @@ class InstrumentSeries(Enum):
         gen_purpose_default=0,
     )
     MSO64 = TEKSCOPE
-    MSO64B = TEKSCOPE
-    MSO54 = TEKSCOPE
-    MSO54B = TEKSCOPE
-    MSO44 = TEKSCOPE
-    MSO44B = TEKSCOPE
-    MSO24 = TEKSCOPE
+    MSO64B = TEKSCOPE  # noqa: PIE796
+    MSO54 = TEKSCOPE  # noqa: PIE796
+    MSO54B = TEKSCOPE  # noqa: PIE796
+    MSO44 = TEKSCOPE  # noqa: PIE796
+    MSO44B = TEKSCOPE  # noqa: PIE796
+    MSO24 = TEKSCOPE  # noqa: PIE796

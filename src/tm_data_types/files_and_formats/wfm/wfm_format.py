@@ -2,37 +2,40 @@
 # pyright: reportArgumentType=false
 """A class which hosts a readable representation of the format information in a .wfm file."""
 
+import contextlib
 import struct
+
 from dataclasses import dataclass, replace
 from typing import (
     Callable,
-    TypeVar,
-    Tuple,
-    Union,
-    Optional,
-    List,
-    TextIO,
     Dict,
     Generic,
-    Type,
     get_args,
+    List,
+    Optional,
+    TextIO,
+    Tuple,
+    Type,
+    TypeVar,
+    Union,
 )
 
 import numpy as np
+
 from numba import njit
 
 from tm_data_types.files_and_formats.wfm.wfm_data_classes import (
-    WaveformStaticFileInfo,
-    WaveformHeader,
-    PixMap,
+    CurveInformation,
+    DimensionsUserView,
+    DimensionsUserViewVer3,
+    DimensionsUserViewVer12,
     ExplicitDimensions,
     ImplicitDimensions,
-    DimensionsUserView,
-    DimensionsUserViewVer12,
-    DimensionsUserViewVer3,
+    PixMap,
     TimeBaseInformation,
     UpdateSpecifications,
-    CurveInformation,
+    WaveformHeader,
+    WaveformStaticFileInfo,
 )
 from tm_data_types.helpers.byte_data_class import StructuredInfo
 from tm_data_types.helpers.byte_data_types import (
@@ -42,24 +45,24 @@ from tm_data_types.helpers.byte_data_types import (
     Float,
     Long,
     Short,
+    String,
     String8,
+    UnsignedChar,
     UnsignedLong,
     UnsignedLongLong,
     UnsignedShort,
-    UnsignedChar,
-    String,
 )
 from tm_data_types.helpers.enums import (
-    DataTypes,
-    VersionNumber,
-    CurveFormatsVer3,
-    WaveformDimension,
-    StorageTypes,
-    DSYFormat,
-    SweepTypes,
     BaseTypes,
     ChecksumType,
+    CurveFormatsVer3,
+    DataTypes,
+    DSYFormat,
+    StorageTypes,
     SummaryFrameType,
+    SweepTypes,
+    VersionNumber,
+    WaveformDimension,
     WaveformTypes,
 )
 from tm_data_types.helpers.instrument_series import Endian
@@ -135,17 +138,20 @@ class WfmFormat:  # pylint: disable=too-many-instance-attributes
     time_info: Optional[Dimension[TimeBaseInformation, TimeBaseInformation]] = None
     update_specifications: Optional[UpdateSpecifications] = None
     curve_info: Optional[CurveInformation] = None
-    update_specs: List[UpdateSpecifications] = []
-    curve_specs: List[CurveInformation] = []
+    update_specs: List[UpdateSpecifications] = []  # noqa: RUF012
+    curve_specs: List[CurveInformation] = []  # noqa: RUF012
     precharge_buffer: np.ndarray = np.empty(0)
     curve_buffer: np.ndarray = np.empty(0)
     postcharge_buffer: np.ndarray = np.empty(0)
     file_checksum: Optional[UnsignedLongLong] = None
-    meta_data: Dict[str, Union[str, Double, Long, UnsignedLong]] = {}
+    meta_data: Dict[str, Union[str, Double, Long, UnsignedLong]] = {}  # noqa: RUF012
 
     # Reading
     def unpack_wfm_file(
-        self, endian: Endian, version_number: VersionNumber, filestream: TextIO
+        self,
+        endian: Endian,
+        version_number: VersionNumber,
+        filestream: TextIO,
     ) -> None:
         """Read the waveform file and unpack all the data into the enforced type data classes.
 
@@ -167,29 +173,36 @@ class WfmFormat:  # pylint: disable=too-many-instance-attributes
             dimension_view = DimensionsUserViewVer12
 
         self.explicit_dimensions, self.explicit_user_view = self._unpack_data(
-            ExplicitDimensions, dimension_view, endian, filestream
+            ExplicitDimensions,
+            dimension_view,
+            endian,
+            filestream,
         )
         self.implicit_dimensions, self.implicit_user_view = self._unpack_data(
-            ImplicitDimensions, dimension_view, endian, filestream
+            ImplicitDimensions,
+            dimension_view,
+            endian,
+            filestream,
         )
         self.time_info = self._unpack_twice(TimeBaseInformation, endian, filestream)
         self.update_specifications = UpdateSpecifications.unpack(
-            endian.struct, filestream, in_order=True
+            endian.struct,
+            filestream,
+            in_order=True,
         )
         self.curve_info = CurveInformation.unpack(endian.struct, filestream, in_order=True)
         self.update_specs, self.curve_specs = self._get_fast_frame_information(endian, filestream)
         self.precharge_buffer, self.curve_buffer, self.postcharge_buffer = (
             self._get_curve_information(filestream)
         )
-        try:
+        with contextlib.suppress(struct.error):
             self.file_checksum = UnsignedLongLong.unpack(endian.struct, filestream)
-        except struct.error:
-            pass
         self.meta_data = self.parse_tekmeta(endian, filestream)
 
     @staticmethod
     def parse_tekmeta(
-        endian: Endian, filestream: TextIO
+        endian: Endian,
+        filestream: TextIO,
     ) -> Optional[Dict[str, Union[Long, Double, UnsignedLong]]]:
         """Parse the metadata from the eof.
 
@@ -216,12 +229,14 @@ class WfmFormat:  # pylint: disable=too-many-instance-attributes
                     key_size = UnsignedLong.unpack(endian.struct, filestream)
                     (key,) = struct.unpack(f"{endian.struct}{key_size}s", filestream.read(key_size))
                     type_indicator = int.from_bytes(
-                        Char.unpack(endian.struct, filestream), "little"
+                        Char.unpack(endian.struct, filestream),
+                        "little",
                     )
                     if type_indicator == 1:
                         value_size = UnsignedLong.unpack(endian.struct, filestream)
                         (value,) = struct.unpack(
-                            f"{endian.struct}{value_size}s", filestream.read(value_size)
+                            f"{endian.struct}{value_size}s",
+                            filestream.read(value_size),
                         )
                     else:
                         value = tek_meta_indicator[type_indicator].unpack(endian.struct, filestream)
@@ -231,15 +246,18 @@ class WfmFormat:  # pylint: disable=too-many-instance-attributes
                 raise IOError("Unrecognizable post-amble prefix for waveform file.")
         except (KeyError, ValueError) as e:
             raise IOError(
-                "Metadata unreadable, post-amble is formatted in a way that is not parseable."
+                "Metadata unreadable, post-amble is formatted in a way that is not parseable.",
             ) from e
 
         return meta_data
 
     # Writing
     # pylint: disable=too-many-branches
-    def pack_wfm_file(
-        self, endian: Endian, version_number: VersionNumber, filestream: TextIO
+    def pack_wfm_file(  # noqa: C901,PLR0912
+        self,
+        endian: Endian,
+        version_number: VersionNumber,
+        filestream: TextIO,
     ) -> None:
         """Pack information in the class attributes into the .wfm file provided.
 
@@ -334,15 +352,15 @@ class WfmFormat:  # pylint: disable=too-many-instance-attributes
             attribute.tofile(filestream)
 
         summation = sum(version_number.value) + sum(endian.format)
-        for _, value in self.__dict__.items():
+        for value in self.__dict__.values():
             if isinstance(value, np.ndarray):
-                if len(value) > 100.0e6:
+                if len(value) > 100.0e6:  # noqa: PLR2004
                     summation += calculate_checksum(value)
                 else:
                     summation += int(np.add.reduce(value.view(np.uint8), dtype=np.uint64))
 
             elif isinstance(value, List):
-                summation += sum((frame.get_value_summation() for frame in value))
+                summation += sum(frame.get_value_summation() for frame in value)
             elif not isinstance(value, Dict):
                 summation += value.get_value_summation()
 
@@ -367,7 +385,6 @@ class WfmFormat:  # pylint: disable=too-many-instance-attributes
             zoom_position: Not For Use. A range of min to max zoom position information
             waveform_label: A label to assign to the waveform
         """
-
         if (
             None not in (self.header, self.pixel_map, self.summary_frame_type)
             or not self.curve_buffer
@@ -376,7 +393,7 @@ class WfmFormat:  # pylint: disable=too-many-instance-attributes
             eof_offset, curve_offset = self._find_offsets()
 
             # byte offset can be calculated by ignoring the precharge buffer
-            # number of frames can be calculated by checking the length of the curve specs (or update)
+            # number of frames can be calculated by checking the length of the curve specs
             # bytes per point is just the size of each item in the curve buffer
             self.file_info = WaveformStaticFileInfo(
                 digits_in_byte_count=len(str(eof_offset)),
@@ -408,7 +425,7 @@ class WfmFormat:  # pylint: disable=too-many-instance-attributes
         """
 
     # pylint: disable=too-many-arguments
-    def setup_header(
+    def setup_header(  # noqa: PLR0913
         self,
         waveform_type: WaveformTypes = WaveformTypes.SINGLE,
         number_of_waveforms: int = 1,
@@ -491,7 +508,7 @@ class WfmFormat:  # pylint: disable=too-many-instance-attributes
             pix_map_max_value=pixel_map_max,
         )
 
-    def setup_explicit_dimensions(
+    def setup_explicit_dimensions(  # noqa: PLR0913
         self,
         scale: float = 1.0,
         offset: float = 0.0,
@@ -511,7 +528,7 @@ class WfmFormat:  # pylint: disable=too-many-instance-attributes
 
         Args:
             scale: The scale of the waveform data for the given dimension.
-            offset: The distance in units from the dimensions’ zero value.
+            offset: The distance in units from the dimensions' zero value.
             size: The size of the explicit dimension in terms of the base storage value.
             units: The units for the dimension.
             extent_range: Not For Use. The range of attainable data for the explicit dimension.
@@ -543,7 +560,8 @@ class WfmFormat:  # pylint: disable=too-many-instance-attributes
         )
 
         self.explicit_dimensions = self._replace_dimension(
-            self.explicit_dimensions, explicit_dimensions
+            self.explicit_dimensions,
+            explicit_dimensions,
         )
         # pylint: disable=pointless-string-statement
         """
@@ -590,7 +608,8 @@ class WfmFormat:  # pylint: disable=too-many-instance-attributes
             )
 
             self.implicit_dimensions = self._replace_dimension(
-                self.implicit_dimensions, implicit_dimensions
+                self.implicit_dimensions,
+                implicit_dimensions,
             )
         else:
             raise AttributeError("Not enough info to generate implicit dimensions sections.")
@@ -757,7 +776,9 @@ class WfmFormat:  # pylint: disable=too-many-instance-attributes
     # Reading
     @staticmethod
     def _unpack_twice(
-        data_class: Type[StructuredInfo], endian: Endian, filestream: TextIO
+        data_class: Type[StructuredInfo],
+        endian: Endian,
+        filestream: TextIO,
     ) -> Dimension:
         """Unpack an enforced data class twice and put into a dimension class.
 
@@ -803,7 +824,9 @@ class WfmFormat:  # pylint: disable=too-many-instance-attributes
 
     # Reading
     def _get_fast_frame_information(
-        self, endian: Endian, filestream: TextIO
+        self,
+        endian: Endian,
+        filestream: TextIO,
     ) -> Tuple[List[UpdateSpecifications], List[CurveInformation]]:
         """Fast Frame information holding both update and curve info data classes.
 
@@ -814,23 +837,24 @@ class WfmFormat:  # pylint: disable=too-many-instance-attributes
         Returns:
             Both the update frame and curve frame lists.
         """
-        # update frame info
-        update_spec = []
         if self.header is not None:
-            for _ in range(self.header.num_acquired_fast_frames):
-                update_spec.append(
-                    UpdateSpecifications.unpack(endian.struct, filestream, in_order=True)
-                )
+            # update frame info
+            update_spec = [
+                UpdateSpecifications.unpack(endian.struct, filestream, in_order=True)
+                for _ in range(self.header.num_acquired_fast_frames)
+            ]
             # curve frame info
-            curve_spec = []
-            for _ in range(self.header.num_acquired_fast_frames):
-                curve_spec.append(CurveInformation.unpack(endian.struct, filestream, in_order=True))
+            curve_spec = [
+                CurveInformation.unpack(endian.struct, filestream, in_order=True)
+                for _ in range(self.header.num_acquired_fast_frames)
+            ]
             return update_spec, curve_spec
         return [], []
 
     # Reading
     def _get_curve_information(
-        self, filestream: TextIO
+        self,
+        filestream: TextIO,
     ) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
         """Obtain the waveform curve.
 
@@ -871,11 +895,15 @@ class WfmFormat:  # pylint: disable=too-many-instance-attributes
             ) // self.file_info.bytes_per_point
 
             precharge_curve_buffer = self.get_curve_data(
-                precharge_buffer_length, curve_type, filestream
+                precharge_buffer_length,
+                curve_type,
+                filestream,
             )
             charge_curve_buffer = self.get_curve_data(charge_buffer_length, curve_type, filestream)
             postcharge_curve_buffer = self.get_curve_data(
-                postcharge_buffer_length, curve_type, filestream
+                postcharge_buffer_length,
+                curve_type,
+                filestream,
             )
 
             return precharge_curve_buffer, charge_curve_buffer, postcharge_curve_buffer
@@ -897,7 +925,7 @@ class WfmFormat:  # pylint: disable=too-many-instance-attributes
         return np.fromfile(file=filestream, dtype=data_type.np_repr, count=length)
 
     # Writing
-    def _setup_wfm_format(self, versioning_number: VersionNumber) -> None:
+    def _setup_wfm_format(self, versioning_number: VersionNumber) -> None:  # noqa: C901
         """Setup the waveform format based on what is already setup.
 
         Args:
@@ -934,6 +962,7 @@ class WfmFormat:  # pylint: disable=too-many-instance-attributes
             A tuple containing the byte length of the file and where the curve begins.
         """
         # starts at ten for version number and byte order verification
+        # eof might just be wrong in .wfm files, check saved waveform file for verification
         # TODO: calculate it instead
         eof_offset = -7
         byte_count = 10
@@ -957,19 +986,17 @@ class WfmFormat:  # pylint: disable=too-many-instance-attributes
                 else:
                     byte_count += len(attribute_value)
             # if attribute is undefined, then we check the length of the type to get a static length
-            elif attribute_name not in "meta_data" "file_checksum":
+            elif attribute_name not in {"meta_data", "file_checksum"}:
                 try:
                     byte_count += attribute_type.get_cls_length()
                 except AttributeError:
                     byte_count += get_args(attribute_type)[0].get_cls_length()
-                    try:
+                    with contextlib.suppress(AttributeError):
                         byte_count += get_args(attribute_type)[1].get_cls_length()
-                    except AttributeError:
-                        pass
 
             if (
                 attribute_value is not None
-                and attribute_name not in "file_checksum" "meta_data"
+                and attribute_name not in {"file_checksum", "meta_data"}
                 and not isinstance(attribute_value, np.ndarray)
             ):
                 curve_offset = byte_count
@@ -1026,7 +1053,7 @@ class WfmFormat:  # pylint: disable=too-many-instance-attributes
             if type_indicator == 1:
                 UnsignedLong(len(value)).pack(endian.struct, filestream)
                 if isinstance(value, str):
-                    value = value.encode("utf_8")
+                    value = value.encode("utf_8")  # noqa: PLW2901
                 filestream.write(struct.pack(f"{endian.struct}{len(value)}s", value))
             else:
                 byte_type(value).pack(endian.struct, filestream)

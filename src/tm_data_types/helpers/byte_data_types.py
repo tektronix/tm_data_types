@@ -1,15 +1,15 @@
 """Byte."""
 
-from abc import ABC
-
 import struct
-from typing import Optional, Any, TextIO
+
+from abc import ABC
+from typing import Any, Optional, TextIO
 
 from pydantic import GetCoreSchemaHandler
-from pydantic_core import CoreSchema, core_schema
+from pydantic_core import core_schema, CoreSchema
 
 
-class ByteData(ABC):
+class ByteData(ABC):  # noqa: B024
     """Class which handles the packing and unpacking of individual datum."""
 
     ################################################################################################
@@ -86,7 +86,9 @@ class String(ByteData, bytes):
     # pylint: disable=unused-argument
     @classmethod
     def __get_pydantic_core_schema__(  # pylint: disable=bad-dunder-name
-        cls, source_type: Any, handler: GetCoreSchemaHandler
+        cls,
+        source_type: Any,
+        handler: GetCoreSchemaHandler,
     ) -> CoreSchema:
         return core_schema.no_info_after_validator_function(cls, handler(bytes))
 
@@ -196,7 +198,9 @@ class SignedChar(int, ByteData):
     # pylint: disable=unused-argument
     @classmethod
     def __get_pydantic_core_schema__(  # pylint: disable=bad-dunder-name
-        cls, source_type: Any, handler: GetCoreSchemaHandler
+        cls,
+        source_type: Any,
+        handler: GetCoreSchemaHandler,
     ) -> CoreSchema:
         return core_schema.no_info_after_validator_function(cls, handler(int))
 
@@ -317,7 +321,9 @@ class Float(ByteData, float):
     # pylint: disable=unused-argument, disable=bad-dunder-name
     @classmethod
     def __get_pydantic_core_schema__(
-        cls, source_type: Any, handler: GetCoreSchemaHandler
+        cls,
+        source_type: Any,
+        handler: GetCoreSchemaHandler,
     ) -> CoreSchema:
         return core_schema.no_info_after_validator_function(cls, handler(float))
 

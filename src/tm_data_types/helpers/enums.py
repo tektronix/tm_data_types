@@ -1,7 +1,6 @@
 """Enumerators used to enforce typing."""
 
 from enum import Enum
-
 from typing import cast, List
 
 

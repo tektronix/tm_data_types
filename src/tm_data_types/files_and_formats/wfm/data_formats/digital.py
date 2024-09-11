@@ -19,7 +19,7 @@ class WaveformFileWFMDigital(WFMFile[DigitalWaveform]):
     ################################################################################################
 
     _META_DATA_LOOKUP = WFMFile.update_bidict(
-        WFMFile._META_DATA_LOOKUP,
+        WFMFile._META_DATA_LOOKUP,  # noqa: SLF001
         {
             "digital_probe_0_state": "d0",
             "digital_probe_1_state": "d1",
@@ -40,7 +40,9 @@ class WaveformFileWFMDigital(WFMFile[DigitalWaveform]):
 
     # Reading
     def _format_to_waveform_vertical_values(  # pyright: ignore [reportIncompatibleMethodOverride]
-        self, waveform: DigitalWaveform, formatted_data: WfmFormat
+        self,
+        waveform: DigitalWaveform,
+        formatted_data: WfmFormat,
     ) -> None:
         """Convert the data from a formatted data class to an digial waveform class.
 
@@ -56,7 +58,9 @@ class WaveformFileWFMDigital(WFMFile[DigitalWaveform]):
 
     # Writing
     def _waveform_vertical_values_to_format(  # pyright: ignore [reportIncompatibleMethodOverride]
-        self, waveform: DigitalWaveform, formatted_data: WfmFormat
+        self,
+        waveform: DigitalWaveform,
+        formatted_data: WfmFormat,
     ) -> None:
         """Convert the data from a digital waveform class to a formatted data class.
 
@@ -66,7 +70,6 @@ class WaveformFileWFMDigital(WFMFile[DigitalWaveform]):
         Returns:
             Returns a digital waveform created from the formatted data.
         """
-
         explicit_data = RawSample(waveform.y_axis_byte_values, as_type=SignedChar)
 
         formatted_data.setup_explicit_dimensions(
