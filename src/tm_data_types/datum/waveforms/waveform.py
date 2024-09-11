@@ -87,7 +87,7 @@ class Waveform(Datum, ABC):
     ) -> None:
         """Initialize the waveform's meta info and x-axis specifications."""
         self.meta_info: Optional[WaveformMetaInfo] = None
-        self.trigger_index: float = 0.0
+        self.trigger_index: Optional[float] = None
         self.source_name: Optional[str] = None
         self.x_axis_values: Optional[np.ndarray] = None
         self.x_axis_spacing: float = 1.0

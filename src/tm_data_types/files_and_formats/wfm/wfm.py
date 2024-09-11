@@ -167,11 +167,17 @@ class WFMFile(AbstractedFile[DATUM_TYPE_VAR], ABC):
         else:
             formatted_data.meta_data = self.META_DATA_TYPE.remap(self._META_DATA_LOOKUP, {})
         self._waveform_vertical_values_to_format(waveform, formatted_data)
+
+        if waveform.trigger_index is None:
+            trigger_index = waveform.normalized_vertical_values.size / 2
+        else:
+            trigger_index = waveform.trigger_index
+
         if formatted_data.implicit_dimensions is None:
             formatted_data.setup_implicit_dimensions(
                 units=waveform.x_axis_units,
                 scale=waveform.x_axis_spacing,
-                offset=-waveform.trigger_index * waveform.x_axis_spacing,
+                offset=-trigger_index * waveform.x_axis_spacing,
             )
 
         formatted_data.pack_wfm_file(endian_prefix, version_number, self.fd)
