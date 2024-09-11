@@ -36,7 +36,7 @@ classifiers = [
   "Topic :: System :: Hardware :: Hardware Drivers"
 ]
 description = "Read and write common Test & Measurement data types."
-documentation = "https://tm-data-types.readthedocs.io/stable/"
+documentation = "https://tm-data-types.readthedocs.io"
 homepage = "https://pypi.org/project/tm_data_types/"
 keywords = [
   "Tektronix",
