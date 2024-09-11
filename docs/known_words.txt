@@ -19,6 +19,7 @@ socio
 styleguide
 sublicense
 tektronix
+tm
 tm_data_types
 wfm
 www
