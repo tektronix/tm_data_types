@@ -35,7 +35,7 @@ classifiers = [
   "Topic :: Scientific/Engineering",
   "Topic :: System :: Hardware :: Hardware Drivers"
 ]
-description = "Read and write common Test & Measurement files."
+description = "Read and write common Test & Measurement data types."
 documentation = "https://tm-data-types.readthedocs.io/stable/"
 homepage = "https://pypi.org/project/tm_data_types/"
 keywords = [
