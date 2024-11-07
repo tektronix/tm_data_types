@@ -85,7 +85,7 @@ pre-commit = [
   {python = "3.8", version = "^3.5"}
 ]
 pylint = "3.2.7"
-pyright = {extras = ["nodejs"], version = "^1.1.387"}
+pyright = {extras = ["nodejs"], version = "1.1.387"}
 pyroma = "^4.2"
 tox = "^4.0"
 tox-gh-actions = "^3.1.0"
@@ -273,7 +273,6 @@ ignore = [
   "ISC001",  # single-line-implicit-string-concatenation (handled by formatter)
   "PTH",  # flake8-use-pathlib  # TODO: enable this
   "RET504",  # Unnecessary assignment to ... before return statement  # TODO: enable this
-  "T20",  # flake8-print
   "TD002",  # Missing author in TO DO
   "TD003",  # Missing issue link on the line following this TO DO
   "TRY003",  # Avoid specifying long messages outside the exception class  # TODO: enable this
@@ -299,12 +298,14 @@ order-by-type = false
 
 [tool.ruff.lint.per-file-ignores]
 "examples/**" = [
-  "S101"  # Use of assert detected
+  "S101",  # Use of assert detected
+  "T201"  # `print` found
 ]
 "tests/**" = [
   "PLC1901",  # compare-to-empty-string
   "PLR2004",  # Magic value used in comparison
-  "S101"  # Use of assert detected
+  "S101",  # Use of assert detected
+  "T201"  # `print` found
 ]
 
 [tool.semantic_release]
