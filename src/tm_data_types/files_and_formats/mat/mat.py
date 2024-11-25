@@ -14,7 +14,7 @@ from dateutil.tz import tzlocal
 
 from tm_data_types.datum.data_types import MeasuredData, Normalized, RawSample, type_max, type_min
 from tm_data_types.datum.waveforms.waveform import Waveform
-from tm_data_types.files_and_formats.waveform_file import AbstractedFile, DATUM_TYPE_VAR
+from tm_data_types.files_and_formats.abstracted_file import AbstractedFile, DATUM_TYPE_VAR
 from tm_data_types.files_and_formats.wfm.wfm_format import Endian
 from tm_data_types.helpers.byte_data_types import (
     ByteData,

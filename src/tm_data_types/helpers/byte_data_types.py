@@ -90,6 +90,7 @@ class String(ByteData, bytes):
         source_type: Any,
         handler: GetCoreSchemaHandler,
     ) -> CoreSchema:
+        """Get the core schema for the class."""
         return core_schema.no_info_after_validator_function(cls, handler(bytes))
 
     def __new__(cls, x):
@@ -202,6 +203,7 @@ class SignedChar(int, ByteData):
         source_type: Any,
         handler: GetCoreSchemaHandler,
     ) -> CoreSchema:
+        """Get the core schema for the class."""
         return core_schema.no_info_after_validator_function(cls, handler(int))
 
 
@@ -325,6 +327,7 @@ class Float(ByteData, float):
         source_type: Any,
         handler: GetCoreSchemaHandler,
     ) -> CoreSchema:
+        """Get the core schema for the class."""
         return core_schema.no_info_after_validator_function(cls, handler(float))
 
 

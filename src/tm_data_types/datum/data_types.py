@@ -75,6 +75,7 @@ def type_max(
         data_format: The dtype to get the maximum extent of.
 
     Returns:
+        The maximum extent of the type.
     """
     dtype = _check_type(data_format)
     if issubclass(dtype.type, np.integer):

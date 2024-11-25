@@ -30,6 +30,7 @@ class WaveformFileWFMAnalog(WFMFile[AnalogWaveform]):
         """Convert the data from a formatted data class to an analog waveform class.
 
         Args:
+            waveform: The analog waveform object.
             formatted_data: The formatted data from the file.
 
         Returns:
@@ -50,7 +51,8 @@ class WaveformFileWFMAnalog(WFMFile[AnalogWaveform]):
         """Convert the data from an analog waveform class to a formatted data class.
 
         Args:
-            waveform: The formatted data from the file.
+            waveform: The analog waveform object.
+            formatted_data: The formatted data from the file.
 
         Returns:
             Returns an analog waveform created from the formatted data.

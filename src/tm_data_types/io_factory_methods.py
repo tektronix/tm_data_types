@@ -20,7 +20,7 @@ from tm_data_types.helpers.class_lookup import (
 from tm_data_types.helpers.instrument_series import InstrumentSeries
 
 if TYPE_CHECKING:
-    from tm_data_types.files_and_formats.waveform_file import AbstractedFile
+    from tm_data_types.files_and_formats.abstracted_file import AbstractedFile
 
 DatumAlias = TypeVar("DatumAlias", bound=Datum, default=Datum)
 

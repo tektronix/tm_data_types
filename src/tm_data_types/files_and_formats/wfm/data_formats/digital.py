@@ -44,9 +44,10 @@ class WaveformFileWFMDigital(WFMFile[DigitalWaveform]):
         waveform: DigitalWaveform,
         formatted_data: WfmFormat,
     ) -> None:
-        """Convert the data from a formatted data class to an digial waveform class.
+        """Convert the data from a formatted data class to a digital waveform class.
 
         Args:
+            waveform: The digital waveform object.
             formatted_data: The formatted data from the file.
 
         Returns:
@@ -65,7 +66,8 @@ class WaveformFileWFMDigital(WFMFile[DigitalWaveform]):
         """Convert the data from a digital waveform class to a formatted data class.
 
         Args:
-            waveform: The formatted data from the file.
+            waveform: The digital waveform object.
+            formatted_data: The formatted data from the file.
 
         Returns:
             Returns a digital waveform created from the formatted data.

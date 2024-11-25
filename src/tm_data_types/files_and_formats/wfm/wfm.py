@@ -10,7 +10,7 @@ import numpy as np
 from bidict import bidict
 
 from tm_data_types.datum.waveforms.waveform import Waveform, WaveformMetaInfo
-from tm_data_types.files_and_formats.waveform_file import AbstractedFile, DATUM_TYPE_VAR
+from tm_data_types.files_and_formats.abstracted_file import AbstractedFile, DATUM_TYPE_VAR
 from tm_data_types.files_and_formats.wfm.wfm_format import Endian, WfmFormat
 from tm_data_types.helpers.byte_data_types import (
     Double,
@@ -220,6 +220,7 @@ class WFMFile(AbstractedFile[DATUM_TYPE_VAR], ABC):
         """Convert the data from a formatted data class to an analog waveform class.
 
         Args:
+            waveform: The waveform object.
             formatted_data: The formatted data from the file.
 
         Returns:
@@ -233,7 +234,8 @@ class WFMFile(AbstractedFile[DATUM_TYPE_VAR], ABC):
         """Convert the data from a waveform class to a formatted data class.
 
         Args:
-            waveform: The formatted data from the file.
+            waveform: The waveform object.
+            formatted_data: The formatted data from the file.
 
         Returns:
             Returns an analog waveform created from the formatted data.

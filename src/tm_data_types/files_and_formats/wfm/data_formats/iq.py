@@ -43,6 +43,7 @@ class WaveformFileWFMIQ(WFMFile[IQWaveform]):
         """Convert the data from a formatted data class to an iq waveform class.
 
         Args:
+            waveform: The IQ waveform object.
             formatted_data: The formatted data from the file.
 
         Returns:
@@ -63,7 +64,8 @@ class WaveformFileWFMIQ(WFMFile[IQWaveform]):
         """Convert the data from an iq waveform class to a formatted data class.
 
         Args:
-            waveform: The formatted data from the file.
+            waveform: The IQ waveform object.
+            formatted_data: The formatted data from the file.
 
         Returns:
             Returns an iq waveform created from the formatted data.

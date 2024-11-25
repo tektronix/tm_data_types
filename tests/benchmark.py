@@ -26,6 +26,8 @@ from tm_data_types.io_factory_methods import (
 
 @dataclass
 class Performance:
+    """A class to hold the performance data of the system."""
+
     total_write_times: NDArray
     writes_per_second: NDArray
     total_read_times: NDArray
@@ -54,7 +56,10 @@ def read_files_serial(file_paths: List[str]) -> None:
 
 
 class BenchMark:
+    """A class to benchmark the performance of the system."""
+
     def __init__(self, name: str, show_graphs: bool = False):
+        """Create a benchmark object to measure the performance of the system."""
         self.results: Optional[Performance] = None
         self.graphs: bool = show_graphs
         self.name = name

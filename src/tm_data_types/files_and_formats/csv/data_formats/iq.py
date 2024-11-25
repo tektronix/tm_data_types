@@ -100,7 +100,14 @@ class WaveformFileCSVIQ(CSVFile[IQWaveform]):
 
     # Writing
     def _formatted_waveform_values(self, waveform: IQWaveform) -> Normalized:  # pyright: ignore [reportIncompatibleMethodOverride]
-        """"""
+        """Return the formatted information for csv writing.
+
+        Args:
+            waveform: The waveform to use when setting up the formatted information.
+
+        Returns:
+            The normalized vertical values.
+        """
         if not isinstance(waveform.interleaved_iq_axis_values, Normalized):
             y_axis_values = Normalized(
                 waveform.interleaved_iq_axis_values,
