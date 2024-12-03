@@ -36,7 +36,7 @@ def _check_type(
     # convert to the provided type, or it's an ndarray use the previous dtype
     if isinstance(as_type, np.dtype):
         dtype = as_type
-    elif as_type and np.issubdtype(as_type, np.floating) or np.issubdtype(as_type, np.integer):
+    elif (as_type and np.issubdtype(as_type, np.floating)) or np.issubdtype(as_type, np.integer):
         dtype = np.dtype(as_type)
     elif as_type is None and MeasuredData and isinstance(measured_data, np.ndarray):
         dtype = measured_data.dtype
