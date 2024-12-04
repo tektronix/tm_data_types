@@ -29,6 +29,7 @@ class AbstractedFile(Generic[DATUM_TYPE_VAR], ABC):
         Args:
             file_path: The path for the file to read/write from.
             io_type: A file to represent what type of IO transference is occurring.
+            product: The product the file is associated with.
         """
         self.file_path = file_path
         self.io_type = io_type
@@ -45,11 +46,7 @@ class AbstractedFile(Generic[DATUM_TYPE_VAR], ABC):
         return self
 
     def __exit__(self, *args) -> None:
-        """Close the filestream when exiting a with statement.
-
-        Args:
-            args:
-        """
+        """Close the filestream when exiting a with statement."""
         self.fd.close()
 
     ################################################################################################

@@ -11,7 +11,7 @@ from bidict import bidict
 
 from tm_data_types.datum.data_types import MeasuredData
 from tm_data_types.datum.waveforms.waveform import Waveform, WaveformMetaInfo
-from tm_data_types.files_and_formats.waveform_file import AbstractedFile, DATUM_TYPE_VAR
+from tm_data_types.files_and_formats.abstracted_file import AbstractedFile, DATUM_TYPE_VAR
 
 
 class CSVFile(AbstractedFile, Generic[DATUM_TYPE_VAR]):

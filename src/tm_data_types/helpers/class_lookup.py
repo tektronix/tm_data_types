@@ -7,13 +7,13 @@ from tm_data_types.datum.datum import Datum
 from tm_data_types.datum.waveforms.analog_waveform import AnalogWaveform
 from tm_data_types.datum.waveforms.digital_waveform import DigitalWaveform
 from tm_data_types.datum.waveforms.iq_waveform import IQWaveform
+from tm_data_types.files_and_formats.abstracted_file import AbstractedFile
 from tm_data_types.files_and_formats.csv.data_formats.analog import WaveformFileCSVAnalog
 from tm_data_types.files_and_formats.csv.data_formats.digital import WaveformFileCSVDigital
 from tm_data_types.files_and_formats.csv.data_formats.iq import WaveformFileCSVIQ
 from tm_data_types.files_and_formats.mat.data_formats.analog import WaveformFileMATAnalog
 from tm_data_types.files_and_formats.mat.data_formats.digital import WaveformFileMATDigital
 from tm_data_types.files_and_formats.mat.data_formats.iq import WaveformFileMATIQ
-from tm_data_types.files_and_formats.waveform_file import AbstractedFile
 from tm_data_types.files_and_formats.wfm.data_formats.analog import WaveformFileWFMAnalog
 from tm_data_types.files_and_formats.wfm.data_formats.digital import WaveformFileWFMDigital
 from tm_data_types.files_and_formats.wfm.data_formats.iq import WaveformFileWFMIQ

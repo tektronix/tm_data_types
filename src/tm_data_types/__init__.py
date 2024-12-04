@@ -1,9 +1,6 @@
 """tm_data_types.
 
 Read and write common Test & Measurement files.
-
-Examples:
-    >>>
 """
 
 from importlib.metadata import version
