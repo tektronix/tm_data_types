@@ -64,6 +64,7 @@ class WFMFile(AbstractedFile[DATUM_TYPE_VAR], ABC):
     # a lookup for the meta info class to what's provided by the .wfm file
     _META_DATA_LOOKUP = bidict(
         {
+            "waveform_label": "waveform_label",
             "y_offset": "yOffset",
             "y_position": "yPosition",
             "analog_thumbnail": "ANALOG_Thumbnail",
@@ -130,7 +131,23 @@ class WFMFile(AbstractedFile[DATUM_TYPE_VAR], ABC):
         waveform: DATUM_TYPE_VAR = self.DATUM_TYPE()  # pylint: disable=abstract-class-instantiated
         # Remap and separate known/unknown keys for meta_info
         remapped = self.META_DATA_TYPE.remap(self._META_DATA_LOOKUP.inverse, formatted_data.meta_data)
-        known_fields = set(self.META_DATA_TYPE.__annotations__.keys())
+        
+        # Convert bytes to strings for string-like metadata
+        def convert_bytes_to_str(value):
+            if isinstance(value, bytes):
+                try:
+                    return value.decode('utf-8')
+                except UnicodeDecodeError:
+                    return value
+            return value
+        
+        remapped = {k: convert_bytes_to_str(v) for k, v in remapped.items()}
+        
+        # Collect all annotated fields from the class and its parents
+        known_fields = set()
+        for cls in self.META_DATA_TYPE.__mro__:
+            if hasattr(cls, "__annotations__"):
+                known_fields.update(cls.__annotations__.keys())
         known_data = {k: v for k, v in remapped.items() if k in known_fields}
         extra_data = {k: v for k, v in remapped.items() if k not in known_fields}
         meta_data = self.META_DATA_TYPE(**known_data, extended_metadata=extra_data or None)
@@ -158,14 +175,14 @@ class WFMFile(AbstractedFile[DATUM_TYPE_VAR], ABC):
         version_number = self.product.value.version
 
         # fill out a format class with the data written, then pack it
-
         formatted_data = WfmFormat()
         if waveform.meta_info:
-            exclusive_meta_data = waveform.meta_info.operable_exclusive_metadata()
-
+            all_metadata = {k: v for k, v in waveform.meta_info.operable_metainfo().items() if k != "extended_metadata"}
+            if waveform.meta_info.extended_metadata:
+                all_metadata.update(waveform.meta_info.extended_metadata)
             formatted_data.meta_data = self.META_DATA_TYPE.remap(
                 self._META_DATA_LOOKUP,
-                exclusive_meta_data,
+                all_metadata,
             )
         else:
             formatted_data.meta_data = self.META_DATA_TYPE.remap(self._META_DATA_LOOKUP, {})
@@ -227,3 +244,19 @@ class WFMFile(AbstractedFile[DATUM_TYPE_VAR], ABC):
             Returns an analog waveform created from the formatted data.
         """
         raise NotImplementedError
+
+    def remap(self, data: dict[str, Any]) -> dict[str, Any]:
+        """Remap the data to the correct format."""
+        print("[remap] Called with data:", data)
+        print("[remap] Lookup table:", self._META_DATA_LOOKUP)
+        result = {}
+        for key, value in data.items():
+            if key in self._META_DATA_LOOKUP:
+                result[self._META_DATA_LOOKUP[key]] = value
+            else:
+                # Only preserve non-standard fields in extended_metadata
+                if key != "waveform_label":  # Exclude waveform_label from extended_metadata
+                    print(f"[remap] Key '{key}' not in lookup; preserving as-is.")
+                    result[key] = value
+        print("[remap] Remapped result:", result)
+        return result
