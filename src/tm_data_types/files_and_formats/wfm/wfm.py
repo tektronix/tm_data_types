@@ -177,9 +177,15 @@ class WFMFile(AbstractedFile[DATUM_TYPE_VAR], ABC):
         # fill out a format class with the data written, then pack it
         formatted_data = WfmFormat()
         if waveform.meta_info:
-            all_metadata = {k: v for k, v in waveform.meta_info.operable_metainfo().items() if k != "extended_metadata"}
+            # Get all metadata, including extended metadata
+            all_metadata = {}
             if waveform.meta_info.extended_metadata:
                 all_metadata.update(waveform.meta_info.extended_metadata)
+            # Add standard metadata, excluding extended_metadata field
+            for key, value in waveform.meta_info.operable_metainfo().items():
+                if key != "extended_metadata":
+                    all_metadata[key] = value
+            # Remap all metadata using the lookup table
             formatted_data.meta_data = self.META_DATA_TYPE.remap(
                 self._META_DATA_LOOKUP,
                 all_metadata,
@@ -247,16 +253,15 @@ class WFMFile(AbstractedFile[DATUM_TYPE_VAR], ABC):
 
     def remap(self, data: dict[str, Any]) -> dict[str, Any]:
         """Remap the data to the correct format."""
-        print("[remap] Called with data:", data)
-        print("[remap] Lookup table:", self._META_DATA_LOOKUP)
-        result = {}
+        result = self.remap_keys(data)
+        return result
+
+    def remap_keys(self, data: dict) -> dict:
+        """Remap keys according to the lookup dictionary."""
+        remapped = {}
         for key, value in data.items():
             if key in self._META_DATA_LOOKUP:
-                result[self._META_DATA_LOOKUP[key]] = value
+                remapped[self._META_DATA_LOOKUP[key]] = value
             else:
-                # Only preserve non-standard fields in extended_metadata
-                if key != "waveform_label":  # Exclude waveform_label from extended_metadata
-                    print(f"[remap] Key '{key}' not in lookup; preserving as-is.")
-                    result[key] = value
-        print("[remap] Remapped result:", result)
-        return result
+                remapped[key] = value
+        return remapped

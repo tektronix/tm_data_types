@@ -56,29 +56,16 @@ class WaveformMetaInfo(ExclusiveMetaInfo):
         }
         return data
 
-    @staticmethod
-    def remap(
-        lookup: bidict[str, str],
-        data: Dict[str, Any],
-        drop_non_existant: bool = False,
-    ) -> Dict[str, Any]:
-        """Remap the pythonic naming convention to tekmeta naming/ file format naming.
-
-        Returns:
-            A dictionary which provides the opposite naming convention.
-        """
-        print("[remap] Called with data:", data)
-        print("[remap] Lookup table:", lookup)
+    @classmethod
+    def remap(cls, lookup: dict[str, str], data: dict[str, Any], drop_non_existant: bool = False) -> dict[str, Any]:
+        """Remap the data to the correct format."""
         remapped_dict = {}
-        for key, val in data.items():
+        for key, value in data.items():
             if key in lookup:
-                remapped_dict[lookup[key]] = val if not isinstance(val, Enum) else val.value
-            elif not drop_non_existant:
-                print(f"[remap] Key '{key}' not in lookup; preserving as-is.")
-                remapped_dict[key] = val
+                remapped_dict[lookup[key]] = value
             else:
-                print(f"[remap] Key '{key}' not in lookup and drop_non_existant=True; skipping.")
-        print("[remap] Remapped result:", remapped_dict)
+                if not drop_non_existant:
+                    remapped_dict[key] = value
         return remapped_dict
 
     extended_metadata: Optional[Dict[str, Any]] = None
