@@ -217,6 +217,31 @@ class WfmFormat:  # pylint: disable=too-many-instance-attributes
         }
 
         meta_data = {}
+        
+        # Store current position
+        current_pos = filestream.tell()
+        
+        # Scan forward for tekmeta! marker
+        chunk_size = 1024  # Read in chunks to be efficient
+        while True:
+            chunk = filestream.read(chunk_size)
+            if not chunk:  # End of file
+                break
+                
+            # Look for tekmeta! in the chunk
+            marker_pos = chunk.find(b"tekmeta!")
+            if marker_pos != -1:
+                # Found the marker, adjust file position to start of marker
+                filestream.seek(current_pos + marker_pos)
+                break
+                
+            # If we didn't find it in this chunk, move forward
+            current_pos = filestream.tell()
+            
+            # If we're near the end of the file, read smaller chunks
+            if len(chunk) < chunk_size:
+                break
+
         try:
             tek_meta = String8.unpack(endian.struct, filestream)
         except struct.error:

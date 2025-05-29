@@ -3,7 +3,7 @@
 import struct
 
 from abc import ABC, abstractmethod
-from typing import ClassVar, Dict, Union
+from typing import ClassVar, Dict, Union, Any
 
 import numpy as np
 
@@ -128,9 +128,12 @@ class WFMFile(AbstractedFile[DATUM_TYPE_VAR], ABC):
         formatted_data.unpack_wfm_file(endian_prefix, version_number, self.fd)
 
         waveform: DATUM_TYPE_VAR = self.DATUM_TYPE()  # pylint: disable=abstract-class-instantiated
-        meta_data = self.META_DATA_TYPE(
-            **self.META_DATA_TYPE.remap(self._META_DATA_LOOKUP.inverse, formatted_data.meta_data),
-        )
+        # Remap and separate known/unknown keys for meta_info
+        remapped = self.META_DATA_TYPE.remap(self._META_DATA_LOOKUP.inverse, formatted_data.meta_data)
+        known_fields = set(self.META_DATA_TYPE.__annotations__.keys())
+        known_data = {k: v for k, v in remapped.items() if k in known_fields}
+        extra_data = {k: v for k, v in remapped.items() if k not in known_fields}
+        meta_data = self.META_DATA_TYPE(**known_data, extended_metadata=extra_data or None)
         if formatted_data.implicit_dimensions is not None:
             waveform.x_axis_units = formatted_data.implicit_dimensions.first.units
             waveform.x_axis_spacing = formatted_data.implicit_dimensions.first.scale
@@ -187,32 +190,15 @@ class WFMFile(AbstractedFile[DATUM_TYPE_VAR], ABC):
     ################################################################################################
 
     # Reading
-    def _check_metadata(self, meta_data: Dict[str, Union[str, Double, Long, UnsignedLong]]) -> bool:
-        """Check the metadata and see if it fits for the format.
-
-        Args:
-            meta_data: A dictionary representing the tekmeta read from the file.
-
-        Returns:
-            An indication that this is the correct format to use.
-        """
-        if meta_data:
-            try:
-                self.META_DATA_TYPE(
-                    **self.META_DATA_TYPE.remap(self._META_DATA_LOOKUP.inverse, meta_data),
-                )
-            except TypeError as e:
-                # if you have too many keywords, this format doesn't work
-                if "unexpected keyword" in str(e):  # noqa: SIM103
-                    return False
-                # if we are missing some keywords, that is fine
-                return True
-            except KeyError:
-                return False
+    def _check_metadata(self, meta_data: Dict[str, Any]) -> bool:
+        """Check if metadata can be used to construct a WaveformMetaInfo object."""
+        try:
+            # Just try to construct with empty known fields - we'll handle the rest in read_datum
+            WaveformMetaInfo()
             return True
-
-        # if no tekmeta, the file is an analog waveform
-        return True
+        except Exception as e:
+            print(f"[_check_metadata] Failed to construct WaveformMetaInfo: {e}")
+            return False
 
     # Reading
     @abstractmethod

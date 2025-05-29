@@ -67,12 +67,26 @@ class WaveformMetaInfo(ExclusiveMetaInfo):
         Returns:
             A dictionary which provides the opposite naming convention.
         """
-        remapped_dict = {
-            lookup[key]: (val if not isinstance(val, Enum) else val.value)
-            for key, val in data.items()
-            if key in lookup or not drop_non_existant
-        }
+        print("[remap] Called with data:", data)
+        print("[remap] Lookup table:", lookup)
+        remapped_dict = {}
+        for key, val in data.items():
+            if key in lookup:
+                remapped_dict[lookup[key]] = val if not isinstance(val, Enum) else val.value
+            elif not drop_non_existant:
+                print(f"[remap] Key '{key}' not in lookup; preserving as-is.")
+                remapped_dict[key] = val
+            else:
+                print(f"[remap] Key '{key}' not in lookup and drop_non_existant=True; skipping.")
+        print("[remap] Remapped result:", remapped_dict)
         return remapped_dict
+
+    extended_metadata: Optional[Dict[str, Any]] = None
+
+    def __getattr__(self, name: str) -> Any:
+        if self.extended_metadata and name in self.extended_metadata:
+            return self.extended_metadata[name]
+        raise AttributeError(f"{type(self).__name__} object has no attribute {name!r}")
 
 
 class Waveform(Datum, ABC):

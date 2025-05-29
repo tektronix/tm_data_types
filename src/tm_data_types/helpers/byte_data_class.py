@@ -2,7 +2,7 @@
 
 import struct
 
-from typing import Any, Dict, get_args, List, Optional, TextIO, Type, TypeVar
+from typing import Any, Dict, get_args, List, Optional, TextIO, Type, TypeVar, Union
 
 from pydantic import model_validator
 from pydantic.dataclasses import dataclass as pydantic_dataclass
@@ -10,54 +10,45 @@ from pydantic.dataclasses import dataclass as pydantic_dataclass
 T = TypeVar("T")
 
 
-def convert_to_type(field_type: T, value_to_convert: Any) -> Optional[T]:
-    """Convert the value provided to the first instance of a usable typecast recursively.
-
-    Example:
-        "6" will be converted to 6 if the field annotation is Optional[int].
+def convert_to_type(field_type: Any, value_to_convert: Any) -> Any:
+    """Convert a value to a type.
 
     Args:
-        field_type: The type annotation being checked for this conversion.
-        value_to_convert: The value to type cast as a new type.
+        field_type: The type to convert to.
+        value_to_convert: The value to convert.
 
     Returns:
-        The field type if it is usable for a type conversion.
+        The converted value.
     """
-    error = TypeError(f"Type {type(value_to_convert)} cannot be converted to type {field_type}.")
-    try:
-        if isinstance(value_to_convert, bytes):
-            # try to convert the type
-            string_to_convert = ""
-            for character in value_to_convert:
-                if chr(character).isalpha():
-                    string_to_convert += chr(character)
-                else:
-                    break
-            converted_value = string_to_convert
-        else:
-            converted_value = field_type(value_to_convert)  # pyright: ignore [reportCallIssue]
-        # no error means we are able to do it
-        return converted_value  # noqa: TRY300
-    except TypeError:
-        # type error means failed type conversion
-        # we can't convert None, field type is needs to be used here as we can't isinstance None
-        if value_to_convert is None and field_type is type(None):
-            return None
-        # if it's Optional or Union, we can get args from it
-        for recursed_type in get_args(field_type):
+    origin = getattr(field_type, "__origin__", None)
+    # Handle Union/Optional types
+    if origin is Union:
+        for arg in field_type.__args__:
+            # NoneType
+            if arg is type(None) and value_to_convert is None:
+                return None
+            # Accept if already correct type (handle generics)
+            arg_origin = getattr(arg, "__origin__", None)
+            if arg_origin is not None:
+                if isinstance(value_to_convert, arg_origin):
+                    return value_to_convert
+            elif isinstance(value_to_convert, arg):
+                return value_to_convert
             try:
-                # recurse
-                convert_to_type(recursed_type, value_to_convert)
-                if value_to_convert is None:
-                    # we can't convert None
-                    return None
-                # return what the type that was returned
-                return recursed_type(value_to_convert)
-            except TypeError:  # noqa: PERF203
-                pass
-    except ValueError as e:
-        raise error from e
-    raise error
+                return convert_to_type(arg, value_to_convert)
+            except Exception:
+                continue
+        raise TypeError(f"Type {type(value_to_convert)} cannot be converted to type {field_type}.")
+    # Accept if already correct type (handle generics)
+    if origin is not None:
+        if isinstance(value_to_convert, origin):
+            return value_to_convert
+    elif isinstance(value_to_convert, field_type):
+        return value_to_convert
+    # Special case for bytes to str
+    if isinstance(value_to_convert, bytes) and field_type is str:
+        return value_to_convert.decode(errors='ignore')
+    return field_type(value_to_convert)
 
 
 @pydantic_dataclass(frozen=False)
