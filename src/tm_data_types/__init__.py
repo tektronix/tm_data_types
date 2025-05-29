@@ -20,7 +20,7 @@ from tm_data_types.io_factory_methods import (
 )
 
 # Read version from installed package.
-#__version__ = version("tm_data_types")
+__version__ = version("tm_data_types")
 
 __all__ = [
     "AnalogWaveform",
