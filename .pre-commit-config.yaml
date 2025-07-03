@@ -123,7 +123,6 @@ repos:
         name: poetry-audit
         entry: poetry audit
         language: system
-        types: [toml]
         pass_filenames: false
         always_run: true
         files: ^(.*/)?(poetry\.lock|pyproject\.toml)$

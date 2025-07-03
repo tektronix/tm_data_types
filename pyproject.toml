@@ -55,7 +55,7 @@ bidict = "^0.23.1"
 numba = "^0.60.0"
 numpy = "^1.26"
 pydantic = "^2.7.4"
-python = "^3.9"  # This is the main Python version requirement
+python = "^3.9.2"  # This is the main Python version requirement
 python-dateutil = "^2.8.2"
 scipy = "^1.12"
 
@@ -347,6 +347,7 @@ python =
     3.12: py312
 
 [testenv]
+skip_install = true
 package = wheel
 install_command = python -I -m pip install --upgrade --upgrade-strategy=eager {opts} {packages}
 deps =
