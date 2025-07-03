@@ -5,7 +5,7 @@ ci:
   autofix_prs: false
   autoupdate_schedule: quarterly
   skip:
-    - check-poetry
+    - poetry-check
     - pylint
 #    - pyright
 #    - pyright-verifytypes
