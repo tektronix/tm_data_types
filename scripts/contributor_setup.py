@@ -51,7 +51,7 @@ def main() -> None:
             raise IndexError  # noqa: TRY301
         # This requires contributors to use newer versions of Python even
         # though the package supports older versions.
-        if sys.version_info < (3, 10):
+        if sys.version_info < (3, 9):
             msg = (
                 "Unable to set up the environment. "
                 "Please use a Python version greater than 3.9 for "
