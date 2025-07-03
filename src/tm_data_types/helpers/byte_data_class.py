@@ -70,9 +70,9 @@ class EnforcedTypeDataClass:
     ################################################################################################
 
     # pylint: disable=too-few-public-methods
+    @classmethod
     @model_validator(mode="before")
-    def validate(cls, values) -> dict[str, Any]:  # pylint: disable=no-self-argument  # noqa: N805
-        # pylint: disable=no-member
+    def validate(cls, values) -> dict[str, Any]:
         """Pre-init enforced type cast."""
         new_values = {}
         # iterate through the parent objects
