@@ -6,8 +6,9 @@ import os
 import pathlib
 import re
 
+from collections.abc import Generator
 from importlib import import_module
-from typing import Any, Generator, Optional, Set, Tuple
+from typing import Any, Optional
 
 import tomli
 
@@ -150,9 +151,9 @@ def class_diagram(  # noqa: C901  # pylint: disable=too-many-locals
     Raises:
         ValueError: If no classDiagram can be created.
     """
-    inheritances: Set[Tuple[str, str]] = set()
-    family_base_classes: Set[str] = set()
-    device_drivers: Set[str] = set()
+    inheritances: set[tuple[str, str]] = set()
+    family_base_classes: set[str] = set()
+    device_drivers: set[str] = set()
 
     def get_tree_upwards(cls: Any) -> None:
         if getattr(cls, "_product_family_base_class", None) == cls:

@@ -51,41 +51,25 @@ version = "0.1.1"
 
 [tool.poetry.dependencies]
 bidict = "^0.23.1"
-numba = [
-  {python = ">=3.9,<4.0", version = "^0.60.0"},
-  {python = "3.8", version = "^0.58.0"}
-]
-numpy = [
-  {python = "^3.9", version = "^1.26"},
-  {python = "^3.8, <3.12", version = "^1.24"}
-]
+numba = "^0.60.0"
+numpy = "^1.26"
 pydantic = "^2.7.4"
-python = "^3.8, <3.13"
+python = "^3.9.2"  # This is the main Python version requirement
 python-dateutil = "^2.8.2"
-scipy = [
-  {python = "^3.9", version = "^1.12"},
-  {python = "^3.8, <3.12", version = "^1.10"}
-]
+scipy = "^1.12"
 
 [tool.poetry.group.dev.dependencies]
-docutils = "^0.20"  # TODO: Drop Python 3.8: remove this when the minimum Python version is >=3.9
 docutils-stubs = "^0.0.22"
-matplotlib = [
-  {python = ">=3.9", version = "^3.8"},
-  {python = "3.8", version = "^3.7"}
-]
+matplotlib = "^3.8"
 nodeenv = "^1.9.1"
-pip = "^24.0"
+pip = "^25.0"
 poetry = "^1.8.0"
 poetry-audit-plugin = "^0.4.0"
 poetry-plugin-export = "^1.7.1"
 poetry-pre-commit-plugin = "^0.1.2"
-pre-commit = [
-  {python = ">=3.9", version = "^3.7"},
-  {python = "3.8", version = "^3.5"}
-]
-pylint = "3.2.7"
-pyright = {extras = ["nodejs"], version = "1.1.391"}
+pre-commit = "^4.2"
+pylint = "3.3.7"
+pyright = {extras = ["nodejs"], version = "1.1.402"}
 pyroma = "^4.2"
 tox = "^4.0"
 tox-gh-actions = "^3.1.0"
@@ -93,22 +77,22 @@ twine = "^6.0.1"
 types-python-dateutil = "^2.9"
 types-pyyaml = "^6.0"
 types-requests = "^2.31"
-wheel = "^0.45"
+wheel = "^0.45.0"
 
 [tool.poetry.group.docs.dependencies]
 black = "^24.4.2"
 codespell = "^2.2.6"
 griffe = "^1.1.0"
 mkdocs = "^1.6.0"
-mkdocs-ezglossary-plugin = "^1.6.10"
+mkdocs-ezglossary-plugin = "^2.0.0"
 mkdocs-gen-files = "^0.5.0"
-mkdocs-include-markdown-plugin = "^6.0.5"
+mkdocs-include-markdown-plugin = "^7.1.5"
 mkdocs-literate-nav = "^0.6.1"
 mkdocs-macros-plugin = "^1.0.5"
 mkdocs-mermaid2-plugin = "^1.1.1"
 mkdocs-section-index = "^0.3.9"
 mkdocs-spellcheck = "^1.1.0"
-mkdocstrings = "^0.26.1"
+mkdocstrings = "^0.29.1"
 mkdocstrings-python = "^1.10.2"
 nodeenv = "^1.9.1"
 packaging = "^24.2"
@@ -169,7 +153,7 @@ pylint.extensions.set_membership,
 pylint.extensions.typing,
 pylint.extensions.while_used
 """
-py-version = "3.8"
+py-version = "3.9"
 recursive = true
 
 [tool.pylint."messages control"]
@@ -218,7 +202,7 @@ ignore = [
   "temp_*.py"
 ]
 pythonPlatform = "All"
-pythonVersion = "3.8"
+pythonVersion = "3.9"
 reportCallInDefaultInitializer = "error"
 reportImplicitOverride = "error"
 reportImplicitStringConcatenation = "error"
@@ -255,7 +239,7 @@ line-length = 100
 namespace-packages = ["docs/**", "examples/**", "scripts/**", "tests/**"]
 output-format = "concise"
 src = ["docs", "examples", "scripts", "src", "tests"]
-target-version = "py38"  # always generate Python 3.8 compatible code
+target-version = "py39"  # always generate Python 3.9 compatible code
 
 [tool.ruff.lint]
 allowed-confusables = []
@@ -340,15 +324,14 @@ legacy_tox_ini = """
 [tox]
 requires = tox>4
 isolated_build = True
-envlist = py38,py39,py310,py311,py312,tests,docs,doctests
+envlist = py39,py310,py311,py312,tests,docs,doctests
 skip_missing_interpreters = True
 labels =
-  basic = py38,py39,py310,py311,py312,tests
+  basic = py39,py310,py311,py312,tests
   documentation = docs,doctests
 
 [gh-actions]
 python =
-    3.8: py38
     3.9: py39
     3.10: py310
     3.11: py311
@@ -362,8 +345,8 @@ deps =
 setenv =
     COVERAGE_FILE = .coverage_{envname}
     DOC_PYTHON_VERSION = python3.11  # Keep this in sync with .readthedocs.yml and any CI scripts
-    # Skip pre-commit checks that are not needed (yamlfix should be removed from this list once Python 3.8 support is dropped)
-    SKIP = file-contents-sorter,yamlfix
+    # Skip pre-commit checks that are not needed
+    SKIP = file-contents-sorter
 commands_pre =
     poetry install --no-root --without=main
 commands =
