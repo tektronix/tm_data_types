@@ -1,7 +1,7 @@
 """Enumerators used to enforce typing."""
 
 from enum import Enum
-from typing import cast
+from typing import cast, List
 
 
 class CustomStrEnum(Enum):
@@ -24,7 +24,7 @@ class CustomStrEnum(Enum):
         return cast("str", self._value_)  # pylint: disable=no-member
 
     @classmethod
-    def list_values(cls) -> list[str]:
+    def list_values(cls) -> List[str]:
         """Return a list of all the values of the enum."""
         return [enum_entry.value for enum_entry in cls]
 

@@ -3,7 +3,7 @@
 import timeit
 
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import List, Type, TYPE_CHECKING
 
 import numpy as np
 import pytest
@@ -99,7 +99,7 @@ def test_parallel(tmp_path: Path) -> None:
     [(AnalogWaveform, AnalogWaveformMetaInfo)],
 )
 def test_wfm(
-    waveform_type: type[Waveform], waveform_meta_info: type[WaveformMetaInfo], tmp_path: Path
+    waveform_type: Type[Waveform], waveform_meta_info: Type[WaveformMetaInfo], tmp_path: Path
 ) -> None:
     """Check that a saved waveform is in a format that is readable by the oscilloscope."""
     waveform = waveform_type()
@@ -430,7 +430,7 @@ def test_types():
         type_max(np.dtype("c"))
 
     data_types = [[1, 2, 3, 4], np.array([1, 2, 3, 4]), RawSample([1, 2, 3, 4], as_type=Short)]
-    data_byte_types: list[type[ByteData]] = [
+    data_byte_types: List[Type[ByteData]] = [
         Char,
         UnsignedChar,
         Short,
@@ -442,7 +442,7 @@ def test_types():
         Float,
         Double,
     ]
-    np_types: list[type[DTypeLike]] = [
+    np_types: List[Type[DTypeLike]] = [
         np.int8,
         np.uint8,
         np.int16,
@@ -467,7 +467,7 @@ def test_types():
             assert np_array.dtype == byte_array.dtype
 
 
-def transformation_types(waveform: AnalogWaveform) -> list[AnalogWaveform]:
+def transformation_types(waveform: AnalogWaveform) -> List[AnalogWaveform]:
     """A list containing all different transformation types dependent on waveform."""
     convert_list = [
         waveform.transform_to_type(np.int8),
@@ -483,7 +483,7 @@ def test_manipulations():
     """Test the different methods which can manipulate waveform values."""
     data = np.array([0.0, 0.25, 0.5, 0.75, 1.0], dtype=np.float32)
     raw_sample = RawSample((data * type_max(np.int16)).astype(np.int16))
-    np_types: list[type[DTypeLike]] = [
+    np_types: List[Type[DTypeLike]] = [
         np.int8,
         np.int16,
         np.int32,

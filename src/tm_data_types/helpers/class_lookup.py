@@ -1,6 +1,7 @@
 """Helpers used to find what type of format needs to be used to write to/read from the file."""
 
 from enum import Enum
+from typing import Dict, List, Type
 
 from tm_data_types.datum.datum import Datum
 from tm_data_types.datum.waveforms.analog_waveform import AnalogWaveform
@@ -26,7 +27,7 @@ class CustomFormatEnum(Enum):
     """
 
     @classmethod
-    def list_values(cls) -> list[AbstractedFile]:
+    def list_values(cls) -> List[AbstractedFile]:
         """Return a list of all the values of the enum."""
         return [enum_entry.value for enum_entry in cls]
 
@@ -87,7 +88,7 @@ def handle_extensions(
 
 def find_class_format(
     extension: FileExtensions,
-    waveform_type: type[Datum],
+    waveform_type: Type[Datum],
 ) -> AbstractedFile:
     """Find the file and class format based on what waveform was provided.
 
@@ -96,7 +97,7 @@ def find_class_format(
         waveform_type: The waveform type that is being written.
     """
     format_lookup = handle_extensions(extension)
-    class_lookup: dict[type[Datum], CustomFormatEnum] = {
+    class_lookup: Dict[Type[Datum], CustomFormatEnum] = {
         AnalogWaveform: format_lookup.WAVEFORM,
         IQWaveform: format_lookup.WAVEFORMIQ,
         DigitalWaveform: format_lookup.WAVEFORMDIGITAL,
@@ -107,7 +108,7 @@ def find_class_format(
 
 def find_class_format_list(
     extension: FileExtensions,
-) -> list[AbstractedFile]:
+) -> List[AbstractedFile]:
     """Find what possible file formats can be used based on the extension or waveform.
 
     Args:

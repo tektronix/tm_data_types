@@ -3,7 +3,7 @@
 import struct
 
 from abc import ABC, abstractmethod
-from typing import ClassVar, Union
+from typing import ClassVar, Dict, Union
 
 import numpy as np
 
@@ -34,7 +34,7 @@ class WFMFile(AbstractedFile[DATUM_TYPE_VAR], ABC):
     ################################################################################################
 
     # a lookup for the byte formats provided by the .wfm file
-    _ENDIAN_PREFIX_LOOKUP: ClassVar[dict[str, Endian]] = {
+    _ENDIAN_PREFIX_LOOKUP: ClassVar[Dict[str, Endian]] = {
         ByteOrderFormat.INTEL.value: Endian(
             struct=">",
             from_byte="little",
@@ -187,7 +187,7 @@ class WFMFile(AbstractedFile[DATUM_TYPE_VAR], ABC):
     ################################################################################################
 
     # Reading
-    def _check_metadata(self, meta_data: dict[str, Union[str, Double, Long, UnsignedLong]]) -> bool:
+    def _check_metadata(self, meta_data: Dict[str, Union[str, Double, Long, UnsignedLong]]) -> bool:
         """Check the metadata and see if it fits for the format.
 
         Args:

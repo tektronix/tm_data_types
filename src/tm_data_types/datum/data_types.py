@@ -4,7 +4,7 @@ import sys
 
 from abc import abstractmethod
 from decimal import Decimal
-from typing import Any, Optional, Union
+from typing import Any, List, Optional, Type, Union
 
 import numpy as np
 
@@ -19,9 +19,9 @@ else:
 
 
 def _check_type(
-    as_type: Optional[Union[type[ByteData], PossibleTypes, type[PossibleTypes]]],
+    as_type: Optional[Union[Type[ByteData], PossibleTypes, Type[PossibleTypes]]],
     measured_data: Optional[
-        Union[NDArray[PossibleTypes], "MeasuredData", list[Union[float, int]]]
+        Union[NDArray[PossibleTypes], "MeasuredData", List[Union[float, int]]]
     ] = None,
 ) -> PossibleTypes:
     """Convert types to np dtype, or grab the measured data dtype.
@@ -67,7 +67,7 @@ def type_ratio(dtype_from: PossibleTypes, dtype_to: PossibleTypes) -> float:
 
 
 def type_max(
-    data_format: Union[type[ByteData], PossibleTypes, type[PossibleTypes]],
+    data_format: Union[Type[ByteData], PossibleTypes, Type[PossibleTypes]],
 ) -> Union[float, int]:
     """Get the maximum extent of a dtype.
 
@@ -86,7 +86,7 @@ def type_max(
 
 
 def type_min(
-    data_format: Union[type[ByteData], PossibleTypes, type[PossibleTypes]],
+    data_format: Union[Type[ByteData], PossibleTypes, Type[PossibleTypes]],
 ) -> Union[float, int]:
     """Get the minimum extent of a dtype.
 
@@ -110,8 +110,8 @@ class MeasuredData(np.ndarray):
 
     def __new__(
         cls,
-        measured_data: Union["MeasuredData", NDArray[PossibleTypes], list[Union[int, float]]],
-        as_type: Optional[Union[type[ByteData], PossibleTypes, type[PossibleTypes]]] = None,
+        measured_data: Union["MeasuredData", NDArray[PossibleTypes], List[Union[int, float]]],
+        as_type: Optional[Union[Type[ByteData], PossibleTypes, Type[PossibleTypes]]] = None,
     ) -> "MeasuredData":
         """When a new instance of MeasuredData is created, retype it.
 
@@ -123,7 +123,7 @@ class MeasuredData(np.ndarray):
             The current new instance of MeasuredData.
         """
         # if the provided data is a list but no conversion type is provided, error out
-        if isinstance(measured_data, list) and as_type is None:
+        if isinstance(measured_data, List) and as_type is None:
             raise TypeError("No type specified for data.")
 
         dtype = _check_type(as_type, measured_data)
@@ -139,7 +139,7 @@ class MeasuredData(np.ndarray):
             )
             return obj
         # otherwise assume that the type is correct and use that without conversion
-        if isinstance(measured_data, list):
+        if isinstance(measured_data, List):
             shape = len(measured_data)
             measured_data = np.array(measured_data, dtype=dtype)
         else:
@@ -399,10 +399,10 @@ class Normalized(MeasuredData):
 
     def __new__(
         cls,
-        measured_data: Union[MeasuredData, NDArray[PossibleTypes], list[Union[float, int]]],
+        measured_data: Union[MeasuredData, NDArray[PossibleTypes], List[Union[float, int]]],
         spacing: Optional[float] = None,
         offset: Optional[float] = None,
-        as_type: Optional[Union[type[ByteData], type[PossibleTypes], PossibleTypes]] = None,
+        as_type: Optional[Union[Type[ByteData], Type[PossibleTypes], PossibleTypes]] = None,
     ) -> "Normalized":
         """Override the base new, utilizing the offset and spacing class variables temporarily.
 

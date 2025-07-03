@@ -3,7 +3,7 @@
 import csv
 
 from abc import abstractmethod
-from typing import Generic
+from typing import Generic, Tuple
 
 import numpy as np
 
@@ -236,7 +236,7 @@ class CSVFile(AbstractedFile, Generic[DATUM_TYPE_VAR]):
 
     # Writing
     @abstractmethod
-    def _formatted_waveform_values(self, waveform: Waveform) -> tuple[MeasuredData, str, str]:
+    def _formatted_waveform_values(self, waveform: Waveform) -> Tuple[MeasuredData, str, str]:
         """Return the formatted information for csv writing.
 
         Args:

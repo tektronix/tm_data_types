@@ -164,6 +164,7 @@ recursive = true
 enable = ["all"]
 disable = [
   "broad-exception-caught",  # caught by ruff
+  "deprecated-typing-alias",  # caught by ruff
   "duplicate-code",
   "fixme",  # caught by ruff
   "global-statement",  # caught by ruff
@@ -265,7 +266,9 @@ ignore = [
   "TD002",  # Missing author in TO DO
   "TD003",  # Missing issue link on the line following this TO DO
   "TRY003",  # Avoid specifying long messages outside the exception class  # TODO: enable this
+  "UP006",  # Use `type` instead of `Type` for type annotation  # TODO: Drop Python 3.9: enable this check
   "UP024",  # Replace aliased errors with `OSError`
+  "UP035",  # `X` is deprecated, use `Y` instead # TODO: Drop Python 3.9: enable this check
   "UP037"  # Remove quotes from type annotation
 ]
 pydocstyle = {convention = "google"}

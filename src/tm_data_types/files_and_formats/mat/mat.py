@@ -4,7 +4,7 @@ import datetime
 import struct
 
 from abc import abstractmethod
-from typing import Any, ClassVar, Generic, Union
+from typing import Any, ClassVar, Dict, Generic, List, Tuple, Union
 
 import numpy as np
 import scipy.io as sio
@@ -43,12 +43,12 @@ class MATFile(AbstractedFile, Generic[DATUM_TYPE_VAR]):
 
     WAVEFORM_TYPE = Waveform
     # a lookup for the byte formats provided by the .wfm file
-    _ENDIAN_PREFIX_LOOKUP: ClassVar[dict[bytes, Endian]] = {
+    _ENDIAN_PREFIX_LOOKUP: ClassVar[Dict[bytes, Endian]] = {
         b"MI": Endian(struct=">", from_byte="little", format=b"MI"),
         b"IM": Endian(struct="<", from_byte="big", format=b"IM"),
     }
 
-    _MAT_VALUE_LOOKUP: ClassVar[dict[int, ByteData]] = {
+    _MAT_VALUE_LOOKUP: ClassVar[Dict[int, ByteData]] = {
         1: SignedChar,
         2: UnsignedChar,
         3: Short,
@@ -128,7 +128,7 @@ class MATFile(AbstractedFile, Generic[DATUM_TYPE_VAR]):
     ################################################################################################
 
     # Reading
-    def _unpack_data(self, endian_prefix: Endian) -> tuple[int, Union[bytes, list[Any]]]:
+    def _unpack_data(self, endian_prefix: Endian) -> Tuple[int, Union[bytes, List[Any]]]:
         """Unpack the .mat values.
 
         Args:
@@ -172,7 +172,7 @@ class MATFile(AbstractedFile, Generic[DATUM_TYPE_VAR]):
         return total_bytes, values
 
     # Reading
-    def _convert_from_formatted_data(self, formatted_data: dict[str, Any]) -> WAVEFORM_TYPE:
+    def _convert_from_formatted_data(self, formatted_data: Dict[str, Any]) -> WAVEFORM_TYPE:
         """Convert the data from a formatted dictionary to a waveform.
 
         Args:
@@ -209,7 +209,7 @@ class MATFile(AbstractedFile, Generic[DATUM_TYPE_VAR]):
         return waveform
 
     # Writing
-    def _convert_to_formatted_data(self, waveform: WAVEFORM_TYPE) -> dict[str, Any]:
+    def _convert_to_formatted_data(self, waveform: WAVEFORM_TYPE) -> Dict[str, Any]:
         """Convert the data from an analog waveform class to a formatted dictionary.
 
         Args:

@@ -1,7 +1,7 @@
 """The base file type which abstracts all file formats."""
 
 from abc import ABC, abstractmethod
-from typing import Generic, Optional, TextIO, TypeVar
+from typing import Dict, Generic, Optional, TextIO, TypeVar
 
 from bidict import bidict
 
@@ -68,7 +68,7 @@ class AbstractedFile(Generic[DATUM_TYPE_VAR], ABC):
         self.fd.write(to_write_info)
 
     @staticmethod
-    def update_bidict(original_bidict: bidict, operating_bidict: dict[str, str]) -> bidict:
+    def update_bidict(original_bidict: bidict, operating_bidict: Dict[str, str]) -> bidict:
         """Update a bidirectional dict with new values.
 
         This may need to be a factory helper.

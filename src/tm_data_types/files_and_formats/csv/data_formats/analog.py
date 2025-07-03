@@ -1,5 +1,7 @@
 """The functionality to read and write to a csv file when the waveform is analog."""
 
+from typing import Tuple
+
 import numpy as np
 
 from tm_data_types.datum.data_types import Normalized, RawSample, type_max, type_min
@@ -89,7 +91,7 @@ class WaveformFileCSVAnalog(CSVFile[AnalogWaveform]):
         return output
 
     # Writing
-    def _formatted_waveform_values(self, waveform: AnalogWaveform) -> tuple[Normalized, str, str]:  # pyright: ignore [reportIncompatibleMethodOverride]
+    def _formatted_waveform_values(self, waveform: AnalogWaveform) -> Tuple[Normalized, str, str]:  # pyright: ignore [reportIncompatibleMethodOverride]
         """Return the formatted information for csv writing.
 
         Args:

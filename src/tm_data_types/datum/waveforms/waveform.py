@@ -2,7 +2,7 @@
 
 from abc import ABC, abstractmethod
 from functools import cached_property
-from typing import Any, Optional
+from typing import Any, Dict, Optional
 
 import numpy as np
 
@@ -35,7 +35,7 @@ class WaveformMetaInfo(ExclusiveMetaInfo):
     # Public Methods
     ################################################################################################
 
-    def operable_metainfo(self) -> dict[str, Any]:
+    def operable_metainfo(self) -> Dict[str, Any]:
         """Meta info that contains non None values within the fields.
 
         Returns:
@@ -43,7 +43,7 @@ class WaveformMetaInfo(ExclusiveMetaInfo):
         """
         return {key: value for key, value in self.__dict__.items() if value is not None}
 
-    def operable_exclusive_metadata(self) -> dict[str, Any]:
+    def operable_exclusive_metadata(self) -> Dict[str, Any]:
         """Meta info that is exclusively tekmeta.
 
         Returns:
@@ -59,9 +59,9 @@ class WaveformMetaInfo(ExclusiveMetaInfo):
     @staticmethod
     def remap(
         lookup: bidict[str, str],
-        data: dict[str, Any],
+        data: Dict[str, Any],
         drop_non_existant: bool = False,
-    ) -> dict[str, Any]:
+    ) -> Dict[str, Any]:
         """Remap the pythonic naming convention to tekmeta naming/ file format naming.
 
         Returns:

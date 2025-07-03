@@ -1,5 +1,7 @@
 """The functionality to read and write to a csv file when the waveform is digital."""
 
+from typing import Tuple
+
 import numpy as np
 
 from tm_data_types.datum.data_types import Digitized, RawSample
@@ -88,7 +90,7 @@ class WaveformFileCSVDigital(CSVFile[DigitalWaveform]):
         return output
 
     # Writing
-    def _formatted_waveform_values(self, waveform: DigitalWaveform) -> tuple[Digitized, str, str]:  # pyright: ignore [reportIncompatibleMethodOverride]
+    def _formatted_waveform_values(self, waveform: DigitalWaveform) -> Tuple[Digitized, str, str]:  # pyright: ignore [reportIncompatibleMethodOverride]
         """Return the formatted information for csv writing.
 
         Args:

@@ -3,7 +3,7 @@
 import multiprocessing
 import os
 
-from typing import Optional, TYPE_CHECKING
+from typing import List, Optional, TYPE_CHECKING
 
 from typing_extensions import TypeVar
 
@@ -93,7 +93,7 @@ def read_file(file_path: str) -> DatumAlias:
         file_extension = FileExtensions[path_extension.replace(".", "").upper()]
     except KeyError as e:
         raise IOError(f"The {path_extension} extension cannot be read from.") from e
-    class_formats: list[AbstractedFile] = find_class_format_list(file_extension)
+    class_formats: List[AbstractedFile] = find_class_format_list(file_extension)
     for file_format in class_formats:
         with file_format(file_path, access_type(file_extension, write=False)) as fd:
             if fd.check_style():
@@ -121,8 +121,8 @@ def read_iq_file(file_path: str) -> IQWaveform:
 
 
 def _write_files(
-    file_paths: list[str],
-    datums: list[Datum],
+    file_paths: List[str],
+    datums: List[Datum],
     product: InstrumentSeries = InstrumentSeries.TEKSCOPE,
     file_format: Optional[CSVFormats] = None,
 ) -> None:
@@ -139,8 +139,8 @@ def _write_files(
 
 
 def write_files_in_parallel(
-    file_paths: list[str],
-    datums: list[Datum],
+    file_paths: List[str],
+    datums: List[Datum],
     force_process_count: int = 4,
     product: InstrumentSeries = InstrumentSeries.TEKSCOPE,
     file_format: Optional[CSVFormats] = None,
@@ -204,7 +204,7 @@ def _read_files(file_paths: str, file_queue: multiprocessing.Queue) -> None:
         file_queue.put((file_path, read_file(file_path)))
 
 
-def read_files_in_parallel(file_paths: list[str], force_process_count: int = 4) -> list[Datum]:
+def read_files_in_parallel(file_paths: List[str], force_process_count: int = 4) -> List[Datum]:
     """Read a list of files in parallel.
 
     This method allows for the parallel reading of multiple waveform files.
