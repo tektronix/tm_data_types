@@ -2,10 +2,11 @@
 
 import struct
 
-from typing import Any, Dict, get_args, List, Optional, TextIO, Type, TypeVar
+from typing import Any, get_args, Optional, TextIO, TypeVar
 
 from pydantic import model_validator
 from pydantic.dataclasses import dataclass as pydantic_dataclass
+from typing_extensions import Self
 
 T = TypeVar("T")
 
@@ -70,7 +71,7 @@ class EnforcedTypeDataClass:
 
     # pylint: disable=too-few-public-methods
     @model_validator(mode="before")
-    def validate(cls, values) -> Dict[str, Any]:  # pylint: disable=no-self-argument  # noqa: N805
+    def validate(cls, values) -> dict[str, Any]:  # pylint: disable=no-self-argument  # noqa: N805
         # pylint: disable=no-member
         """Pre-init enforced type cast."""
         new_values = {}
@@ -121,12 +122,12 @@ class StructuredInfo(EnforcedTypeDataClass):
     # Reading
     @classmethod
     def unpack(
-        cls: Type[T],
+        cls,
         endian: str,
         filestream: TextIO,
         in_order: bool,
-        order: Optional[List[str]] = None,
-    ) -> T:
+        order: Optional[list[str]] = None,
+    ) -> Self:
         """Read a file and unpack its contents into a specific datum format.
 
         Args:
@@ -161,7 +162,7 @@ class StructuredInfo(EnforcedTypeDataClass):
         endian: str,
         filestream: TextIO,
         in_order: bool = True,
-        order: Optional[List[str]] = None,
+        order: Optional[list[str]] = None,
     ) -> None:
         """Pack the wfm format into a byte sequence then write it to a file.
 

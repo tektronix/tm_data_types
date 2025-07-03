@@ -3,7 +3,7 @@
 import csv
 
 from abc import abstractmethod
-from typing import Generic, Tuple
+from typing import Generic
 
 import numpy as np
 
@@ -129,7 +129,7 @@ class CSVFile(AbstractedFile, Generic[DATUM_TYPE_VAR]):
 
         vertical_values, csv_format, channels = self._formatted_waveform_values(waveform)
 
-        output += f'\nLabels{"".join(["," for _ in range(vertical_values.shape[1])])}\n'
+        output += f"\nLabels{''.join([',' for _ in range(vertical_values.shape[1])])}\n"
         output += f"TIME,{channels}"
 
         np.savetxt(
@@ -236,7 +236,7 @@ class CSVFile(AbstractedFile, Generic[DATUM_TYPE_VAR]):
 
     # Writing
     @abstractmethod
-    def _formatted_waveform_values(self, waveform: Waveform) -> Tuple[MeasuredData, str, str]:
+    def _formatted_waveform_values(self, waveform: Waveform) -> tuple[MeasuredData, str, str]:
         """Return the formatted information for csv writing.
 
         Args:

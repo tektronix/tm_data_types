@@ -8,14 +8,10 @@ import struct
 from dataclasses import dataclass, replace
 from typing import (
     Callable,
-    Dict,
     Generic,
     get_args,
-    List,
     Optional,
     TextIO,
-    Tuple,
-    Type,
     TypeVar,
     Union,
 )
@@ -138,13 +134,13 @@ class WfmFormat:  # pylint: disable=too-many-instance-attributes
     time_info: Optional[Dimension[TimeBaseInformation, TimeBaseInformation]] = None
     update_specifications: Optional[UpdateSpecifications] = None
     curve_info: Optional[CurveInformation] = None
-    update_specs: List[UpdateSpecifications] = []  # noqa: RUF012
-    curve_specs: List[CurveInformation] = []  # noqa: RUF012
+    update_specs: list[UpdateSpecifications] = []  # noqa: RUF012
+    curve_specs: list[CurveInformation] = []  # noqa: RUF012
     precharge_buffer: np.ndarray = np.empty(0)
     curve_buffer: np.ndarray = np.empty(0)
     postcharge_buffer: np.ndarray = np.empty(0)
     file_checksum: Optional[UnsignedLongLong] = None
-    meta_data: Dict[str, Union[str, Double, Long, UnsignedLong]] = {}  # noqa: RUF012
+    meta_data: dict[str, Union[str, Double, Long, UnsignedLong]] = {}  # noqa: RUF012
 
     # Reading
     def unpack_wfm_file(
@@ -203,7 +199,7 @@ class WfmFormat:  # pylint: disable=too-many-instance-attributes
     def parse_tekmeta(
         endian: Endian,
         filestream: TextIO,
-    ) -> Optional[Dict[str, Union[Long, Double, UnsignedLong]]]:
+    ) -> Optional[dict[str, Union[Long, Double, UnsignedLong]]]:
         """Parse the metadata from the eof.
 
         Args:
@@ -359,9 +355,9 @@ class WfmFormat:  # pylint: disable=too-many-instance-attributes
                 else:
                     summation += int(np.add.reduce(value.view(np.uint8), dtype=np.uint64))
 
-            elif isinstance(value, List):
+            elif isinstance(value, list):
                 summation += sum(frame.get_value_summation() for frame in value)
-            elif not isinstance(value, Dict):
+            elif not isinstance(value, dict):
                 summation += value.get_value_summation()
 
         self.file_checksum = UnsignedLongLong(summation)
@@ -372,8 +368,8 @@ class WfmFormat:  # pylint: disable=too-many-instance-attributes
     # Writing
     def setup_file_info(
         self,
-        zoom_scale: Tuple[int, float] = (1, 1.0),
-        zoom_position: Tuple[float, float] = (0.0, 0.0),
+        zoom_scale: tuple[int, float] = (1, 1.0),
+        zoom_position: tuple[float, float] = (0.0, 0.0),
         waveform_label: str = "",
     ) -> None:
         """Fill in the generic file and structure info.
@@ -514,7 +510,7 @@ class WfmFormat:  # pylint: disable=too-many-instance-attributes
         offset: float = 0.0,
         size: int = 0,
         units: str = "V",
-        extent_range: Tuple[float, float] = (0.0, 0.0),
+        extent_range: tuple[float, float] = (0.0, 0.0),
         resolution: float = 1.0,
         reference_point: float = 0.0,
         curve_format: CurveFormatsVer3 = CurveFormatsVer3.EXPLICIT_INT16,
@@ -522,7 +518,7 @@ class WfmFormat:  # pylint: disable=too-many-instance-attributes
         invalid_data: int = 0,
         over_range: bool = False,
         under_range: bool = False,
-        value_range: Tuple[int, int] = (0, 0),
+        value_range: tuple[int, int] = (0, 0),
     ) -> None:
         """Fill in either the first or second explicit dimension.
 
@@ -574,7 +570,7 @@ class WfmFormat:  # pylint: disable=too-many-instance-attributes
         scale: float = 4.0e-7,
         offset: float = 0.0,
         units: str = "s",
-        extent_range: Tuple[float, float] = (0.0, 0.0),
+        extent_range: tuple[float, float] = (0.0, 0.0),
         resolution: float = 0.0,
         reference_point: float = 0.0,
         spacing: int = 0,
@@ -638,7 +634,7 @@ class WfmFormat:  # pylint: disable=too-many-instance-attributes
             horizontal_reference: The horizontal position of the trigger in percentile.
             trigger_delay: The amount of delay, in seconds, from the trigger to the HRef.
         """
-        user_view_class: Callable
+        user_view_class: Callable  # pylint: disable=deprecated-typing-alias
         # version 3 uses a double for point_density
         if version_number == VersionNumber.THREE:
             user_view_class = DimensionsUserViewVer3
@@ -776,7 +772,7 @@ class WfmFormat:  # pylint: disable=too-many-instance-attributes
     # Reading
     @staticmethod
     def _unpack_twice(
-        data_class: Type[StructuredInfo],
+        data_class: type[StructuredInfo],
         endian: Endian,
         filestream: TextIO,
     ) -> Dimension:
@@ -798,11 +794,11 @@ class WfmFormat:  # pylint: disable=too-many-instance-attributes
     # Reading
     @staticmethod
     def _unpack_data(
-        dimensions: Type[StructuredInfo],
-        user_view: Type[Union[DimensionsUserViewVer12, DimensionsUserViewVer3]],
+        dimensions: type[StructuredInfo],
+        user_view: type[Union[DimensionsUserViewVer12, DimensionsUserViewVer3]],
         endian: Endian,
         filestream: TextIO,
-    ) -> Tuple[Dimension, Dimension]:
+    ) -> tuple[Dimension, Dimension]:
         """Unpack the explicit data and it's user view information.
 
         Args:
@@ -827,7 +823,7 @@ class WfmFormat:  # pylint: disable=too-many-instance-attributes
         self,
         endian: Endian,
         filestream: TextIO,
-    ) -> Tuple[List[UpdateSpecifications], List[CurveInformation]]:
+    ) -> tuple[list[UpdateSpecifications], list[CurveInformation]]:
         """Fast Frame information holding both update and curve info data classes.
 
         Args:
@@ -855,7 +851,7 @@ class WfmFormat:  # pylint: disable=too-many-instance-attributes
     def _get_curve_information(
         self,
         filestream: TextIO,
-    ) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
+    ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
         """Obtain the waveform curve.
 
         Args:
@@ -911,7 +907,7 @@ class WfmFormat:  # pylint: disable=too-many-instance-attributes
 
     # Reading
     @staticmethod
-    def get_curve_data(length: int, data_type: Type[ByteData], filestream: TextIO) -> np.ndarray:
+    def get_curve_data(length: int, data_type: type[ByteData], filestream: TextIO) -> np.ndarray:
         """Read the curve data from the file.
 
         Args:
@@ -955,7 +951,7 @@ class WfmFormat:  # pylint: disable=too-many-instance-attributes
             self.setup_file_info()
 
     # Writing
-    def _find_offsets(self) -> Tuple[int, int]:
+    def _find_offsets(self) -> tuple[int, int]:
         """Determine the total byte length and where the curve is located dynamically.
 
         Returns:
@@ -977,7 +973,7 @@ class WfmFormat:  # pylint: disable=too-many-instance-attributes
             if attribute_value is not None and attribute_name not in "meta_data":
                 if isinstance(attribute_value, np.ndarray):
                     byte_count += len(attribute_value) * attribute_value.dtype.itemsize
-                elif isinstance(attribute_value, List):
+                elif isinstance(attribute_value, list):
                     byte_count += (
                         len(attribute_value) * get_args(attribute_type)[0].get_cls_length()
                     )

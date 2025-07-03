@@ -1,11 +1,12 @@
 """Test the benchmark of how well the system performs reading and writing files."""
 
+import collections
 import os
 import tempfile
 import timeit
 
 from dataclasses import asdict, dataclass
-from typing import Callable, List, Optional, Tuple, Union
+from typing import Optional, Union
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -34,7 +35,7 @@ class Performance:
     reads_per_second: NDArray
 
 
-def write_files_serial(file_paths: List[str], datums: List[AnalogWaveform]) -> None:
+def write_files_serial(file_paths: list[str], datums: list[AnalogWaveform]) -> None:
     """Write to the provided file paths using the waveforms serially.
 
     Args:
@@ -45,7 +46,7 @@ def write_files_serial(file_paths: List[str], datums: List[AnalogWaveform]) -> N
         write_file(file_path, datum)
 
 
-def read_files_serial(file_paths: List[str]) -> None:
+def read_files_serial(file_paths: list[str]) -> None:
     """Read the provided file paths serially.
 
     Args:
@@ -73,7 +74,7 @@ class BenchMark:
         time_values: NDArray[np.float64],
         z_axis_label: str,
         scatter_colors: Union[str, NDArray[np.int64]],
-        view_tuple: Tuple[int, int],
+        view_tuple: tuple[int, int],
     ) -> None:
         """Plot a mesh of values on a scatter plot graph.
 
@@ -156,10 +157,10 @@ class BenchMark:
     # pylint: disable=too-many-locals
     def measure_times(
         self,
-        write_method: Callable[[List[str], List[Datum]], None],
-        read_method: Callable[[List[str]], None],
-        curve_lengths: List[int],
-        file_counts: List[int],
+        write_method: collections.abc.Callable[[list[str], list[Datum]], None],
+        read_method: collections.abc.Callable[[list[str]], None],
+        curve_lengths: list[int],
+        file_counts: list[int],
     ) -> None:
         """Measure the time for the provided range of curve lengths and file counts.
 
