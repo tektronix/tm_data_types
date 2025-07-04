@@ -52,7 +52,10 @@ version = "0.1.1"
 
 [tool.poetry.dependencies]
 bidict = "^0.23.1"
-numba = "^0.60.0"
+numba = [
+  {python = ">=3.9,<3.13", version = "0.60.0"},
+  {python = ">=3.13,<3.14", version = "0.61.0"}
+]
 numpy = "^1.26"
 pydantic = "^2.7.4"
 python = "^3.9.2"  # This is the main Python version requirement
