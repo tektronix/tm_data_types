@@ -363,7 +363,7 @@ setenv =
     # Skip pre-commit checks that are not needed
     SKIP = file-contents-sorter
 commands_pre =
-    poetry install --no-root --without=main
+    poetry install --no-root --only main
 commands =
     !tests: poetry build --output=dist_{envname}
     !tests: twine check --strict dist_{envname}/*
