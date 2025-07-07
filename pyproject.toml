@@ -54,7 +54,7 @@ version = "0.1.1"
 bidict = "^0.23.1"
 numba = [
   {python = ">=3.9,<3.13", version = "0.60.0"},
-  {python = "^3.13", version = "0.61.0"}
+  {python = ">=3.13,<3.14", version = "0.61.0"}
 ]
 numpy = [
   {python = ">=3.9,<3.13", version = ">=1.24,<2.0"},
