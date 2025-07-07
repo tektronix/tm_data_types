@@ -22,6 +22,10 @@ Things to be included in the next release go here.
 
 - Python 3.8 support has been removed from the package. The minimum supported version is now Python 3.9.
 
+### Added
+
+- Added support for Python 3.13.
+
 ---
 
 ## v0.1.1 (2024-09-11)
