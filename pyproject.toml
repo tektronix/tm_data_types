@@ -61,7 +61,7 @@ numpy = [
   {python = ">=3.13,<3.14", version = ">=2.1,<3.0"}
 ]
 pydantic = "^2.7.4"
-python = "^3.9.2"  # This is the main Python version requirement
+python = ">=3.9.2,<3.14"
 python-dateutil = "^2.8.2"
 scipy = [
   {python = ">=3.9,<3.13", version = ">=1.9,<1.13"},
