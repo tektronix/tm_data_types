@@ -5,12 +5,13 @@ ci:
   autofix_prs: false
   autoupdate_schedule: quarterly
   skip:
-    - poetry-check
     - pylint
 #    - pyright
 #    - pyright-verifytypes
     - pyroma
+    - poetry-lock
     - poetry-audit
+    - poetry-check
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: cef0300fd0fc4d2a87a85fa2093c6b283ea36f4b  # frozen: v5.0.0
@@ -119,13 +120,20 @@ repos:
         pass_filenames: false
         always_run: true
         args: [., --min=10]
+      - id: poetry-lock
+        name: poetry-lock
+        entry: poetry lock
+        language: system
+        pass_filenames: false
+        always_run: true
+        files: ^(.*/)?(poetry\.lock|pyproject\.toml)$
       - id: poetry-audit
         name: poetry-audit
         entry: poetry audit
         language: system
         pass_filenames: false
-        always_run: true
         files: ^(.*/)?(poetry\.lock|pyproject\.toml)$
+        always_run: true
         args: [--json, --ignore-code=CVE-2019-8341]
       - id: poetry-check
         name: poetry-check
@@ -133,6 +141,7 @@ repos:
         language: system
         pass_filenames: false
         files: ^(.*/)?(poetry\.lock|pyproject\.toml)$
+#        args: [--strict]  # TODO: enable this when poetry can be updated to v2+
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: 7445ed19e95ffaa6aad0d9bd4123025f7039511a  # frozen: v0.12.1
     hooks:
