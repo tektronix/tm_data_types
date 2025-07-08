@@ -363,7 +363,7 @@ setenv =
     # Skip pre-commit checks that are not needed
     SKIP = file-contents-sorter
 commands_pre =
-    poetry install --no-root --without=main
+    python -m poetry install --no-root --without=main
 commands =
     !tests: python -c "import shutil; shutil.rmtree('.dist/{envname}', ignore_errors=True)"
     !tests: poetry build --output=.dist/{envname}
