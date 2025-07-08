@@ -229,7 +229,7 @@ class MATFile(AbstractedFile, Generic[DATUM_TYPE_VAR]):
         formatted_data["__header__"] = (
             f"MATLAB 5.0 MAT-file. Tek Waveform Writer Version: {version}\n"
             f"Platform: {model}\n"
-            f'Created on {now.strftime("%A")[0:3]} {now.strftime("%B")} '
+            f"Created on {now.strftime('%A')[0:3]} {now.strftime('%B')} "
             f"{now.hour}:{now.minute}:{now.second} {now.year}"
         ).encode()
         formatted_data["__version__"] = 1.0

@@ -86,7 +86,7 @@ class WaveformFileCSVDigital(CSVFile[DigitalWaveform]):
         Returns:
             The specific digital waveform headers to append to the csv output.
         """
-        output = f"Digital Type,{np.dtype(waveform.y_axis_byte_values.dtype).itemsize*8}x1\n"
+        output = f"Digital Type,{np.dtype(waveform.y_axis_byte_values.dtype).itemsize * 8}x1\n"
         return output
 
     # Writing

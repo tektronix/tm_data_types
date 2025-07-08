@@ -129,7 +129,7 @@ class CSVFile(AbstractedFile, Generic[DATUM_TYPE_VAR]):
 
         vertical_values, csv_format, channels = self._formatted_waveform_values(waveform)
 
-        output += f'\nLabels{"".join(["," for _ in range(vertical_values.shape[1])])}\n'
+        output += f"\nLabels{''.join([',' for _ in range(vertical_values.shape[1])])}\n"
         output += f"TIME,{channels}"
 
         np.savetxt(
