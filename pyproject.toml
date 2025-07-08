@@ -63,7 +63,10 @@ numpy = [
 pydantic = "^2.7.4"
 python = "^3.9.2"  # This is the main Python version requirement
 python-dateutil = "^2.8.2"
-scipy = "^1.12"
+scipy = [
+  {python = ">=3.9,<3.13", version = ">=1.9,<1.13"},
+  {python = ">=3.13,<3.14", version = ">=1.14.1,<2.0"}
+]
 
 [tool.poetry.group.dev.dependencies]
 docutils-stubs = "^0.0.22"
