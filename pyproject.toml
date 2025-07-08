@@ -366,6 +366,8 @@ package = wheel
 install_command = python -I -m pip install --upgrade --upgrade-strategy=eager {opts} {packages}
 deps =
     poetry
+passenv =
+    GITHUB_ACTIONS
 setenv =
     COVERAGE_FILE = .coverage_{envname}
     DOC_PYTHON_VERSION = python3.11  # Keep this in sync with .readthedocs.yml and any CI scripts
