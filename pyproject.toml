@@ -389,6 +389,7 @@ deps =
     -rtests/requirements.txt
 passenv =
     pytest_report_title
+    GITHUB_ACTIONS
 setenv =
     pytest_github_report = true
     pytest_use_blanks = true

@@ -543,9 +543,9 @@ def test_transforms(tmp_path: Path) -> None:
         ("1G", 10**9),
     ],
 )
-def test_wfm_size(tmp_path: Path, si_unit: str, length: int) -> None:
+def test_wfm_size(si_unit: str, length: int, tmp_path: Path) -> None:
     """Test how different waveform sizes function efficiently."""
-    if si_unit in {"10M", "100M", "1G"} and os.getenv("GITHUB_ACTIONS"):
+    if si_unit in {"1G"} and os.getenv("GITHUB_ACTIONS"):
         pytest.skip(f"Skipping {si_unit} test in GitHub Actions environment")
 
     waveform_path = tmp_path / f"test_length_{length}.wfm"
