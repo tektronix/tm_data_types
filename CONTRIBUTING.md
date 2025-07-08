@@ -3,6 +3,9 @@
 Contributions are welcome, and they are greatly appreciated! Every bit helps,
 and credit will always be given.
 
+> [!TIP]
+> View this page in the [online documentation](https://tm-data-types.readthedocs.io/latest/CONTRIBUTING) for the best experience.
+
 ## Types of Contributions
 
 There are several types of contributions that can be made:
@@ -178,27 +181,6 @@ Ready to contribute? Here's how to set up `tm_data_types` for local development.
     - See the
         [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/)
         website for more details on this format.
-
-## Updating requirements and commit hooks
-
-To update the required python packages and commit hooks run the following
-commands:
-
-!!! note
-
-    Always remember to activate the virtual environment before attempting to run tests or other code.
-
-    ```console
-    # Linux
-    source .venv/bin/activate
-
-    # Windows
-    .venv\Scripts\activate.bat
-    ```
-
-```console
-python scripts/update_development_dependencies.py
-```
 
 ## Pull Request Guidelines
 
