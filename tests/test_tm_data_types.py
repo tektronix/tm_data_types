@@ -528,44 +528,45 @@ def test_transforms(tmp_path: Path) -> None:
                     assert all(value_comparisons)
 
 
-def test_wfm_size(tmp_path: Path) -> None:
-    """Test how different waveform sizes function."""
-    lengths = {
-        "10": 10**1,
-        "100": 10**2,
-        "1K": 10**3,
-        "10K": 10**4,
-        "100K": 10**5,
-        "1M": 10**6,
-        "10M": 10**7,
-        "100M": 10**8,
-        "1G": 10**9,
-    }
-    for si_unit, length in lengths.items():
-        waveform_path = tmp_path / f"test_length_{length}.wfm"
-        data = np.linspace(
-            type_min(np.dtype(np.int16)),
-            type_max(np.dtype(np.int16)),
-            length,
-            dtype=np.int16,
-        )
+@pytest.mark.parametrize(
+    ("si_unit", "length"),
+    [
+        ("10", 10**1),
+        ("100", 10**2),
+        ("1K", 10**3),
+        ("10K", 10**4),
+        ("100K", 10**5),
+        ("1M", 10**6),
+        ("10M", 10**7),
+        ("100M", 10**8),
+        ("1G", 10**9),
+    ],
+)
+def test_wfm_size(tmp_path: Path, si_unit: str, length: int) -> None:
+    """Test how different waveform sizes function efficiently."""
+    waveform_path = tmp_path / f"test_length_{length}.wfm"
 
-        waveform = AnalogWaveform()
-        # no conversion
-        waveform.y_axis_values = data
+    # Generate data
+    data = np.linspace(
+        type_min(np.dtype(np.int16)), type_max(np.dtype(np.int16)), num=length, dtype=np.int16
+    )
 
-        start_time = timeit.default_timer()
-        write_file(waveform_path.as_posix(), waveform)
-        end_time = timeit.default_timer()
-        print(f"Write Time without conversion {si_unit}: {round(end_time - start_time, 4)}")
+    waveform = AnalogWaveform()
+    waveform.y_axis_values = data
 
-        start_time = timeit.default_timer()
-        read_waveform: AnalogWaveform = read_file(waveform_path.as_posix())
-        end_time = timeit.default_timer()
+    start_time = timeit.default_timer()
+    write_file(waveform_path.as_posix(), waveform)
+    print(
+        f"Write Time without conversion {si_unit}: {round(timeit.default_timer() - start_time, 4)}"
+    )
 
-        print(f"Read Time without conversion {si_unit}: {round(end_time - start_time, 4)}")
+    start_time = timeit.default_timer()
+    read_waveform: AnalogWaveform = read_file(waveform_path.as_posix())
+    print(
+        f"Read Time without conversion {si_unit}: {round(timeit.default_timer() - start_time, 4)}"
+    )
 
-        assert read_waveform.y_axis_values.shape[0] == waveform.y_axis_values.shape[0]
+    assert read_waveform.y_axis_values.shape[0] == waveform.y_axis_values.shape[0]
 
 
 def test_invalid_inputs():
