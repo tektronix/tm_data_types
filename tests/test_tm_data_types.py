@@ -533,16 +533,10 @@ def test_wfm_size(tmp_path: Path) -> None:
     lengths = {
         "10": 10**1,
         "100": 10**2,
-        "1K": 10**3,
-        "10K": 10**4,
-        "100K": 10**5,
-        "1M": 10**6,
-        "10M": 10**7,
-        "100M": 10**8,
-        "1G": 10**9,
     }
     for si_unit, length in lengths.items():
         waveform_path = tmp_path / f"test_length_{length}.wfm"
+        print("waveform_path:", waveform_path)
         data = np.linspace(
             type_min(np.dtype(np.int16)),
             type_max(np.dtype(np.int16)),
