@@ -25,6 +25,7 @@ Things to be included in the next release go here.
 ### Added
 
 - Added support for Python 3.13.
+- Allow optional/unknown metadata keys in .wfm files
 
 ---
 
