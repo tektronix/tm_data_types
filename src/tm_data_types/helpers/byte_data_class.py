@@ -101,7 +101,7 @@ class StructuredInfo(EnforcedTypeDataClass):
     def __len__(self):
         """Sum the number of bytes for all annotations in this dataclass."""
         total_length = 0
-        for value in self.__annotations__.values():  # pylint: disable=no-member
+        for value in self.__annotations__.values():
             total_length += value.length
         return total_length
 
@@ -162,7 +162,6 @@ class StructuredInfo(EnforcedTypeDataClass):
             in_order: If the contents should be unpacked in definition order or provided order.
             order: The order in which to unpack the contents.
         """
-        # pylint: disable=no-member
         struct_repr_str = ""
         if not in_order and not order:
             raise IndexError("Requested custom order unpacking, but order not provided")
@@ -186,7 +185,7 @@ class StructuredInfo(EnforcedTypeDataClass):
     def get_value_summation(self):
         """Sum each byte for all annotations in this dataclass."""
         total_summation = 0
-        for key in self.__annotations__:  # pylint: disable=no-member
+        for key in self.__annotations__:
             value = getattr(self, key)
             total_summation += value.get_value_summation()
         return total_summation
