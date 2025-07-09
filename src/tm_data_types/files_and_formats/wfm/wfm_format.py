@@ -200,7 +200,7 @@ class WfmFormat:  # pylint: disable=too-many-instance-attributes
         self.meta_data = self.parse_tekmeta(endian, filestream)
 
     @staticmethod
-    def parse_tekmeta(
+    def parse_tekmeta(  # pylint: disable=too-many-locals
         endian: Endian,
         filestream: TextIO,
     ) -> Optional[Dict[str, Union[Long, Double, UnsignedLong]]]:
@@ -217,27 +217,22 @@ class WfmFormat:  # pylint: disable=too-many-instance-attributes
         }
 
         meta_data = {}
-        
+
         # Store current position
         current_pos = filestream.tell()
-        
+
         # Scan forward for tekmeta! marker
         chunk_size = 1024  # Read in chunks to be efficient
-        while True:
-            chunk = filestream.read(chunk_size)
-            if not chunk:  # End of file
-                break
-                
+        while chunk := filestream.read(chunk_size):  # End of file
             # Look for tekmeta! in the chunk
-            marker_pos = chunk.find(b"tekmeta!")
-            if marker_pos != -1:
+            if (marker_pos := chunk.find(b"tekmeta!")) != -1:
                 # Found the marker, adjust file position to start of marker
                 filestream.seek(current_pos + marker_pos)
                 break
-                
+
             # If we didn't find it in this chunk, move forward
             current_pos = filestream.tell()
-            
+
             # If we're near the end of the file, read smaller chunks
             if len(chunk) < chunk_size:
                 break

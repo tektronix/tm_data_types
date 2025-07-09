@@ -3,7 +3,7 @@
 import struct
 
 from abc import ABC, abstractmethod
-from typing import ClassVar, Dict, Union, Any
+from typing import Any, ClassVar, Dict
 
 import numpy as np
 
@@ -130,19 +130,21 @@ class WFMFile(AbstractedFile[DATUM_TYPE_VAR], ABC):
 
         waveform: DATUM_TYPE_VAR = self.DATUM_TYPE()  # pylint: disable=abstract-class-instantiated
         # Remap and separate known/unknown keys for meta_info
-        remapped = self.META_DATA_TYPE.remap(self._META_DATA_LOOKUP.inverse, formatted_data.meta_data)
-        
+        remapped = self.META_DATA_TYPE.remap(
+            self._META_DATA_LOOKUP.inverse, formatted_data.meta_data
+        )
+
         # Convert bytes to strings for string-like metadata
         def convert_bytes_to_str(value):
             if isinstance(value, bytes):
                 try:
-                    return value.decode('utf-8')
+                    return value.decode("utf-8")
                 except UnicodeDecodeError:
                     return value
             return value
-        
+
         remapped = {k: convert_bytes_to_str(v) for k, v in remapped.items()}
-        
+
         # Collect all annotated fields from the class and its parents
         known_fields = set()
         for cls in self.META_DATA_TYPE.__mro__:
@@ -184,7 +186,7 @@ class WFMFile(AbstractedFile[DATUM_TYPE_VAR], ABC):
             # Add standard metadata, excluding extended_metadata field
             for key, value in waveform.meta_info.operable_metainfo().items():
                 if key != "extended_metadata":
-                    all_metadata[key] = value
+                    all_metadata[key] = value  # noqa: PERF403
             # Remap all metadata using the lookup table
             formatted_data.meta_data = self.META_DATA_TYPE.remap(
                 self._META_DATA_LOOKUP,
@@ -213,15 +215,15 @@ class WFMFile(AbstractedFile[DATUM_TYPE_VAR], ABC):
     ################################################################################################
 
     # Reading
-    def _check_metadata(self, meta_data: Dict[str, Any]) -> bool:
+    @staticmethod
+    def _check_metadata(meta_data: Dict[str, Any]) -> bool:  # noqa: ARG004
         """Check if metadata can be used to construct a WaveformMetaInfo object."""
         try:
             # Just try to construct with empty known fields - we'll handle the rest in read_datum
             WaveformMetaInfo()
-            return True
-        except Exception as e:
-            print(f"[_check_metadata] Failed to construct WaveformMetaInfo: {e}")
+        except Exception:  # noqa: BLE001
             return False
+        return True
 
     # Reading
     @abstractmethod

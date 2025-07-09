@@ -2,7 +2,7 @@
 
 import struct
 
-from typing import Any, Dict, get_args, List, Optional, TextIO, Type, TypeVar, Union
+from typing import Any, Dict, List, Optional, TextIO, Type, TypeVar, Union
 
 from pydantic import model_validator
 from pydantic.dataclasses import dataclass as pydantic_dataclass
@@ -10,7 +10,7 @@ from pydantic.dataclasses import dataclass as pydantic_dataclass
 T = TypeVar("T")
 
 
-def convert_to_type(field_type: Any, value_to_convert: Any) -> Any:
+def convert_to_type(field_type: Any, value_to_convert: Any) -> Any:  # noqa:PLR0911,C901
     """Convert a value to a type.
 
     Args:
@@ -28,15 +28,14 @@ def convert_to_type(field_type: Any, value_to_convert: Any) -> Any:
             if arg is type(None) and value_to_convert is None:
                 return None
             # Accept if already correct type (handle generics)
-            arg_origin = getattr(arg, "__origin__", None)
-            if arg_origin is not None:
+            if (arg_origin := getattr(arg, "__origin__", None)) is not None:
                 if isinstance(value_to_convert, arg_origin):
                     return value_to_convert
             elif isinstance(value_to_convert, arg):
                 return value_to_convert
             try:
                 return convert_to_type(arg, value_to_convert)
-            except Exception:
+            except Exception:  # noqa:BLE001,S112
                 continue
         raise TypeError(f"Type {type(value_to_convert)} cannot be converted to type {field_type}.")
     # Accept if already correct type (handle generics)
@@ -47,7 +46,7 @@ def convert_to_type(field_type: Any, value_to_convert: Any) -> Any:
         return value_to_convert
     # Special case for bytes to str
     if isinstance(value_to_convert, bytes) and field_type is str:
-        return value_to_convert.decode(errors='ignore')
+        return value_to_convert.decode(errors="ignore")
     return field_type(value_to_convert)
 
 
