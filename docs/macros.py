@@ -6,8 +6,9 @@ import os
 import pathlib
 import re
 
+from collections.abc import Generator
 from importlib import import_module
-from typing import Any, Generator, Optional, Set, Tuple
+from typing import Any, Optional, Set, Tuple
 
 import tomli
 
@@ -50,6 +51,9 @@ def convert_gfm_alerts_to_admonitions(content: str) -> str:
         text = match.group(2).strip()
         # Replace initial '>' from subsequent lines
         text = text.replace("\n>", "\n")
+        # Check if the alert type "tip" should be converted to "hint"
+        if alert_type == "tip":
+            alert_type = "hint"
         # Replace with admonition format
         return f"!!! {alert_type}\n    " + text.replace("\n", "\n    ")
 
@@ -142,7 +146,7 @@ def class_diagram(  # noqa: C901  # pylint: disable=too-many-locals
             "LR" (left to right), "RL" (right to left),
             "TB" (top to bottom), or "BT" (bottom to top).
         highlight_family_base_classes: Indicate to highlight the family base classes in cyan.
-        highlight_device_drivers: Indicate to highlight the device drivers in lightgreen.
+        highlight_device_drivers: Indicate to highlight the device drivers in lawngreen.
 
     Returns:
         The mermaid code block with complete syntax for the classDiagram.
@@ -199,7 +203,7 @@ def class_diagram(  # noqa: C901  # pylint: disable=too-many-locals
             mermaid_code_block += f"\n  style {family_base_class} stroke:orangered,stroke-width:4px"
     if highlight_device_drivers:
         for device_driver in sorted(device_drivers):
-            mermaid_code_block += f"\n  style {device_driver} fill:lightgreen"
+            mermaid_code_block += f"\n  style {device_driver} fill:lawngreen"
     mermaid_code_block += "\n```"
 
     return mermaid_code_block
@@ -229,8 +233,8 @@ def define_env(env: MacrosPlugin) -> None:
             used to perform a transformation
     """
     # Read in the current package version number to use in templates and files
-    with open(
-        pathlib.Path(f"{pathlib.Path(__file__).parents[1]}") / "pyproject.toml", "rb"
+    with (pathlib.Path(f"{pathlib.Path(__file__).parents[1]}") / "pyproject.toml").open(
+        "rb"
     ) as file_handle:
         pyproject_data = tomli.load(file_handle)
         package_version = "v" + pyproject_data["tool"]["poetry"]["version"]
@@ -254,10 +258,10 @@ def on_post_page_macros(env: MacrosPlugin) -> None:
         for search, replace in PAGE_REPLACEMENTS[env.page.file.src_path]:
             env.markdown = env.markdown.replace(search, replace)
     # Check if all black format disable comments should be removed from the page
-    if env.page.file.src_path in FILES_TO_REMOVE_BLACK_FORMATTER_DISABLE_COMMENT:  # pyright: ignore[reportUnknownMemberType]
-        env.markdown = env.markdown.replace("# fmt: off\n", "")  # pyright: ignore[reportUnknownMemberType]
+    if env.page.file.src_path in FILES_TO_REMOVE_BLACK_FORMATTER_DISABLE_COMMENT:
+        env.markdown = env.markdown.replace("# fmt: off\n", "")
     # Check if there are any admonitions to replace on the page
-    env.markdown = convert_gfm_alerts_to_admonitions(env.markdown)  # pyright: ignore[reportUnknownMemberType,reportUnknownArgumentType]
+    env.markdown = convert_gfm_alerts_to_admonitions(env.markdown)
     # Check if the title is correct
     if actual_title_match := HEADER_ONE_REGEX.search(env.markdown):
         actual_title = actual_title_match.group(1)

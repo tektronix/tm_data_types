@@ -1,6 +1,8 @@
 # Temporary files
 temp*.*
 *.log
+*.dat
+**/logs/**
 
 # Poetry lock file
 poetry.lock
@@ -53,6 +55,7 @@ coverage.xml
 *.py,cover
 .pytest_cache/
 .results*/
+.dist*/
 prof/
 
 # Documentation
@@ -63,6 +66,7 @@ docs/_autoapi/
 docs/reference/
 _readthedocs/
 *site*/
+*.inv
 
 # Jupyter Notebook
 .ipynb_checkpoints

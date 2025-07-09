@@ -3,6 +3,9 @@
 Contributions are welcome, and they are greatly appreciated! Every bit helps,
 and credit will always be given.
 
+> [!TIP]
+> View this page in the [online documentation](https://tm-data-types.readthedocs.io/latest/CONTRIBUTING) for the best experience.
+
 ## Types of Contributions
 
 There are several types of contributions that can be made:
@@ -55,6 +58,7 @@ Ready to contribute? Here's how to set up `tm_data_types` for local development.
 1. Set up commit signing, see [GitHub's documentation](https://docs.github.com/en/authentication/managing-commit-signature-verification/about-commit-signature-verification) for details.
 
     !!! hint
+
         All commits going into the main repository are required to be signed, so make sure
         to set up commit signing before starting to make changes.
 
@@ -99,6 +103,7 @@ Ready to contribute? Here's how to set up `tm_data_types` for local development.
     formatting requirements and pass any tests.
 
     !!! note
+
         Always remember to activate the virtual environment before attempting to run tests or other code.
 
         ```console
@@ -135,6 +140,7 @@ Ready to contribute? Here's how to set up `tm_data_types` for local development.
         ```
 
         !!! note
+
             Two html outputs are generated:
 
             - Code coverage report: `.results_tests/htmlcov/index.html`
@@ -147,6 +153,7 @@ Ready to contribute? Here's how to set up `tm_data_types` for local development.
         ```
 
         !!! hint
+
             To view the documentation locally you will need to first build and then serve the site using one of the following methods:
 
             ```console
@@ -174,26 +181,6 @@ Ready to contribute? Here's how to set up `tm_data_types` for local development.
     - See the
         [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/)
         website for more details on this format.
-
-## Updating requirements and commit hooks
-
-To update the required python packages and commit hooks run the following
-commands:
-
-!!! note
-    Always remember to activate the virtual environment before attempting to run tests or other code.
-
-    ```console
-    # Linux
-    source .venv/bin/activate
-
-    # Windows
-    .venv\Scripts\activate.bat
-    ```
-
-```console
-python scripts/update_development_dependencies.py
-```
 
 ## Pull Request Guidelines
 
