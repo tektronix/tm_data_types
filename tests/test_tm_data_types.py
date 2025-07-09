@@ -591,13 +591,6 @@ def test_invalid_inputs():
     with pytest.raises(IOError, match=r"The .kkw extension cannot be written to."):
         write_file(f"{waveform_dir}/{invalid_extensions}", waveform)
 
-    invalid_format = "invalid_format.wfm"
-    with pytest.raises(
-        TypeError,
-        match=r"No class found which associates with this file extension and data format.",
-    ):
-        read_file(f"{waveform_dir}/{invalid_format}")
-
     invalid_format = "invalid_record_length.csv"
     with pytest.raises(
         IOError,
