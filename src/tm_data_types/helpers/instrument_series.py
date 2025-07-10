@@ -35,4 +35,4 @@ class InstrumentSeries(Enum):
         gen_purpose_default=0,
     )
 
-    MSO54 = TEKSCOPE  # noqa: PIE796
+    MSO54 = TEKSCOPE  # noqa: PIE796s
