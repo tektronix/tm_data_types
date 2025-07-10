@@ -34,5 +34,3 @@ class InstrumentSeries(Enum):
         slot_ids=5,
         gen_purpose_default=0,
     )
-
-    MSO54 = TEKSCOPE  # noqa: PIE796s
