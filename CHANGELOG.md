@@ -25,6 +25,8 @@ Things to be included in the next release go here.
 ### Added
 
 - Added support for Python 3.13.
+- Allow optional/unknown metadata keys in .wfm files.
+    - _**<span style="color:red">WARNING</span>**_: This update is known to break digital and IQ waveform handling. This will be fixed in an upcoming release.
 
 ---
 

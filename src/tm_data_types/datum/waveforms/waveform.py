@@ -6,13 +6,12 @@ from typing import Any, Dict, Optional
 
 import numpy as np
 
-from bidict import bidict
 from pydantic.dataclasses import dataclass as pydantic_dataclass
 
 from tm_data_types.datum.data_types import MeasuredData
 from tm_data_types.datum.datum import Datum
 from tm_data_types.helpers.byte_data_class import EnforcedTypeDataClass
-from tm_data_types.helpers.enums import Enum, SIBaseUnit
+from tm_data_types.helpers.enums import SIBaseUnit
 
 
 # pylint: disable=too-few-public-methods
@@ -56,23 +55,36 @@ class WaveformMetaInfo(ExclusiveMetaInfo):
         }
         return data
 
-    @staticmethod
+    @classmethod
     def remap(
-        lookup: bidict[str, str],
-        data: Dict[str, Any],
-        drop_non_existant: bool = False,
-    ) -> Dict[str, Any]:
-        """Remap the pythonic naming convention to tekmeta naming/ file format naming.
+        cls, lookup: dict[str, str], data: dict[str, Any], drop_non_existant: bool = False
+    ) -> dict[str, Any]:
+        """Remap the data to the correct format."""
+        remapped_dict = {}
+        for key, value in data.items():
+            if key in lookup:
+                remapped_dict[lookup[key]] = value
+            elif not drop_non_existant:
+                remapped_dict[key] = value
+        return remapped_dict
+
+    extended_metadata: Optional[Dict[str, Any]] = None
+
+    def __getattr__(self, name: str) -> Any:
+        """Retrieve an attribute from the extended metadata if it exists.
+
+        Args:
+            name: The name of the attribute to retrieve.
 
         Returns:
-            A dictionary which provides the opposite naming convention.
+            The value of the attribute from `extended_metadata` if it exists.
+
+        Raises:
+            AttributeError: If the attribute does not exist in `extended_metadata`.
         """
-        remapped_dict = {
-            lookup[key]: (val if not isinstance(val, Enum) else val.value)
-            for key, val in data.items()
-            if key in lookup or not drop_non_existant
-        }
-        return remapped_dict
+        if self.extended_metadata and name in self.extended_metadata:
+            return self.extended_metadata[name]
+        raise AttributeError(f"{type(self).__name__} object has no attribute {name!r}")
 
 
 class Waveform(Datum, ABC):
