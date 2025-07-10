@@ -48,6 +48,7 @@ Things to be included in the next release go here.
 ### Removed
 
 - Python 3.8 support has been removed from the package. The minimum supported version is now Python 3.9.
+- Removed unused instrument series models (MSO64, MSO54, MSO24, etc.) from InstrumentSeries enum.
 
 ### Added
 
