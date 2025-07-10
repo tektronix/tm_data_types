@@ -18,6 +18,33 @@ Valid subsections within a version are:
 
 Things to be included in the next release go here.
 
+---
+
+## v0.2.0 (2025-07-10)
+
+### Merged Pull Requests
+
+- Allow optional/unknown metadata keys in .wfm files ([#100](https://github.com/tektronix/tm_data_types/pull/100))
+- Drop support for Python 3.8, add support for Python 3.13, and update dependencies. ([#97](https://github.com/tektronix/tm_data_types/pull/97))
+- python-deps(deps-dev): update pyright requirement from 1.1.390 to 1.1.391 in the python-dependencies group ([#70](https://github.com/tektronix/tm_data_types/pull/70))
+- gh-actions(deps): bump tektronix/python-package-ci-cd ([#44](https://github.com/tektronix/tm_data_types/pull/44))
+- python-deps(deps-dev): update pyright requirement from 1.1.389 to 1.1.390 in the python-dependencies group ([#69](https://github.com/tektronix/tm_data_types/pull/69))
+- python-deps(deps-dev): update twine requirement from ^5.0.0 to ^6.0.1 in the python-dependencies group ([#67](https://github.com/tektronix/tm_data_types/pull/67))
+- Enable insiders documentation features ([#65](https://github.com/tektronix/tm_data_types/pull/65))
+- python-deps(deps-dev): update pyright requirement from 1.1.388 to 1.1.389 in the python-dependencies group ([#64](https://github.com/tektronix/tm_data_types/pull/64))
+- python-deps(deps-dev): bump the python-dependencies group with 2 updates ([#63](https://github.com/tektronix/tm_data_types/pull/63))
+- docs: Update link to badge ([#62](https://github.com/tektronix/tm_data_types/pull/62))
+- refactor: No longer allow printouts in this package ([#61](https://github.com/tektronix/tm_data_types/pull/61))
+- chore: Update pyright dependency and use more reliable method of installing local nodejs for it ([#59](https://github.com/tektronix/tm_data_types/pull/59))
+- python-deps(deps-dev): update pyright requirement from 1.1.383 to 1.1.386 in the python-dependencies group across 1 directory ([#58](https://github.com/tektronix/tm_data_types/pull/58))
+- ci: Skip updating the mdformat repo during the dependency updater workflow ([#57](https://github.com/tektronix/tm_data_types/pull/57))
+- docs: Update documentation templates and macros ([#55](https://github.com/tektronix/tm_data_types/pull/55))
+- python-deps(deps-dev): update pyright requirement from 1.1.382.post1 to 1.1.383 in the python-dependencies group ([#52](https://github.com/tektronix/tm_data_types/pull/52))
+- python-deps(deps-dev): update pyright requirement from 1.1.381 to 1.1.382.post1 in the python-dependencies group ([#49](https://github.com/tektronix/tm_data_types/pull/49))
+- python-deps(deps-dev): update pyright requirement from 1.1.380 to 1.1.381 in the python-dependencies group ([#46](https://github.com/tektronix/tm_data_types/pull/46))
+- test: Ignore googletagmanager links during doctests ([#47](https://github.com/tektronix/tm_data_types/pull/47))
+- test: enabled doctests in test-docs.yml ([#45](https://github.com/tektronix/tm_data_types/pull/45))
+
 ### Removed
 
 - Python 3.8 support has been removed from the package. The minimum supported version is now Python 3.9.
