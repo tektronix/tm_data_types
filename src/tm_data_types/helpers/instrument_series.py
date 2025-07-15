@@ -34,10 +34,3 @@ class InstrumentSeries(Enum):
         slot_ids=5,
         gen_purpose_default=0,
     )
-    MSO64 = TEKSCOPE
-    MSO64B = TEKSCOPE  # noqa: PIE796
-    MSO54 = TEKSCOPE  # noqa: PIE796
-    MSO54B = TEKSCOPE  # noqa: PIE796
-    MSO44 = TEKSCOPE  # noqa: PIE796
-    MSO44B = TEKSCOPE  # noqa: PIE796
-    MSO24 = TEKSCOPE  # noqa: PIE796
