@@ -143,13 +143,13 @@ repos:
         files: ^(.*/)?(poetry\.lock|pyproject\.toml)$
 #        args: [--strict]  # TODO: enable this when poetry can be updated to v2+
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: 3d44372123ca5e8617fdb65d9f11facd159b9e95  # frozen: v0.12.3
+    rev: 4cbc74d53fe5634e58e0e65db7d28939c9cec3f7  # frozen: v0.12.7
     hooks:
       - id: ruff-check
         args: [--fix, --exit-non-zero-on-fix]
       - id: ruff-format
   - repo: https://github.com/PyCQA/docformatter
-    rev: e73b8ba0c1316be565983236c72e653ad44e6b66  # frozen: v1.7.7
+    rev: 3c8d549eb9d99221d06ce818510c51db0601b90f  # frozen: v1.7.8-rc1
     hooks:
       - id: docformatter
         additional_dependencies: [tomli]
