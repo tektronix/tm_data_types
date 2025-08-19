@@ -3,13 +3,13 @@
 A collection of terms and symbols used throughout the documentation and their definitions.
 
 BIN
-: Binary format used for storing waveform data.
+:   Binary format used for storing waveform data.
 
 CSV
-: Comma-Separated Values
+:   Comma-Separated Values
 
 Scope
-: Oscilloscope
+:   Oscilloscope
 
 WFM
-: Waveform format used by Test & Measurement devices.
+:   Waveform format used by Test & Measurement devices.
