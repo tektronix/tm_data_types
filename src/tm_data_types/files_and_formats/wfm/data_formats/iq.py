@@ -1,6 +1,8 @@
 # pyright: ignore [reportIncompatibleMethodOverride]
 """The functionality to read and write to a csv file when the waveform is complex."""
 
+from typing import Any, Dict
+
 from tm_data_types.datum.data_types import RawSample
 from tm_data_types.datum.waveforms.iq_waveform import IQWaveform, IQWaveformMetaInfo
 from tm_data_types.files_and_formats.wfm.wfm import WFMFile
@@ -33,6 +35,16 @@ class WaveformFileWFMIQ(WFMFile[IQWaveform]):
     ################################################################################################
     # Private Methods
     ################################################################################################
+
+    # Reading
+    def _check_metadata(self, meta_data: Dict[str, Any]) -> bool:
+        """Check if metadata indicates this is an IQ waveform.
+        
+        IQ waveforms are identified by the presence of IQ-specific metadata fields:
+        - IQ_centerFrequency, IQ_fftLength, IQ_rbw, IQ_span, IQ_windowType, IQ_sampleRate
+        """
+        iq_fields = ["IQ_centerFrequency", "IQ_fftLength", "IQ_rbw", "IQ_span", "IQ_windowType", "IQ_sampleRate"]
+        return any(field in meta_data for field in iq_fields)
 
     # Reading
     def _format_to_waveform_vertical_values(
