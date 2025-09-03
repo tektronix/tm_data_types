@@ -14,7 +14,29 @@ from tm_data_types.helpers.enums import SIBaseUnit
 
 @pydantic_dataclass(kw_only=True)
 class DigitalWaveformMetaInfo(WaveformMetaInfo):  # pylint: disable=too-many-instance-attributes
-    """Data which can come from tekmeta or a header for analog waveforms."""
+    """Data which can come from tekmeta or a header for digital waveforms.
+    
+    This class extends WaveformMetaInfo with digital-specific metadata fields.
+    It includes all the standard waveform metadata plus digital-specific fields
+    for digital probe states and digital signal information.
+    
+    Digital-specific fields:
+    - digital_probe_0_state through digital_probe_7_state: State of digital probes
+    - digital_probe_0_threshold through digital_probe_7_threshold: Threshold values
+    - digital_probe_0_name through digital_probe_7_name: Names of digital probes
+    - digital_probe_0_unit through digital_probe_7_unit: Units for digital probes
+    
+    Example:
+        >>> meta_info = DigitalWaveformMetaInfo()
+        >>> meta_info.digital_probe_0_state = b"0x01"
+        >>> meta_info.digital_probe_0_threshold = 1.65
+        >>> meta_info.set_custom_metadata(
+        ...     test_equipment="MSO54",
+        ...     digital_pattern="PRBS7"
+        ... )
+        >>> print(meta_info.digital_probe_0_threshold)  # 1.65
+        >>> print(meta_info.test_equipment)  # "MSO54"
+    """
 
     ################################################################################################
     # Class Variables

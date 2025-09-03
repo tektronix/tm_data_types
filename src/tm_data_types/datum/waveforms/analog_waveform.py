@@ -24,7 +24,31 @@ from tm_data_types.helpers.enums import SIBaseUnit
 
 @pydantic_dataclass(kw_only=True)
 class AnalogWaveformMetaInfo(WaveformMetaInfo):
-    """Data which can come from tekmeta or a header for analog waveforms."""
+    """Data which can come from tekmeta or a header for analog waveforms.
+    
+    This class extends WaveformMetaInfo with analog-specific metadata fields.
+    It includes all the standard waveform metadata plus analog-specific fields
+    like vertical offset, position, and clipping information.
+    
+    Analog-specific fields:
+    - y_offset: Vertical offset of the waveform
+    - y_position: Vertical position of the waveform
+    - analog_thumbnail: Thumbnail representation of the analog signal
+    - clipping_initialized: Whether clipping detection is enabled
+    - interpreter_factor: Factor used for data interpretation
+    - real_data_start_index: Index where real data starts
+    
+    Example:
+        >>> meta_info = AnalogWaveformMetaInfo()
+        >>> meta_info.y_offset = 0.5
+        >>> meta_info.y_position = 1.0
+        >>> meta_info.set_custom_metadata(
+        ...     test_equipment="MSO54",
+        ...     channel="CH1"
+        ... )
+        >>> print(meta_info.y_offset)  # 0.5
+        >>> print(meta_info.test_equipment)  # "MSO54"
+    """
 
     ################################################################################################
     # Class Variables
