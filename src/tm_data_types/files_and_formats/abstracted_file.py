@@ -11,7 +11,7 @@ from tm_data_types.helpers.instrument_series import InstrumentSeries
 DATUM_TYPE_VAR = TypeVar("DATUM_TYPE_VAR", bound=Datum)
 
 
-class AbstractedFile(Generic[DATUM_TYPE_VAR], ABC):
+class AbstractedFile(ABC, Generic[DATUM_TYPE_VAR]):
     """An abstracted base class containing basic filestream functionality."""
 
     ################################################################################################
