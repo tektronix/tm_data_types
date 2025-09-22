@@ -40,7 +40,7 @@ repos:
       - id: remove-tabs
       - id: forbid-tabs
   - repo: https://github.com/python-jsonschema/check-jsonschema
-    rev: 9b9df9f1d3bd9a5e7a52d8f61a3be3e29e73d127  # frozen: 0.33.3
+    rev: 83987cd6ad8943c7f029b500b14aaf82c00a01fa  # frozen: 0.34.0
     hooks:
       - id: check-readthedocs
       - id: check-dependabot
@@ -143,7 +143,7 @@ repos:
         files: ^(.*/)?(poetry\.lock|pyproject\.toml)$
 #        args: [--strict]  # TODO: enable this when poetry can be updated to v2+
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: 13a6bda8ea7612b3aec844ded16569d424b9a1ab  # frozen: v0.13.0
+    rev: a113f03edeabb71305f025e6e14bd2cd68660e29  # frozen: v0.13.1
     hooks:
       - id: ruff-check
         args: [--fix, --exit-non-zero-on-fix]
