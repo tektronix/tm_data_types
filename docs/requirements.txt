@@ -24,7 +24,7 @@ mkdocs-autorefs==1.4.3 ; python_full_version >= "3.9.2" and python_version < "3.
 mkdocs-ezglossary-plugin==2.0.0 ; python_full_version >= "3.9.2" and python_version < "3.14"
 mkdocs-gen-files==0.5.0 ; python_full_version >= "3.9.2" and python_version < "3.14"
 mkdocs-get-deps==0.2.0 ; python_full_version >= "3.9.2" and python_version < "3.14"
-mkdocs-include-markdown-plugin==7.1.7 ; python_full_version >= "3.9.2" and python_version < "3.14"
+mkdocs-include-markdown-plugin==7.1.8 ; python_full_version >= "3.9.2" and python_version < "3.14"
 mkdocs-literate-nav==0.6.2 ; python_full_version >= "3.9.2" and python_version < "3.14"
 mkdocs-macros-plugin==1.4.0 ; python_full_version >= "3.9.2" and python_version < "3.14"
 mkdocs-mermaid2-plugin==1.2.2 ; python_full_version >= "3.9.2" and python_version < "3.14"
