@@ -18,6 +18,22 @@ Valid subsections within a version are:
 
 Things to be included in the next release go here.
 
+### Fixed
+
+- Fixed WFM file type detection to correctly identify digital and IQ waveforms instead of always defaulting to analog waveforms
+- Improved metadata system error messages to provide helpful guidance when accessing custom metadata fields
+
+### Added
+
+- Added `set_custom_metadata()` convenience method to `WaveformMetaInfo` classes for easier custom metadata management
+- Added comprehensive docstrings to all metadata classes with practical examples and usage guidance
+- Added helpful warnings in `remap()` method for unknown metadata fields
+
+### Changed
+
+- Enhanced error messages for custom metadata access to guide users on proper usage
+- Improved documentation for `extended_metadata` field with file format compatibility notes
+
 ---
 
 ## v0.2.0 (2025-07-10)

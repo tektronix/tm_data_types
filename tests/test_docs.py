@@ -12,7 +12,7 @@ from pathlib import Path
 
 import pytest
 
-from conftest import PROJECT_ROOT_DIR
+from .conftest import PROJECT_ROOT_DIR
 
 
 @pytest.fixture(name="docs_server")

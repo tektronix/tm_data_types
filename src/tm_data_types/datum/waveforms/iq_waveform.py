@@ -16,7 +16,31 @@ from tm_data_types.helpers.enums import IQWindowTypes, SIBaseUnit
 
 @pydantic_dataclass(frozen=False)
 class IQWaveformMetaInfo(AnalogWaveformMetaInfo):
-    """Data which can come from tekmeta or a header for iq waveforms."""
+    """Data which can come from tekmeta or a header for IQ waveforms.
+
+    This class extends AnalogWaveformMetaInfo with IQ-specific metadata fields.
+    It includes all the standard waveform metadata plus analog fields plus
+    IQ-specific fields for frequency domain analysis and IQ signal processing.
+
+    IQ-specific fields:
+    - iq_center_frequency: Center frequency of the IQ signal
+    - iq_fft_length: Length of the FFT used for IQ processing
+    - iq_resolution_bandwidth: Resolution bandwidth for IQ analysis
+    - iq_span: Frequency span of the IQ signal
+    - iq_window_type: Type of window function used
+    - iq_sample_rate: Sample rate of the IQ signal
+
+    Example:
+        >>> meta_info = IQWaveformMetaInfo()
+        >>> meta_info.iq_center_frequency = 2.4e9
+        >>> meta_info.iq_span = 100e6
+        >>> meta_info.set_custom_metadata(
+        ...     test_equipment="MSO54",
+        ...     modulation_type="QPSK"
+        ... )
+        >>> print(meta_info.iq_center_frequency)  # 2400000000.0
+        >>> print(meta_info.test_equipment)  # "MSO54"
+    """
 
     ################################################################################################
     # Class Variables
