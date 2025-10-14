@@ -26,7 +26,7 @@ class DigitalWaveformMetaInfo(WaveformMetaInfo):  # pylint: disable=too-many-ins
     - digital_probe_0_name through digital_probe_7_name: Names of digital probes
     - digital_probe_0_unit through digital_probe_7_unit: Units for digital probes
 
-    Example:
+    Examples:
         >>> meta_info = DigitalWaveformMetaInfo()
         >>> meta_info.digital_probe_0_state = b"0x01"
         >>> meta_info.digital_probe_0_threshold = 1.65

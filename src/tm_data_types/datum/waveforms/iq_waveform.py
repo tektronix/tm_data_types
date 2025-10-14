@@ -30,7 +30,7 @@ class IQWaveformMetaInfo(AnalogWaveformMetaInfo):
     - iq_window_type: Type of window function used
     - iq_sample_rate: Sample rate of the IQ signal
 
-    Example:
+    Examples:
         >>> meta_info = IQWaveformMetaInfo()
         >>> meta_info.iq_center_frequency = 2.4e9
         >>> meta_info.iq_span = 100e6

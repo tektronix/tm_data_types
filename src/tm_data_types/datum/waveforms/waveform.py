@@ -44,7 +44,7 @@ class WaveformMetaInfo(ExclusiveMetaInfo):
     Custom metadata can be added using the extended_metadata dictionary or
     the set_custom_metadata() convenience method.
 
-    Example:
+    Examples:
         >>> meta_info = WaveformMetaInfo()
         >>> meta_info.waveform_label = "Test Signal"
         >>> meta_info.set_custom_metadata(
@@ -72,7 +72,7 @@ class WaveformMetaInfo(ExclusiveMetaInfo):
         Returns:
             A dictionary containing meta info which do not have None values.
 
-        Example:
+        Examples:
             >>> meta_info = WaveformMetaInfo()
             >>> meta_info.waveform_label = "Test Signal"
             >>> meta_info.set_custom_metadata(test_equipment="MSO54")
@@ -96,7 +96,7 @@ class WaveformMetaInfo(ExclusiveMetaInfo):
         Returns:
             A dictionary containing meta info which is exclusively tekmeta.
 
-        Example:
+        Examples:
             >>> meta_info = WaveformMetaInfo()
             >>> meta_info.set_custom_metadata(tekmeta_field="value")
             >>> exclusive = meta_info.operable_exclusive_metadata()
@@ -124,7 +124,7 @@ class WaveformMetaInfo(ExclusiveMetaInfo):
             **kwargs: Key-value pairs to add as custom metadata. Keys will become
                      accessible as attributes on the meta_info object.
 
-        Example:
+        Examples:
             >>> meta_info = WaveformMetaInfo()
             >>> meta_info.set_custom_metadata(
             ...     pattern_type="prbs7",
@@ -169,7 +169,7 @@ class WaveformMetaInfo(ExclusiveMetaInfo):
         Returns:
             Remapped dictionary with keys transformed according to lookup
 
-        Example:
+        Examples:
             >>> lookup = {"old_name": "new_name", "another_old": "another_new"}
             >>> data = {"old_name": "value1", "unknown_key": "value2", "another_old": "value3"}
             >>> result = WaveformMetaInfo.remap(lookup, data, drop_non_existant=False)
@@ -209,14 +209,14 @@ class WaveformMetaInfo(ExclusiveMetaInfo):
 
     This dictionary allows you to store arbitrary key-value pairs for custom
     metadata fields. You can access these fields as attributes on the meta_info
-    object using Python's __getattr__ mechanism.
+    object using Python's `__getattr__` mechanism.
 
-    The extended_metadata system is designed for:
+    The `extended_metadata` system is designed for:
     - Application-specific data (test conditions, equipment info, etc.)
     - Fields that don't fit into the standard waveform metadata schema
     - Temporary or experimental metadata fields
 
-    Example:
+    Examples:
         >>> meta_info = WaveformMetaInfo()
         >>> meta_info.extended_metadata = {
         ...     "pattern_type": "prbs7",
@@ -270,7 +270,7 @@ class WaveformMetaInfo(ExclusiveMetaInfo):
             raise AttributeError(
                 f"{type(self).__name__} object has no attribute {name!r}. "
                 f"Available custom metadata keys: {available_keys}. "
-                f"To add this field: meta_info.extended_metadata['{name}'] = your_value"
+                f"To add this field use: meta_info.extended_metadata['{name}'] = your_value"
             )
         raise AttributeError(f"{type(self).__name__} object has no attribute {name!r}")
 

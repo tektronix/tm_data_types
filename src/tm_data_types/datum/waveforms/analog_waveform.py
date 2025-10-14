@@ -38,7 +38,7 @@ class AnalogWaveformMetaInfo(WaveformMetaInfo):
     - interpreter_factor: Factor used for data interpretation
     - real_data_start_index: Index where real data starts
 
-    Example:
+    Examples:
         >>> meta_info = AnalogWaveformMetaInfo()
         >>> meta_info.y_offset = 0.5
         >>> meta_info.y_position = 1.0
