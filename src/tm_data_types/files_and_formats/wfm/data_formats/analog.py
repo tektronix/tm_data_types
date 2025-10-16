@@ -28,11 +28,11 @@ class WaveformFileWFMAnalog(WFMFile[AnalogWaveform]):
         """Check if metadata indicates this is an analog waveform.
 
         Analog waveforms are identified as the default case when:
-        - data_type is not DIGITAL (6)
+        - No digital probe fields are present
         - No IQ-specific metadata fields are present
         """
-        # Check if this is a digital waveform (data_type == 6)
-        if meta_data.get("data_type") == 6:  # noqa: PLR2004  # DataTypes.DIGITAL
+        digital_probe_fields = ["d0", "d1", "d2", "d3", "d4", "d5", "d6", "d7"]
+        if any(field in meta_data for field in digital_probe_fields):
             return False
 
         # Check if this is an IQ waveform (has IQ-specific metadata)

@@ -44,10 +44,17 @@ class WaveformFileWFMDigital(WFMFile[DigitalWaveform]):
     def _check_metadata(self, meta_data: Dict[str, Any]) -> bool:  # pylint: disable=arguments-differ
         """Check if metadata indicates this is a digital waveform.
 
-        Digital waveforms are identified by:
-        - data_type == 6 (DataTypes.DIGITAL)
+        Digital waveforms are identified by the presence of any of the following fields:
+        - "d0", "d1", "d2", "d3", "d4", "d5", "d6", "d7"
+
+        Args:
+            meta_data: A dictionary containing metadata to check.
+
+        Returns:
+            True if the metadata indicates a digital waveform, False otherwise.
         """
-        return meta_data.get("data_type") == 6  # noqa: PLR2004  # DataTypes.DIGITAL
+        digital_probe_fields = ["d0", "d1", "d2", "d3", "d4", "d5", "d6", "d7"]
+        return any(field in meta_data for field in digital_probe_fields)
 
     # Reading
     def _format_to_waveform_vertical_values(  # pyright: ignore [reportIncompatibleMethodOverride]
