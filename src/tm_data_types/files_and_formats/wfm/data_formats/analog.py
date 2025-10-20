@@ -1,5 +1,7 @@
 """The functionality to read and write to a csv file when the waveform is analog."""
 
+from typing import Any, Dict
+
 from tm_data_types.datum.data_types import RawSample
 from tm_data_types.datum.waveforms.analog_waveform import AnalogWaveform, AnalogWaveformMetaInfo
 from tm_data_types.files_and_formats.wfm.wfm import WFMFile
@@ -20,6 +22,31 @@ class WaveformFileWFMAnalog(WFMFile[AnalogWaveform]):
     ################################################################################################
     # Private Methods
     ################################################################################################
+
+    # Reading
+    def _check_metadata(self, meta_data: Dict[str, Any]) -> bool:  # pylint: disable=arguments-differ
+        """Check if metadata indicates this is an analog waveform.
+
+        Analog waveforms are identified as the default case when:
+        - No digital probe fields are present
+        - No IQ-specific metadata fields are present
+        """
+        digital_probe_fields = ["d0", "d1", "d2", "d3", "d4", "d5", "d6", "d7"]
+        if any(field in meta_data for field in digital_probe_fields):
+            return False
+
+        # Check if this is an IQ waveform (has IQ-specific metadata)
+        iq_fields = [
+            "IQ_centerFrequency",
+            "IQ_fftLength",
+            "IQ_rbw",
+            "IQ_span",
+            "IQ_windowType",
+            "IQ_sampleRate",
+        ]
+
+        # If neither digital nor IQ, assume analog
+        return not any(field in meta_data for field in iq_fields)
 
     # Reading
     def _format_to_waveform_vertical_values(  # pyright: ignore [reportIncompatibleMethodOverride]

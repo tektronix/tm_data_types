@@ -45,8 +45,11 @@ def convert_to_type(field_type: Any, value_to_convert: Any) -> Any:  # noqa:PLR0
     elif isinstance(value_to_convert, field_type):
         return value_to_convert
     # Special case for bytes to str
-    if isinstance(value_to_convert, bytes) and field_type is str:
-        return value_to_convert.decode(errors="ignore")
+    # Handle str to bytes conversion with encoding
+    if isinstance(value_to_convert, str) and field_type is bytes:
+        if value_to_convert == "":
+            return b""  # Empty string becomes empty bytes
+        return value_to_convert.encode("utf-8", errors="ignore")
     return field_type(value_to_convert)
 
 

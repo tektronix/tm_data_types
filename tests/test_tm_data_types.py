@@ -207,7 +207,6 @@ def test_analog(tmp_path: Path) -> None:
             )
 
 
-@pytest.mark.xfail(reason="IQ waveforms are broken")
 def test_iq(tmp_path: Path) -> None:
     """Test to see if IQ waveforms will return the same data when saved and loaded."""
     temp_waveform = "test_iq."
@@ -233,7 +232,6 @@ def test_iq(tmp_path: Path) -> None:
         )
 
 
-@pytest.mark.xfail(reason="Digital waveforms are broken")
 def test_digital(tmp_path: Path) -> None:
     """Test to see if digital waveforms will return the same data when saved and loaded."""
     waveform_data = "digital_data.npy"

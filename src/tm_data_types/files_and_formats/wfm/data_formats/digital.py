@@ -1,5 +1,7 @@
 """The functionality to read and write to a csv file when the waveform is digital."""
 
+from typing import Any, Dict
+
 from tm_data_types.datum.data_types import RawSample
 from tm_data_types.datum.waveforms.digital_waveform import (
     DigitalWaveform,
@@ -37,6 +39,22 @@ class WaveformFileWFMDigital(WFMFile[DigitalWaveform]):
     ################################################################################################
     # Private Methods
     ################################################################################################
+
+    # Reading
+    def _check_metadata(self, meta_data: Dict[str, Any]) -> bool:  # pylint: disable=arguments-differ
+        """Check if metadata indicates this is a digital waveform.
+
+        Digital waveforms are identified by the presence of any of the following fields:
+        - "d0", "d1", "d2", "d3", "d4", "d5", "d6", "d7"
+
+        Args:
+            meta_data: A dictionary containing metadata to check.
+
+        Returns:
+            True if the metadata indicates a digital waveform, False otherwise.
+        """
+        digital_probe_fields = ["d0", "d1", "d2", "d3", "d4", "d5", "d6", "d7"]
+        return any(field in meta_data for field in digital_probe_fields)
 
     # Reading
     def _format_to_waveform_vertical_values(  # pyright: ignore [reportIncompatibleMethodOverride]
