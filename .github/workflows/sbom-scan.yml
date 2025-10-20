@@ -8,7 +8,20 @@ on:
   release:
     types: [published]
 jobs:
+  # Step 1: Upgrade pip before SBOM generation
+  upgrade-pip:
+    name: Upgrade pip before SBOM generation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'  # use your current workflow Python version
+      - name: Upgrade pip
+        run: python -m pip install --upgrade "pip>=25.2"
+
+  # Step 2: Run the Anchore SBOM scan (depends on upgraded pip)
   sbom-scan:
+    needs: upgrade-pip
     uses: tektronix/python-package-ci-cd/.github/workflows/_reusable-sbom-scan.yml@v1.8.1
     permissions:
       security-events: write
