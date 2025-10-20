@@ -114,7 +114,7 @@ class WaveformMetaInfo(ExclusiveMetaInfo):
         }
         return data
 
-    def set_custom_metadata(self, **kwargs) -> None:
+    def set_custom_metadata(self, **kwargs: Any) -> None:
         """Set custom metadata fields in extended_metadata.
 
         This is a convenience method to make it easier to add custom metadata
