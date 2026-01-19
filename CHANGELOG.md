@@ -20,6 +20,39 @@ Things to be included in the next release go here.
 
 ---
 
+## v0.3.0 (2025-10-28)
+
+### Merged Pull Requests
+
+- wfm type detection ([#125](https://github.com/tektronix/tm_data_types/pull/125))
+- python-deps(deps): bump the python-dependencies group with 6 updates ([#103](https://github.com/tektronix/tm_data_types/pull/103))
+- gh-actions(deps): bump tektronix/python-package-ci-cd ([#104](https://github.com/tektronix/tm_data_types/pull/104))
+- chore: Update Mermaid library source to use CDN ([#117](https://github.com/tektronix/tm_data_types/pull/117))
+- python-deps(deps): bump the python-dependencies group with 2 updates ([#116](https://github.com/tektronix/tm_data_types/pull/116))
+- python-deps(deps): bump the python-dependencies group with 5 updates ([#112](https://github.com/tektronix/tm_data_types/pull/112))
+- docs: Correct formatting in glossary and update setuptools version in pre-commit config ([#111](https://github.com/tektronix/tm_data_types/pull/111))
+- gh-actions(deps): bump actions/checkout ([#107](https://github.com/tektronix/tm_data_types/pull/107))
+- python-deps(deps): bump the python-dependencies group with 8 updates ([#105](https://github.com/tektronix/tm_data_types/pull/105))
+- Removed unused models ([#101](https://github.com/tektronix/tm_data_types/pull/101))
+
+### Fixed
+
+- Fixed WFM file type detection to correctly identify digital and IQ waveforms instead of always defaulting to analog waveforms
+- Improved metadata system error messages to provide helpful guidance when accessing custom metadata fields
+
+### Added
+
+- Added `set_custom_metadata()` convenience method to `WaveformMetaInfo` classes for easier custom metadata management
+- Added comprehensive docstrings to all metadata classes with practical examples and usage guidance
+- Added helpful warnings in `remap()` method for unknown metadata fields
+
+### Changed
+
+- Enhanced error messages for custom metadata access to guide users on proper usage
+- Improved documentation for `extended_metadata` field with file format compatibility notes
+
+---
+
 ## v0.2.0 (2025-07-10)
 
 ### Merged Pull Requests
