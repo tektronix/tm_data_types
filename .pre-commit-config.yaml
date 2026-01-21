@@ -10,7 +10,7 @@ ci:
 #    - pyright-verifytypes
     - pyroma
     - poetry-lock
-    - poetry-audit
+#    - poetry-audit
     - poetry-check
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
