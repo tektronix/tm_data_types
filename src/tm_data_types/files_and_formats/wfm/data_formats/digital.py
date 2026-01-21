@@ -1,5 +1,7 @@
 """The functionality to read and write to a csv file when the waveform is digital."""
 
+import struct
+
 from typing import Any, Dict
 
 from tm_data_types.datum.data_types import RawSample
@@ -8,9 +10,13 @@ from tm_data_types.datum.waveforms.digital_waveform import (
     DigitalWaveformMetaInfo,
 )
 from tm_data_types.files_and_formats.wfm.wfm import WFMFile
+from tm_data_types.files_and_formats.wfm.wfm_data_classes import (
+    WaveformHeader,
+    WaveformStaticFileInfo,
+)
 from tm_data_types.files_and_formats.wfm.wfm_format import WfmFormat
-from tm_data_types.helpers.byte_data_types import SignedChar
-from tm_data_types.helpers.enums import DataTypes
+from tm_data_types.helpers.byte_data_types import SignedChar, String8, UnsignedLong
+from tm_data_types.helpers.enums import DataTypes, VersionNumber
 
 
 class WaveformFileWFMDigital(WFMFile[DigitalWaveform]):
@@ -35,6 +41,64 @@ class WaveformFileWFMDigital(WFMFile[DigitalWaveform]):
     )
     DATUM_TYPE = DigitalWaveform
     META_DATA_TYPE = DigitalWaveformMetaInfo
+
+    ################################################################################################
+    # Public Methods
+    ################################################################################################
+
+    # Reading
+    def check_style(self) -> bool:
+        """Check the style of the waveform data to see if it works in this format.
+
+        Checks metadata first, and if metadata is empty, checks the header's data_type field.
+
+        Returns:
+            A boolean indicating whether the format supports the data provided.
+        """
+        # Read endian and version (same as parent)
+        (byte_order,) = struct.unpack(">2s", self.fd.read(2))
+        if byte_order in self._ENDIAN_PREFIX_LOOKUP:
+            endian_prefix = self._ENDIAN_PREFIX_LOOKUP[byte_order]
+        else:
+            self.fd.seek(0)
+            raise ValueError("Endian Format in wfm invalid.")
+
+        version_number = String8.unpack(endian_prefix.struct, self.fd)
+        enum_version_num = VersionNumber(version_number)
+
+        # Seek out the tekmeta
+        self.fd.seek(11)
+        curve_local = UnsignedLong.unpack(endian_prefix.struct, self.fd)
+        self.fd.seek(curve_local - 5 + (20 if enum_version_num == VersionNumber.THREE else 0))
+
+        # Parse metadata
+        meta_data = WfmFormat.parse_tekmeta(endian_prefix, self.fd)
+        self.fd.seek(0)
+
+        # First try standard metadata check
+        if self._check_metadata(meta_data):
+            return True
+
+        # If metadata is empty, check header data_type
+        if not meta_data:
+            try:
+                # File structure: [endian(2)][version(8)][file_info][header]...
+                # We're at position 0, need to skip endian and version (10 bytes total)
+                # Then read file_info and header
+                self.fd.seek(10)  # Skip endian (2) + version (8)
+                WaveformStaticFileInfo.unpack(endian_prefix.struct, self.fd, in_order=True)
+                header = WaveformHeader.unpack(endian_prefix.struct, self.fd, in_order=True)
+                # Check if data_type indicates digital
+                if header.data_type == DataTypes.DIGITAL.value:
+                    self.fd.seek(0)
+                    return True
+            except Exception:  # noqa: BLE001
+                # If we can't read the header, fall through to return False
+                pass
+            finally:
+                self.fd.seek(0)
+
+        return False
 
     ################################################################################################
     # Private Methods
