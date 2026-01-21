@@ -12,8 +12,7 @@ from pathlib import Path
 
 import pytest
 
-# pylint: disable=import-error
-from conftest import PROJECT_ROOT_DIR
+from .conftest import PROJECT_ROOT_DIR
 
 
 @pytest.fixture(name="docs_server")
