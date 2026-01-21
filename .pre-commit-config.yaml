@@ -76,13 +76,12 @@ repos:
           - mdformat-beautysh
           - mdformat-config
           - mdformat-footnote
-          - mdformat-frontmatter
+          - mdformat-front-matters
           - mdformat-gfm
           - mdformat-gfm-alerts
           - mdformat-mkdocs
           - mdformat-shfmt
           - mdformat-simple-breaks
-          - mdformat-tables
           - mdformat-toc
           - mdformat-web
           - mdformat-wikilink

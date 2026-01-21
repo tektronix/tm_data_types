@@ -145,7 +145,7 @@ class StructuredInfo(EnforcedTypeDataClass):
                 struct_repr_str += field.struct_repr
                 length += field.length
         info = struct.unpack(endian + struct_repr_str, filestream.read(length))
-        output_list = {key: value for value, key in zip(info, unpacking_order)}
+        output_list = {key: value for value, key in zip(info, unpacking_order, strict=False)}
         return cls(**output_list)
 
     # Writing
