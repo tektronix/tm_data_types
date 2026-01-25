@@ -41,7 +41,7 @@ def write_files_serial(file_paths: List[str], datums: List[AnalogWaveform]) -> N
         file_paths: The file paths to read from.
         datums: The waveforms that are being written.
     """
-    for file_path, datum in zip(file_paths, datums):
+    for file_path, datum in zip(file_paths, datums, strict=False):
         write_file(file_path, datum)
 
 

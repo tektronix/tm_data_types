@@ -222,7 +222,7 @@ def test_iq(tmp_path: Path) -> None:
         FileExtensions.MAT.value,
     ]
     file_types = [WaveformFileWFMIQ]
-    for extension, _ in zip(extensions, file_types):
+    for extension, _ in zip(extensions, file_types, strict=False):
         temporary_path = tmp_path / (temp_waveform + extension)
         read_write_read(
             "interleaved_iq_axis_values",
@@ -464,7 +464,7 @@ def test_types():
         for np_type in np_types:
             np_arrays.append(RawSample(data, as_type=np_type))  # noqa: PERF401
 
-        for np_array, byte_array in zip(np_arrays, byte_arrays):
+        for np_array, byte_array in zip(np_arrays, byte_arrays, strict=False):
             assert np_array.dtype == byte_array.dtype
 
 
