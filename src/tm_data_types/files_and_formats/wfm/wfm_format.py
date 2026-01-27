@@ -18,7 +18,6 @@ from typing import (
     Tuple,
     Type,
     TypeVar,
-    Union,
 )
 
 import numpy as np
@@ -146,7 +145,7 @@ class WfmFormat:  # pylint: disable=too-many-instance-attributes
     curve_buffer: np.ndarray = np.empty(0)
     postcharge_buffer: np.ndarray = np.empty(0)
     file_checksum: Optional[UnsignedLongLong] = None
-    meta_data: Dict[str, Union[str, Double, Long, UnsignedLong]] = {}  # noqa: RUF012
+    meta_data: Dict[str, str | Double | Long | UnsignedLong] = {}  # noqa: RUF012
 
     # Reading
     def unpack_wfm_file(
@@ -205,7 +204,7 @@ class WfmFormat:  # pylint: disable=too-many-instance-attributes
     def parse_tekmeta(  # pylint: disable=too-many-locals
         endian: Endian,
         filestream: TextIO,
-    ) -> Optional[Dict[str, Union[Long, Double, UnsignedLong]]]:
+    ) -> Optional[Dict[str, Long | Double | UnsignedLong]]:
         """Parse the metadata from the eof.
 
         Args:
@@ -825,7 +824,7 @@ class WfmFormat:  # pylint: disable=too-many-instance-attributes
     @staticmethod
     def _unpack_data(
         dimensions: Type[StructuredInfo],
-        user_view: Type[Union[DimensionsUserViewVer12, DimensionsUserViewVer3]],
+        user_view: Type[DimensionsUserViewVer12 | DimensionsUserViewVer3],
         endian: Endian,
         filestream: TextIO,
     ) -> Tuple[Dimension, Dimension]:

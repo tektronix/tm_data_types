@@ -4,7 +4,7 @@ import datetime
 import struct
 
 from abc import abstractmethod
-from typing import Any, ClassVar, Dict, Generic, List, Tuple, Union
+from typing import Any, ClassVar, Dict, Generic, List, Tuple
 
 import numpy as np
 import scipy.io as sio
@@ -129,7 +129,7 @@ class MATFile(AbstractedFile, Generic[DATUM_TYPE_VAR]):
     ################################################################################################
 
     # Reading
-    def _unpack_data(self, endian_prefix: Endian) -> Tuple[int, Union[bytes, List[Any]]]:
+    def _unpack_data(self, endian_prefix: Endian) -> Tuple[int, bytes | List[Any]]:
         """Unpack the .mat values.
 
         Args:

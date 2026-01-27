@@ -1,7 +1,7 @@
 """Handles information pertaining to analog waveforms."""
 
 from functools import cached_property
-from typing import Any, Optional, Type, Union
+from typing import Any, Optional, Type
 
 import numpy as np
 
@@ -126,7 +126,7 @@ class AnalogWaveform(Waveform):
 
     def transform_to_type(
         self,
-        as_type: Union[Type[ByteData], Type[PossibleTypes], PossibleTypes],
+        as_type: Type[ByteData] | Type[PossibleTypes] | PossibleTypes,
     ) -> "AnalogWaveform":
         """Convert the waveform to a new type.
 

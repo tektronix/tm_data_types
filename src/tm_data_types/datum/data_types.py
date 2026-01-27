@@ -11,13 +11,13 @@ from typing_extensions import Self
 
 from tm_data_types.helpers.byte_data_types import ByteData, Double
 
-PossibleTypes = Union[np.integer[Any], np.floating[Any]]
+PossibleTypes = np.integer[Any] | np.floating[Any]
 
 
 def _check_type(
-    as_type: Optional[Union[Type[ByteData], PossibleTypes, Type[PossibleTypes]]],
+    as_type: Optional[Type[ByteData] | PossibleTypes | Type[PossibleTypes]],
     measured_data: Optional[
-        Union[NDArray[PossibleTypes], "MeasuredData", List[Union[float, int]]]
+        Union[NDArray[PossibleTypes], "MeasuredData", List[float | int]]
     ] = None,
 ) -> PossibleTypes:
     """Convert types to np dtype, or grab the measured data dtype.
@@ -64,8 +64,8 @@ def type_ratio(dtype_from: PossibleTypes, dtype_to: PossibleTypes) -> float:
 
 
 def type_max(
-    data_format: Union[Type[ByteData], PossibleTypes, Type[PossibleTypes]],
-) -> Union[float, int]:
+    data_format: Type[ByteData] | PossibleTypes | Type[PossibleTypes],
+) -> float | int:
     """Get the maximum extent of a dtype.
 
     Args:
@@ -84,8 +84,8 @@ def type_max(
 
 
 def type_min(
-    data_format: Union[Type[ByteData], PossibleTypes, Type[PossibleTypes]],
-) -> Union[float, int]:
+    data_format: Type[ByteData] | PossibleTypes | Type[PossibleTypes],
+) -> float | int:
     """Get the minimum extent of a dtype.
 
     Args:
@@ -109,8 +109,8 @@ class MeasuredData(np.ndarray):
 
     def __new__(
         cls,
-        measured_data: Union["MeasuredData", NDArray[PossibleTypes], List[Union[int, float]]],
-        as_type: Optional[Union[Type[ByteData], PossibleTypes, Type[PossibleTypes]]] = None,
+        measured_data: Union["MeasuredData", NDArray[PossibleTypes], List[int | float]],
+        as_type: Optional[Type[ByteData] | PossibleTypes | Type[PossibleTypes]] = None,
     ) -> Self:
         """When a new instance of MeasuredData is created, retype it.
 
@@ -394,10 +394,10 @@ class Normalized(MeasuredData):
 
     def __new__(
         cls,
-        measured_data: Union[MeasuredData, NDArray[PossibleTypes], List[Union[float, int]]],
+        measured_data: MeasuredData | NDArray[PossibleTypes] | List[float | int],
         spacing: Optional[float] = None,
         offset: Optional[float] = None,
-        as_type: Optional[Union[Type[ByteData], Type[PossibleTypes], PossibleTypes]] = None,
+        as_type: Optional[Type[ByteData] | Type[PossibleTypes] | PossibleTypes] = None,
     ) -> Self:
         """Override the base new, utilizing the offset and spacing class variables temporarily.
 

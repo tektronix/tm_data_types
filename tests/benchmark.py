@@ -5,7 +5,7 @@ import tempfile
 import timeit
 
 from dataclasses import asdict, dataclass
-from typing import Callable, List, Optional, Tuple, Union
+from typing import Callable, List, Optional, Tuple
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -72,7 +72,7 @@ class BenchMark:
         file_counts: NDArray[np.float64],
         time_values: NDArray[np.float64],
         z_axis_label: str,
-        scatter_colors: Union[str, NDArray[np.int64]],
+        scatter_colors: str | NDArray[np.int64],
         view_tuple: Tuple[int, int],
     ) -> None:
         """Plot a mesh of values on a scatter plot graph.
