@@ -272,18 +272,19 @@ fixable = ["ALL"]
 flake8-pytest-style = {mark-parentheses = false}
 flake8-quotes = {docstring-quotes = "double"}
 ignore = [
-  "ANN401",  # Dynamically typed expressions (typing.Any) are disallowed in *args and **kwargs
-  "COM812",  # Trailing comma missing (handled by formatter)
+  "ANN401",  # Dynamically typed expressions (typing.Any) are disallowed in *args and **kwargs (allowed in this package)
+  "COM812",  # Trailing comma missing (allowed in this package)
+  "FA100",  # Missing `from __future__ import annotations`, but uses ... (allowed in this package)
   "FBT",  # flake8-boolean-trap (allowed in this package)
-  "FIX002",  # Line contains TO DO
+  "FIX002",  # Line contains TO DO (allowed in this package)
   "ISC001",  # single-line-implicit-string-concatenation (handled by formatter)
   "PTH",  # flake8-use-pathlib  # TODO: enable this
-  "TD002",  # Missing author in TO DO
-  "TD003",  # Missing issue link on the line following this TO DO
-  "UP006",  # Use `type` instead of `Type` for type annotation  # TODO: Drop Python 3.9: enable this check
-  "UP024",  # Replace aliased errors with `OSError`
-  "UP035",  # Use `X | Y` for type annotations # TODO: Drop Python 3.9: enable this check
-  "UP045",  # Use `X | None` for type annotations # TODO: Drop Python 3.9: enable this check
+  "TD002",  # Missing author in TO DO (allowed in this package)
+  "TD003",  # Missing issue link on the line following this TO DO (allowed in this package)
+  "UP006",  # Use `type` instead of `Type` for type annotation  # TODO: enable this check (will require updating code handling data types)
+  "UP024",  # Replace aliased errors with `OSError` (allowed in this package)
+  "UP035",  # Use `X | Y` for type annotations  # TODO: enable this check (will require updating code handling data types)
+  "UP045",  # Use `X | None` for type annotations  # TODO: enable this check (will require updating code handling data types)
 ]
 pydocstyle = {convention = "google"}
 pylint = {max-args = 7}
