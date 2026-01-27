@@ -93,7 +93,8 @@ class WFMFile(AbstractedFile[DATUM_TYPE_VAR], ABC):
         if byte_order in self._ENDIAN_PREFIX_LOOKUP:
             endian_prefix = self._ENDIAN_PREFIX_LOOKUP[byte_order]
         else:
-            raise ValueError("Endian Format in wfm invalid.")
+            msg = "Endian Format in wfm invalid."
+            raise ValueError(msg)
 
         version_number = String8.unpack(endian_prefix.struct, self.fd)
         enum_version_num = VersionNumber(version_number)
@@ -120,7 +121,8 @@ class WFMFile(AbstractedFile[DATUM_TYPE_VAR], ABC):
         if byte_order in self._ENDIAN_PREFIX_LOOKUP:
             endian_prefix = self._ENDIAN_PREFIX_LOOKUP[byte_order]
         else:
-            raise ValueError("Endian Format in wfm invalid.")
+            msg = "Endian Format in wfm invalid."
+            raise ValueError(msg)
         # figure out the version string
         version_value = String8.unpack(endian_prefix.struct, self.fd)
         version_number = VersionNumber(version_value)
@@ -255,8 +257,7 @@ class WFMFile(AbstractedFile[DATUM_TYPE_VAR], ABC):
 
     def remap(self, data: dict[str, Any]) -> dict[str, Any]:
         """Remap the data to the correct format."""
-        result = self.remap_keys(data)
-        return result
+        return self.remap_keys(data)
 
     def remap_keys(self, data: dict) -> dict:
         """Remap keys according to the lookup dictionary."""

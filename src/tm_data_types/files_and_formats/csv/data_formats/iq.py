@@ -95,8 +95,7 @@ class WaveformFileCSVIQ(CSVFile[IQWaveform]):
         Returns:
             The specific iq waveform headers to append to the csv output.
         """
-        output = f"Vertical Units,{waveform.iq_axis_units}\n"
-        return output
+        return f"Vertical Units,{waveform.iq_axis_units}\n"
 
     # Writing
     def _formatted_waveform_values(self, waveform: IQWaveform) -> Normalized:  # pyright: ignore [reportIncompatibleMethodOverride]

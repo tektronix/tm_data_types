@@ -38,8 +38,7 @@ class ByteData(ABC):  # noqa: B024
         # convert to byte
         representation = struct.pack(self.struct_repr, self)
         # sum
-        summation = sum(representation)
-        return summation
+        return sum(representation)
 
     def pack(self, endian: str, filestream: TextIO):
         """Pack the current value of the datum into the specified file.
@@ -109,8 +108,7 @@ class String(ByteData, bytes):
 
     def __str__(self):
         """Remove the null terminations and return it."""
-        string_repr = self.decode("utf_8").rstrip("\x00")
-        return string_repr
+        return self.decode("utf_8").rstrip("\x00")
 
     ################################################################################################
     # Public Methods

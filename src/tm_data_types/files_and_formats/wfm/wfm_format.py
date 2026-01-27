@@ -263,10 +263,12 @@ class WfmFormat:  # pylint: disable=too-many-instance-attributes
 
                     meta_data[key.decode("utf_8")] = value
             else:
-                raise IOError("Unrecognizable post-amble prefix for waveform file.")
+                msg = "Unrecognizable post-amble prefix for waveform file."
+                raise IOError(msg)
         except (KeyError, ValueError) as e:
+            msg = "Metadata unreadable, post-amble is formatted in a way that is not parseable."
             raise IOError(
-                "Metadata unreadable, post-amble is formatted in a way that is not parseable.",
+                msg,
             ) from e
 
         return meta_data
@@ -429,7 +431,8 @@ class WfmFormat:  # pylint: disable=too-many-instance-attributes
                 header_size=len(self.header) + len(self.pixel_map) + len(self.summary_frame_type),
             )
         else:
-            raise AttributeError("Not enough info to generate static file info section.")
+            msg = "Not enough info to generate static file info section."
+            raise AttributeError(msg)
         # pylint: disable=pointless-string-statement
         """
         - digits_in_byte_count derived from the length from the bytes_till_eof.
@@ -502,7 +505,8 @@ class WfmFormat:  # pylint: disable=too-many-instance-attributes
                 num_acquired_fast_frames=len(self.update_specs),
             )
         else:
-            raise AttributeError("Not enough info to generate a header section.")
+            msg = "Not enough info to generate a header section."
+            raise AttributeError(msg)
         # pylint: disable=pointless-string-statement
         """
         - update_spec_cnt is allocated based on the length of the update specs provided (+1)
@@ -632,7 +636,8 @@ class WfmFormat:  # pylint: disable=too-many-instance-attributes
                 implicit_dimensions,
             )
         else:
-            raise AttributeError("Not enough info to generate implicit dimensions sections.")
+            msg = "Not enough info to generate implicit dimensions sections."
+            raise AttributeError(msg)
         # pylint: disable=pointless-string-statement
         """
         -Size derived from the length of the pre, post and curve buffers.
@@ -812,8 +817,7 @@ class WfmFormat:  # pylint: disable=too-many-instance-attributes
         """
         first_instance = data_class.unpack(endian.struct, filestream, in_order=True)
         second_instance = data_class.unpack(endian.struct, filestream, in_order=True)
-        dimension = Dimension(first=first_instance, second=second_instance)
-        return dimension
+        return Dimension(first=first_instance, second=second_instance)
 
     # Reading
     @staticmethod
@@ -927,7 +931,8 @@ class WfmFormat:  # pylint: disable=too-many-instance-attributes
             )
 
             return precharge_curve_buffer, charge_curve_buffer, postcharge_curve_buffer
-        raise AttributeError("No primary dimensions defined in file.")
+        msg = "No primary dimensions defined in file."
+        raise AttributeError(msg)
 
     # Reading
     @staticmethod

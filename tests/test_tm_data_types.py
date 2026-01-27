@@ -92,7 +92,8 @@ def test_parallel(tmp_path: Path) -> None:
         for file_path, waveform in read_info:
             assert np.array_equal(waveform.y_axis_values, waveform_info[file_path].y_axis_values)
     else:
-        raise IOError("No Files written/read.")
+        msg = "No Files written/read."
+        raise IOError(msg)
 
 
 @pytest.mark.parametrize(
@@ -470,14 +471,13 @@ def test_types():
 
 def transformation_types(waveform: AnalogWaveform) -> List[AnalogWaveform]:
     """A list containing all different transformation types dependent on waveform."""
-    convert_list = [
+    return [
         waveform.transform_to_type(np.int8),
         waveform.transform_to_type(np.int16),
         waveform.transform_to_type(np.int32),
         waveform.transform_to_type(np.float32),
         waveform.transform_to_normalized(),
     ]
-    return convert_list
 
 
 def test_manipulations():

@@ -128,7 +128,8 @@ class WaveformFileWFMIQ(WFMFile[IQWaveform]):
             Returns an iq waveform created from the formatted data.
         """
         if type(waveform.i_axis_values) is not type(waveform.q_axis_values):
-            raise TypeError("I values are a different type than Q values.")
+            msg = "I values are a different type than Q values."
+            raise TypeError(msg)
 
         if not isinstance(waveform.i_axis_values, RawSample):
             explicit_data = RawSample(waveform.interleaved_iq_axis_values, as_type=Short)

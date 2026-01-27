@@ -92,7 +92,8 @@ class MATFile(AbstractedFile, Generic[DATUM_TYPE_VAR]):
         if byte_order in self._ENDIAN_PREFIX_LOOKUP:
             endian_prefix = self._ENDIAN_PREFIX_LOOKUP[byte_order]
         else:
-            raise ValueError("Endian Format in wfm invalid.")
+            msg = "Endian Format in wfm invalid."
+            raise ValueError(msg)
         values = []
         # keep running through the file
         all_conditionals_true = False

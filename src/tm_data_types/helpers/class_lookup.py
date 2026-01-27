@@ -82,7 +82,8 @@ def handle_extensions(
         }
         format_lookup = extension_lookup[extension]
     except KeyError as e:
-        raise KeyError(f"Extension {extension} cannot be written or read from.") from e
+        msg = f"Extension {extension} cannot be written or read from."
+        raise KeyError(msg) from e
     return format_lookup
 
 
@@ -116,9 +117,7 @@ def find_class_format_list(
     """
     format_lookup = handle_extensions(extension)
 
-    file_format = format_lookup.list_values()
-
-    return file_format
+    return format_lookup.list_values()
 
 
 def access_type(extension: FileExtensions, write: bool):

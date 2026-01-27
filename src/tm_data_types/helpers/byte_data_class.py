@@ -37,7 +37,8 @@ def convert_to_type(field_type: Any, value_to_convert: Any) -> Any:  # noqa:PLR0
                 return convert_to_type(arg, value_to_convert)
             except Exception:  # noqa:BLE001,S112
                 continue
-        raise TypeError(f"Type {type(value_to_convert)} cannot be converted to type {field_type}.")
+        msg = f"Type {type(value_to_convert)} cannot be converted to type {field_type}."
+        raise TypeError(msg)
     # Accept if already correct type (handle generics)
     if origin is not None:
         if isinstance(value_to_convert, origin):
@@ -85,8 +86,9 @@ class EnforcedTypeDataClass:
                 except (KeyError, TypeError) as e:
                     # if pre-defined as a "no_default" value, error if not provided
                     if (value_to_convert := getattr(base, field_name)) == "no_default":
+                        msg = f"__init__ missing 1 required argument: {field_name}"
                         raise TypeError(
-                            f"__init__ missing 1 required argument: {field_name}",
+                            msg,
                         ) from e
                 # type cast the vlue
                 new_values[field_name] = convert_to_type(field_type, value_to_convert)
@@ -131,7 +133,8 @@ class StructuredInfo(EnforcedTypeDataClass):
         length = 0
         struct_repr_str = ""
         if not in_order and not order:
-            raise IndexError("Requested custom order unpacking, but order not provided")
+            msg = "Requested custom order unpacking, but order not provided"
+            raise IndexError(msg)
 
         if not in_order and order:  # noqa: SIM108
             unpacking_order = order
@@ -166,7 +169,8 @@ class StructuredInfo(EnforcedTypeDataClass):
         """
         struct_repr_str = ""
         if not in_order and not order:
-            raise IndexError("Requested custom order unpacking, but order not provided")
+            msg = "Requested custom order unpacking, but order not provided"
+            raise IndexError(msg)
 
         if not in_order and order:  # noqa: SIM108
             packing = order

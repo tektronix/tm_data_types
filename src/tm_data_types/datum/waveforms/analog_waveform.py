@@ -174,8 +174,7 @@ class AnalogWaveform(Waveform):
             by the waveform.
         """
         # FOILed to support float64
-        extent = self.y_axis_spacing / self.y_axis_values.calculate_spacing()
-        return extent
+        return self.y_axis_spacing / self.y_axis_values.calculate_spacing()
 
     @y_axis_extent_magnitude.setter
     def y_axis_extent_magnitude(self, extent_magnitude: float) -> None:

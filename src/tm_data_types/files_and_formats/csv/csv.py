@@ -82,11 +82,13 @@ class CSVFile(AbstractedFile, Generic[DATUM_TYPE_VAR]):
                     if values_matrix is None:
                         float(row[0])
                         if not record_length:
-                            raise IOError("No Record Length Provided in csv.")
+                            msg = "No Record Length Provided in csv."
+                            raise IOError(msg)
                         values_matrix = np.empty((record_length, len(row)))
                     for index, item in enumerate(row):
                         if len(row) != values_matrix.shape[1]:
-                            raise IOError("CSV data not parseable.")
+                            msg = "CSV data not parseable."
+                            raise IOError(msg)
                         values_matrix[values_row][index] = float(item)
                     values_row += 1
                 except ValueError:
