@@ -94,7 +94,7 @@ class WaveformFileWFMDigital(WFMFile[DigitalWaveform]):
                     return True
             except Exception:  # noqa: BLE001
                 # If we can't read the header, fall through to return False
-                pass
+                return False
             finally:
                 self.fd.seek(0)
 

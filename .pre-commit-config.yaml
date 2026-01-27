@@ -10,7 +10,7 @@ ci:
 #    - pyright-verifytypes
     - pyroma
     - poetry-lock
-#    - poetry-audit
+    - poetry-audit
     - poetry-check
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
@@ -127,13 +127,14 @@ repos:
         pass_filenames: false
         always_run: true
         files: ^(.*/)?(poetry\.lock|pyproject\.toml)$
-#      - id: poetry-audit  # TODO: enable after dropping Python 3.9 (patched deps require >=3.10)
-#        name: poetry-audit
-#        entry: poetry audit
-#        language: system
-#        pass_filenames: false
-#        files: ^(.*/)?(poetry\.lock|pyproject\.toml)$
-#        always_run: true
+      - id: poetry-audit
+        name: poetry-audit
+        entry: poetry audit
+        language: system
+        pass_filenames: false
+        files: ^(.*/)?(poetry\.lock|pyproject\.toml)$
+        always_run: true
+        args: [--json, --ignore-code=CVE-2019-8341]
       - id: poetry-check
         name: poetry-check
         entry: poetry check
@@ -145,7 +146,7 @@ repos:
     rev: f298305809c552671cc47e0fec0ba43e96c146a2  # frozen: v0.13.2
     hooks:
       - id: ruff-check
-        args: [--fix, --exit-non-zero-on-fix, --ignore=S110]
+        args: [--fix, --exit-non-zero-on-fix]
       - id: ruff-format
   - repo: https://github.com/PyCQA/docformatter
     rev: e73b8ba0c1316be565983236c72e653ad44e6b66  # frozen: v1.7.7

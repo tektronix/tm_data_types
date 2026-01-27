@@ -38,7 +38,6 @@ class WaveformFileWFMIQ(WFMFile[IQWaveform]):
     # Public Methods
     ################################################################################################
 
-    # Reading
     def check_style(self) -> bool:
         """Check the style of the waveform data to see if it works in this format.
 
@@ -70,11 +69,6 @@ class WaveformFileWFMIQ(WFMFile[IQWaveform]):
 
         # First try standard metadata check
         return self._check_metadata(meta_data)
-
-        # If metadata is empty, we can't reliably detect IQ waveforms
-        # IQ is a recent feature that may not have clear file format indicators.
-        # We rely primarily on metadata for detection.
-        # Return False to let other formats (like Analog) handle it.
 
     ################################################################################################
     # Private Methods
