@@ -134,7 +134,7 @@ def _write_files(
         product: The product being written to.
         file_format: A specialized file format we are writing as.
     """
-    for file_path, datum in zip(file_paths, datums):
+    for file_path, datum in zip(file_paths, datums, strict=False):
         write_file(file_path, datum, product, file_format)
 
 
