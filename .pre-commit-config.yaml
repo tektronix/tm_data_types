@@ -77,13 +77,12 @@ repos:
           - beautysh==6.1.0  # Required by mdformat-beautysh; newer versions break CI
           - mdformat-config
           - mdformat-footnote
-          - mdformat-frontmatter
+          - mdformat-front-matters
           - mdformat-gfm
           - mdformat-gfm-alerts
           - mdformat-mkdocs
           - mdformat-shfmt
           - mdformat-simple-breaks
-          - mdformat-tables
           - mdformat-toc
           - mdformat-web
           - mdformat-wikilink

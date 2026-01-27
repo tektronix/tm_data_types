@@ -37,7 +37,6 @@ classifiers = [
   "Intended Audience :: Developers",
   "Intended Audience :: Science/Research",
   "Operating System :: OS Independent",
-  "Programming Language :: Python :: 3.9",  # manually add this classifier since Poetry won't add it automatically due to the mimimum Python version being 3.9.2  # TODO: Drop Python 3.9: Remove this classifier
   "Topic :: Scientific/Engineering :: Interface Engine/Protocol Translator",
   "Topic :: Scientific/Engineering",
   "Topic :: System :: Hardware :: Hardware Drivers",
@@ -76,7 +75,7 @@ numpy = [
   {python = ">=3.13", version = "^2.1"},
 ]
 pydantic = "^2.7.4"
-python = ">=3.9.2,<3.14"  # This is the main Python version requirement
+python = ">=3.10,<3.14"  # PYTHON VERSION MARKER
 python-dateutil = "^2.8.2"
 scipy = [
   {python = ">=3.9,<3.13", version = "^1.9"},
@@ -183,13 +182,14 @@ pylint.extensions.set_membership,
 pylint.extensions.typing,
 pylint.extensions.while_used
 """
-py-version = "3.9"
+py-version = "3.10"  # PYTHON VERSION MARKER
 recursive = true
 
 [tool.pylint."messages control"]
 enable = ["all"]
 disable = [
   "broad-exception-caught",  # caught by ruff
+  "consider-alternative-union-syntax",  # caught by ruff
   "deprecated-typing-alias",  # caught by ruff
   "duplicate-code",
   "fixme",  # caught by ruff
@@ -235,7 +235,7 @@ ignore = [
   "temp_*.py",
 ]
 pythonPlatform = "All"
-pythonVersion = "3.9"
+pythonVersion = "3.10"  # PYTHON VERSION MARKER
 reportCallInDefaultInitializer = "error"
 reportImplicitOverride = "error"
 reportImplicitStringConcatenation = "error"
@@ -272,7 +272,7 @@ line-length = 100
 namespace-packages = ["docs/**", "examples/**", "scripts/**", "tests/**"]
 output-format = "concise"
 src = ["docs", "examples", "scripts", "src", "tests"]
-target-version = "py39"  # always generate Python 3.9 compatible code
+target-version = "py310"  # always generate Python 3.10 compatible code  # PYTHON VERSION MARKER
 
 [tool.ruff.lint]
 allowed-confusables = []
@@ -364,15 +364,14 @@ legacy_tox_ini = """
 [tox]
 requires = tox>4
 isolated_build = True
-envlist = py39,py310,py311,py312,py313,tests,docs,doctests
+envlist = py310,py311,py312,py313,tests,docs,doctests  # PYTHON VERSION MARKER
 skip_missing_interpreters = True
 labels =
-  basic = py39,py310,py311,py312,py313,tests
+  basic = py310,py311,py312,py313,tests  # PYTHON VERSION MARKER
   documentation = docs,doctests
 
 [gh-actions]
-python =
-    3.9: py39
+python =  # PYTHON VERSION MARKER
     3.10: py310
     3.11: py311
     3.12: py312
