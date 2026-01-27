@@ -8,7 +8,6 @@ import struct
 from dataclasses import dataclass, replace
 from typing import (
     Any,
-    Callable,
     Dict,
     Generic,
     get_args,
@@ -17,6 +16,7 @@ from typing import (
     TextIO,
     Tuple,
     Type,
+    TYPE_CHECKING,
     TypeVar,
 )
 
@@ -67,6 +67,9 @@ from tm_data_types.helpers.enums import (
     WaveformTypes,
 )
 from tm_data_types.helpers.instrument_series import Endian
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 T1 = TypeVar("T1")  # pylint: disable=invalid-name
 T2 = TypeVar("T2")  # pylint: disable=invalid-name

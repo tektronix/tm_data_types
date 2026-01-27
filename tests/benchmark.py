@@ -4,8 +4,9 @@ import os
 import tempfile
 import timeit
 
+from collections.abc import Callable
 from dataclasses import asdict, dataclass
-from typing import Callable, List, Optional, Tuple
+from typing import List, Optional, Tuple
 
 import matplotlib.pyplot as plt
 import numpy as np
