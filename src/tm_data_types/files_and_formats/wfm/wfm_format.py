@@ -7,6 +7,7 @@ import struct
 
 from dataclasses import dataclass, replace
 from typing import (
+    Any,
     Callable,
     Dict,
     Generic,
@@ -23,6 +24,7 @@ from typing import (
 import numpy as np
 
 from numba import njit
+from numpy import ndarray
 
 from tm_data_types.files_and_formats.wfm.wfm_data_classes import (
     CurveInformation,
@@ -104,7 +106,7 @@ class Dimension(Generic[T1, T2]):
 
 
 @njit(cache=True)
-def calculate_checksum(value) -> int:
+def calculate_checksum(value: ndarray) -> int:
     """Calculate the byte checksum for the np arrays using numba.
 
     Returns:
@@ -728,7 +730,7 @@ class WfmFormat:  # pylint: disable=too-many-instance-attributes
         real_point_spacing: int = 1,
         sweep_type: SweepTypes = SweepTypes.SWEEP_SAMPLE,
         type_of_base: BaseTypes = BaseTypes.BASE_TIME,
-    ):
+    ) -> None:
         """Describes how the waveform data was acquired and the meaning of the acquired points.
 
         Args:
@@ -1029,7 +1031,7 @@ class WfmFormat:  # pylint: disable=too-many-instance-attributes
 
     # Writing
     @staticmethod
-    def _replace_dimension(dimension: Optional[Dimension], data_class) -> Dimension:
+    def _replace_dimension(dimension: Optional[Dimension], data_class: Any) -> Dimension:
         """Replace either the first or second dimension with new data.
 
         Args:

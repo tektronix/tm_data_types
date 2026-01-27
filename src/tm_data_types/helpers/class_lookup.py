@@ -120,7 +120,7 @@ def find_class_format_list(
     return format_lookup.list_values()
 
 
-def access_type(extension: FileExtensions, write: bool):
+def access_type(extension: FileExtensions, write: bool) -> str:
     """How the file should be accessed.
 
     Args:

@@ -272,10 +272,9 @@ fixable = ["ALL"]
 flake8-pytest-style = {mark-parentheses = false}
 flake8-quotes = {docstring-quotes = "double"}
 ignore = [
-  "ANN",  # flake8-annotations  # TODO: enable this
   "ANN401",  # Dynamically typed expressions (typing.Any) are disallowed in *args and **kwargs
   "COM812",  # Trailing comma missing (handled by formatter)
-  "FBT",  # flake8-boolean-trap  # TODO: enable this
+  "FBT",  # flake8-boolean-trap (allowed in this package)
   "FIX002",  # Line contains TO DO
   "ISC001",  # single-line-implicit-string-concatenation (handled by formatter)
   "PTH",  # flake8-use-pathlib  # TODO: enable this

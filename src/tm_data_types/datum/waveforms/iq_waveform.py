@@ -85,7 +85,7 @@ class IQWaveform(Waveform):
     # Dunder Methods
     ################################################################################################
 
-    def __str__(self):
+    def __str__(self) -> str:
         """Returns a string representation of the class.
 
         Returns:
@@ -93,7 +93,7 @@ class IQWaveform(Waveform):
         """
         return "iq"
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize the iq waveform class with the raw data."""
         super().__init__()
         self.meta_info: Optional[IQWaveformMetaInfo]
@@ -199,7 +199,7 @@ class IQWaveform(Waveform):
         return self.iq_axis_spacing * type_extent
 
     @iq_axis_extent_magnitude.setter
-    def iq_axis_extent_magnitude(self, extent_magnitude: float):
+    def iq_axis_extent_magnitude(self, extent_magnitude: float) -> None:
         """Set the magnitude extent of values that can be represented in the y-axis units.
 
         Args:

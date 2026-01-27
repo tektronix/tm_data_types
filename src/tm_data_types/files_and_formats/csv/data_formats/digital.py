@@ -63,7 +63,7 @@ class WaveformFileCSVDigital(CSVFile[DigitalWaveform]):
         self,
         waveform: DigitalWaveform,
         values_matrix: np.ndarray,
-    ):
+    ) -> None:
         """Set the vertical values for the waveform using the csv data.
 
         Args:

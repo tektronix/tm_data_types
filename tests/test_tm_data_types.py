@@ -132,7 +132,7 @@ def read_write_read(
     waveform_path: str,
     data_path: str,
     temp_path: str,
-):
+) -> None:
     """Read a file, then write the waveform from the file, then read it again.
 
     Args:
@@ -258,7 +258,7 @@ def test_digital(tmp_path: Path) -> None:
             )
 
 
-def test_data():  # pylint: disable=too-many-locals
+def test_data() -> None:  # pylint: disable=too-many-locals
     """Test if normalized data is correctly represented, and that data types can be converted."""
     waveform_name = "data_test_waveform.wfm"
     waveform_dir = f"{Path(__file__).parent}/waveforms"
@@ -348,7 +348,7 @@ def test_data():  # pylint: disable=too-many-locals
     assert all(value_comparisons)
 
 
-def test_properties():
+def test_properties() -> None:
     """Test the different properties in waveforms to see if they are correctly represented."""
     # Analog
     analog_waveform = AnalogWaveform()
@@ -417,7 +417,7 @@ def test_properties():
     assert np.array_equal(digital_waveform.get_nth_bitstream(0), [1, 0, 0, 0])
 
 
-def test_types():
+def test_types() -> None:
     """Test the different types that can be used as waveform data."""
     with pytest.raises(TypeError, match=r"No type specified for data."):
         RawSample([1, 2, 3, 4])
@@ -480,7 +480,7 @@ def transformation_types(waveform: AnalogWaveform) -> List[AnalogWaveform]:
     ]
 
 
-def test_manipulations():
+def test_manipulations() -> None:
     """Test the different methods which can manipulate waveform values."""
     data = np.array([0.0, 0.25, 0.5, 0.75, 1.0], dtype=np.float32)
     raw_sample = RawSample((data * type_max(np.int16)).astype(np.int16))
@@ -573,7 +573,7 @@ def test_wfm_size(si_unit: str, length: int, tmp_path: Path) -> None:
     assert read_waveform.y_axis_values.shape[0] == waveform.y_axis_values.shape[0]
 
 
-def test_invalid_inputs():
+def test_invalid_inputs() -> None:
     """Test waveforms that have invalid values or formats."""
     waveform_dir = f"{Path(__file__).parent}/waveforms/invalid_waveforms"
     invalid_tekmeta = "invalid_tekmeta.wfm"

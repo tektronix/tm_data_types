@@ -32,7 +32,7 @@ class WaveformFileCSVIQ(CSVFile[IQWaveform]):
     # Dunder Methods
     ################################################################################################
 
-    def __str__(self):
+    def __str__(self) -> str:
         """Returns a string representation of the class.
 
         Returns:
@@ -45,7 +45,7 @@ class WaveformFileCSVIQ(CSVFile[IQWaveform]):
     ################################################################################################
 
     # Reading
-    def _check_file_contents(self):
+    def _check_file_contents(self) -> bool:
         """Check the contents of the file and find info that dictates if the waveform is IQ.
 
         Returns:
@@ -66,7 +66,7 @@ class WaveformFileCSVIQ(CSVFile[IQWaveform]):
         self,
         waveform: IQWaveform,
         values_matrix: np.ndarray,
-    ):
+    ) -> None:
         """Set the vertical values for the iq waveform using the csv data.
 
         Args:

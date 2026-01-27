@@ -46,7 +46,7 @@ class AbstractedFile(ABC, Generic[DATUM_TYPE_VAR]):
         self.fd = open(self.file_path, self.io_type)  # pylint: disable=unspecified-encoding
         return self
 
-    def __exit__(self, *args) -> None:
+    def __exit__(self, *args: object) -> None:
         """Close the filestream when exiting a with statement."""
         self.fd.close()
 

@@ -58,7 +58,7 @@ def read_files_serial(file_paths: List[str]) -> None:
 class BenchMark:
     """A class to benchmark the performance of the system."""
 
-    def __init__(self, name: str, show_graphs: bool = False):
+    def __init__(self, name: str, show_graphs: bool = False) -> None:
         """Create a benchmark object to measure the performance of the system."""
         self.results: Optional[Performance] = None
         self.graphs: bool = show_graphs
@@ -251,7 +251,7 @@ class BenchMark:
             )
 
 
-def run_benchmark():
+def run_benchmark() -> None:
     """Run the benchmark tests for both parallel and serial file read/write methods."""
     benchmark_parallel = BenchMark("Parallel")
     benchmark_parallel.measure_times(

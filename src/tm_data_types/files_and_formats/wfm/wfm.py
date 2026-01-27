@@ -3,7 +3,7 @@
 import struct
 
 from abc import ABC, abstractmethod
-from typing import Any, ClassVar, Dict
+from typing import Any, ClassVar, Dict, NoReturn
 
 import numpy as np
 
@@ -137,7 +137,7 @@ class WFMFile(AbstractedFile[DATUM_TYPE_VAR], ABC):
         )
 
         # Convert bytes to strings for string-like metadata
-        def convert_bytes_to_str(value):
+        def convert_bytes_to_str(value):  # noqa: ANN001,ANN202
             if isinstance(value, bytes):
                 try:
                     return value.decode("utf-8")
@@ -165,6 +165,7 @@ class WFMFile(AbstractedFile[DATUM_TYPE_VAR], ABC):
 
         self._format_to_waveform_vertical_values(waveform, formatted_data)
 
+        # pylint: disable=unreachable
         return waveform
 
     # Writing
@@ -198,6 +199,7 @@ class WFMFile(AbstractedFile[DATUM_TYPE_VAR], ABC):
             formatted_data.meta_data = self.META_DATA_TYPE.remap(self._META_DATA_LOOKUP, {})
         self._waveform_vertical_values_to_format(waveform, formatted_data)
 
+        # pylint: disable=unreachable
         if waveform.trigger_index is None:
             trigger_index = waveform.normalized_vertical_values.size / 2
         else:
@@ -229,7 +231,9 @@ class WFMFile(AbstractedFile[DATUM_TYPE_VAR], ABC):
 
     # Reading
     @abstractmethod
-    def _format_to_waveform_vertical_values(self, waveform: Waveform, formatted_data: WfmFormat):
+    def _format_to_waveform_vertical_values(
+        self, waveform: Waveform, formatted_data: WfmFormat
+    ) -> NoReturn:
         """Convert the data from a formatted data class to an analog waveform class.
 
         Args:
@@ -243,7 +247,9 @@ class WFMFile(AbstractedFile[DATUM_TYPE_VAR], ABC):
 
     # Writing
     @abstractmethod
-    def _waveform_vertical_values_to_format(self, waveform: Waveform, formatted_data: WfmFormat):
+    def _waveform_vertical_values_to_format(
+        self, waveform: Waveform, formatted_data: WfmFormat
+    ) -> NoReturn:
         """Convert the data from a waveform class to a formatted data class.
 
         Args:

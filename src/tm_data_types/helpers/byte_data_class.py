@@ -64,7 +64,7 @@ class EnforcedTypeDataClass:
 
     # pylint: disable=too-few-public-methods
     @model_validator(mode="before")
-    def validate(cls, values) -> Dict[str, Any]:  # pylint: disable=no-self-argument  # noqa: N805
+    def validate(cls, values: Any) -> Dict[str, Any]:  # pylint: disable=no-self-argument  # noqa: N805
         # pylint: disable=no-member
         """Pre-init enforced type cast."""
         new_values = {}
@@ -102,7 +102,7 @@ class StructuredInfo(EnforcedTypeDataClass):
     # Dunder Methods
     ################################################################################################
 
-    def __len__(self):
+    def __len__(self) -> int:
         """Sum the number of bytes for all annotations in this dataclass."""
         total_length = 0
         for value in self.__annotations__.values():
@@ -188,7 +188,7 @@ class StructuredInfo(EnforcedTypeDataClass):
         filestream.write(struct.pack(endian + struct_repr_str, *value))
 
     # Writing
-    def get_value_summation(self):
+    def get_value_summation(self) -> int:
         """Sum each byte for all annotations in this dataclass."""
         total_summation = 0
         for key in self.__annotations__:
@@ -198,7 +198,7 @@ class StructuredInfo(EnforcedTypeDataClass):
 
     # Writing
     @classmethod
-    def get_cls_length(cls):
+    def get_cls_length(cls) -> int:
         """Sum the number of bytes for all annotations in this dataclass."""
         total_length = 0
         for field in cls.__annotations__.values():
