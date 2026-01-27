@@ -275,7 +275,6 @@ ignore = [
   "ANN",  # flake8-annotations  # TODO: enable this
   "ANN401",  # Dynamically typed expressions (typing.Any) are disallowed in *args and **kwargs
   "COM812",  # Trailing comma missing (handled by formatter)
-  "FA100",  # Missing `from __future__ import annotations`, but uses ...  # TODO: enable this
   "FBT",  # flake8-boolean-trap  # TODO: enable this
   "FIX002",  # Line contains TO DO
   "ISC001",  # single-line-implicit-string-concatenation (handled by formatter)
