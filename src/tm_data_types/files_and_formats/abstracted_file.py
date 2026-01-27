@@ -4,6 +4,7 @@ from abc import ABC, abstractmethod
 from typing import Dict, Generic, Optional, TextIO, TypeVar
 
 from bidict import bidict
+from typing_extensions import Self
 
 from tm_data_types.datum.datum import Datum
 from tm_data_types.helpers.instrument_series import InstrumentSeries
@@ -36,7 +37,7 @@ class AbstractedFile(ABC, Generic[DATUM_TYPE_VAR]):
         self.product = product
         self.fd: TextIO
 
-    def __enter__(self) -> "AbstractedFile":
+    def __enter__(self) -> Self:
         """Open a filestream for the file when entering a with statement.
 
         Returns:
