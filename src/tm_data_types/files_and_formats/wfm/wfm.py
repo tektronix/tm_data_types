@@ -3,7 +3,7 @@
 import struct
 
 from abc import ABC, abstractmethod
-from typing import Any, ClassVar, Dict, NoReturn
+from typing import Any, ClassVar, Dict, NoReturn, Optional, Tuple
 
 import numpy as np
 
@@ -87,25 +87,7 @@ class WFMFile(AbstractedFile[DATUM_TYPE_VAR], ABC):
         Returns:
             A boolean indicating whether the format supports the data provided.
         """
-        # lookup the endian type
-        (byte_order,) = struct.unpack(">2s", self.fd.read(2))
-
-        if byte_order in self._ENDIAN_PREFIX_LOOKUP:
-            endian_prefix = self._ENDIAN_PREFIX_LOOKUP[byte_order]
-        else:
-            msg = "Endian Format in wfm invalid."
-            raise ValueError(msg)
-
-        version_number = String8.unpack(endian_prefix.struct, self.fd)
-        enum_version_num = VersionNumber(version_number)
-        # seek out the tekmeta
-        self.fd.seek(11)
-        curve_local = UnsignedLong.unpack(endian_prefix.struct, self.fd)
-        self.fd.seek(curve_local - 5 + (20 if enum_version_num == VersionNumber.THREE else 0))
-
-        # parse it and check to see if it can be put into the meta info dataclass
-        meta_data = WfmFormat.parse_tekmeta(endian_prefix, self.fd)
-        self.fd.seek(0)
+        meta_data, _ = self._get_metadata_for_check_style()
         return self._check_metadata(meta_data)
 
     # Reading
@@ -217,6 +199,33 @@ class WFMFile(AbstractedFile[DATUM_TYPE_VAR], ABC):
     ################################################################################################
     # Private Methods
     ################################################################################################
+
+    def _get_metadata_for_check_style(
+        self,
+    ) -> Tuple[Optional[Dict[str, Long | Double | UnsignedLong]], Endian]:
+        """Get the metadata from the waveform meta info class for the check_style() method."""
+        # Read endian and version
+        (byte_order,) = struct.unpack(">2s", self.fd.read(2))
+        if byte_order in self._ENDIAN_PREFIX_LOOKUP:
+            endian_prefix = self._ENDIAN_PREFIX_LOOKUP[byte_order]
+        else:
+            self.fd.seek(0)
+            msg = "Endian Format in wfm invalid."
+            raise ValueError(msg)
+
+        version_number = String8.unpack(endian_prefix.struct, self.fd)
+        enum_version_num = VersionNumber(version_number)
+
+        # Seek out the tekmeta
+        self.fd.seek(11)
+        curve_local = UnsignedLong.unpack(endian_prefix.struct, self.fd)
+        self.fd.seek(curve_local - 5 + (20 if enum_version_num == VersionNumber.THREE else 0))
+
+        # Parse metadata
+        meta_data = WfmFormat.parse_tekmeta(endian_prefix, self.fd)
+        self.fd.seek(0)
+
+        return meta_data, endian_prefix
 
     # Reading
     @staticmethod

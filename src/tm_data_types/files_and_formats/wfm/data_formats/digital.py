@@ -1,7 +1,5 @@
 """The functionality to read and write to a csv file when the waveform is digital."""
 
-import struct
-
 from typing import Any, Dict
 
 from tm_data_types.datum.data_types import RawSample
@@ -15,8 +13,8 @@ from tm_data_types.files_and_formats.wfm.wfm_data_classes import (
     WaveformStaticFileInfo,
 )
 from tm_data_types.files_and_formats.wfm.wfm_format import WfmFormat
-from tm_data_types.helpers.byte_data_types import SignedChar, String8, UnsignedLong
-from tm_data_types.helpers.enums import DataTypes, VersionNumber
+from tm_data_types.helpers.byte_data_types import SignedChar
+from tm_data_types.helpers.enums import DataTypes
 
 
 class WaveformFileWFMDigital(WFMFile[DigitalWaveform]):
@@ -55,25 +53,7 @@ class WaveformFileWFMDigital(WFMFile[DigitalWaveform]):
         Returns:
             A boolean indicating whether the format supports the data provided.
         """
-        # Read endian and version (same as parent)
-        (byte_order,) = struct.unpack(">2s", self.fd.read(2))
-        if byte_order in self._ENDIAN_PREFIX_LOOKUP:
-            endian_prefix = self._ENDIAN_PREFIX_LOOKUP[byte_order]
-        else:
-            self.fd.seek(0)
-            raise ValueError("Endian Format in wfm invalid.")
-
-        version_number = String8.unpack(endian_prefix.struct, self.fd)
-        enum_version_num = VersionNumber(version_number)
-
-        # Seek out the tekmeta
-        self.fd.seek(11)
-        curve_local = UnsignedLong.unpack(endian_prefix.struct, self.fd)
-        self.fd.seek(curve_local - 5 + (20 if enum_version_num == VersionNumber.THREE else 0))
-
-        # Parse metadata
-        meta_data = WfmFormat.parse_tekmeta(endian_prefix, self.fd)
-        self.fd.seek(0)
+        meta_data, endian_prefix = self._get_metadata_for_check_style()
 
         # First try standard metadata check
         if self._check_metadata(meta_data):
