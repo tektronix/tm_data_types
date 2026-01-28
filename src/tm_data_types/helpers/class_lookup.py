@@ -52,9 +52,9 @@ class CSVFormats(CustomFormatEnum):
 class WFMFormats(CustomFormatEnum):
     """The different formats that a wfm file can exist in."""
 
-    WAVEFORM = WaveformFileWFMAnalog  # Analog WFM waveform
-    WAVEFORMIQ = WaveformFileWFMIQ  # IQ WFM waveform
-    WAVEFORMDIGITAL = WaveformFileWFMDigital  # Digital WFM waveform
+    WAVEFORMDIGITAL = WaveformFileWFMDigital  # Digital WFM waveform (checked first)
+    WAVEFORMIQ = WaveformFileWFMIQ  # IQ WFM waveform (checked second)
+    WAVEFORM = WaveformFileWFMAnalog  # Analog WFM waveform (checked last, default fallback)
 
 
 class MATFormats(CustomFormatEnum):
