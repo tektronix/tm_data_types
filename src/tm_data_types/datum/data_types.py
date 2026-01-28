@@ -7,6 +7,7 @@ from typing import Any, List, Optional, Type, Union
 import numpy as np
 
 from numpy.typing import NDArray
+from typing_extensions import Self
 
 from tm_data_types.helpers.byte_data_types import ByteData, Double
 
@@ -107,7 +108,7 @@ class MeasuredData(np.ndarray):
         cls,
         measured_data: Union["MeasuredData", NDArray[PossibleTypes], List[Union[int, float]]],
         as_type: Optional[Union[Type[ByteData], PossibleTypes, Type[PossibleTypes]]] = None,
-    ) -> "MeasuredData":
+    ) -> Self:
         """When a new instance of MeasuredData is created, retype it.
 
         Args:
@@ -398,7 +399,7 @@ class Normalized(MeasuredData):
         spacing: Optional[float] = None,
         offset: Optional[float] = None,
         as_type: Optional[Union[Type[ByteData], Type[PossibleTypes], PossibleTypes]] = None,
-    ) -> "Normalized":
+    ) -> Self:
         """Override the base new, utilizing the offset and spacing class variables temporarily.
 
         Args:
