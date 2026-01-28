@@ -25,7 +25,7 @@ def convert_to_type(field_type: Any, value_to_convert: Any) -> Any:  # noqa:PLR0
     if origin is Union:
         for arg in field_type.__args__:
             # NoneType
-            if arg is type(None) and value_to_convert is None:
+            if (arg is None) and value_to_convert is None:
                 return None
             # Accept if already correct type (handle generics)
             if (arg_origin := getattr(arg, "__origin__", None)) is not None:
