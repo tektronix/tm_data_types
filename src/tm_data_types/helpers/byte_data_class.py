@@ -37,7 +37,8 @@ def convert_to_type(field_type: Any, value_to_convert: Any) -> Any:  # noqa:PLR0
                 return convert_to_type(arg, value_to_convert)
             except Exception:  # noqa:BLE001,S112
                 continue
-        raise TypeError(f"Type {type(value_to_convert)} cannot be converted to type {field_type}.")
+        msg = f"Type {type(value_to_convert)} cannot be converted to type {field_type}."
+        raise TypeError(msg)
     # Accept if already correct type (handle generics)
     if origin is not None:
         if isinstance(value_to_convert, origin):
@@ -63,7 +64,7 @@ class EnforcedTypeDataClass:
 
     # pylint: disable=too-few-public-methods
     @model_validator(mode="before")
-    def validate(cls, values) -> Dict[str, Any]:  # pylint: disable=no-self-argument  # noqa: N805
+    def validate(cls, values: Any) -> Dict[str, Any]:  # pylint: disable=no-self-argument  # noqa: N805
         # pylint: disable=no-member
         """Pre-init enforced type cast."""
         new_values = {}
@@ -85,8 +86,9 @@ class EnforcedTypeDataClass:
                 except (KeyError, TypeError) as e:
                     # if pre-defined as a "no_default" value, error if not provided
                     if (value_to_convert := getattr(base, field_name)) == "no_default":
+                        msg = f"__init__ missing 1 required argument: {field_name}"
                         raise TypeError(
-                            f"__init__ missing 1 required argument: {field_name}",
+                            msg,
                         ) from e
                 # type cast the vlue
                 new_values[field_name] = convert_to_type(field_type, value_to_convert)
@@ -100,7 +102,7 @@ class StructuredInfo(EnforcedTypeDataClass):
     # Dunder Methods
     ################################################################################################
 
-    def __len__(self):
+    def __len__(self) -> int:
         """Sum the number of bytes for all annotations in this dataclass."""
         total_length = 0
         for value in self.__annotations__.values():
@@ -131,7 +133,8 @@ class StructuredInfo(EnforcedTypeDataClass):
         length = 0
         struct_repr_str = ""
         if not in_order and not order:
-            raise IndexError("Requested custom order unpacking, but order not provided")
+            msg = "Requested custom order unpacking, but order not provided"
+            raise IndexError(msg)
 
         if not in_order and order:  # noqa: SIM108
             unpacking_order = order
@@ -166,7 +169,8 @@ class StructuredInfo(EnforcedTypeDataClass):
         """
         struct_repr_str = ""
         if not in_order and not order:
-            raise IndexError("Requested custom order unpacking, but order not provided")
+            msg = "Requested custom order unpacking, but order not provided"
+            raise IndexError(msg)
 
         if not in_order and order:  # noqa: SIM108
             packing = order
@@ -184,7 +188,7 @@ class StructuredInfo(EnforcedTypeDataClass):
         filestream.write(struct.pack(endian + struct_repr_str, *value))
 
     # Writing
-    def get_value_summation(self):
+    def get_value_summation(self) -> int:
         """Sum each byte for all annotations in this dataclass."""
         total_summation = 0
         for key in self.__annotations__:
@@ -194,7 +198,7 @@ class StructuredInfo(EnforcedTypeDataClass):
 
     # Writing
     @classmethod
-    def get_cls_length(cls):
+    def get_cls_length(cls) -> int:
         """Sum the number of bytes for all annotations in this dataclass."""
         total_length = 0
         for field in cls.__annotations__.values():

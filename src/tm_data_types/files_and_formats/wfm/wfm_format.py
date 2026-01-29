@@ -7,7 +7,7 @@ import struct
 
 from dataclasses import dataclass, replace
 from typing import (
-    Callable,
+    Any,
     Dict,
     Generic,
     get_args,
@@ -16,13 +16,14 @@ from typing import (
     TextIO,
     Tuple,
     Type,
+    TYPE_CHECKING,
     TypeVar,
-    Union,
 )
 
 import numpy as np
 
 from numba import njit
+from numpy import ndarray
 
 from tm_data_types.files_and_formats.wfm.wfm_data_classes import (
     CurveInformation,
@@ -67,6 +68,9 @@ from tm_data_types.helpers.enums import (
 )
 from tm_data_types.helpers.instrument_series import Endian
 
+if TYPE_CHECKING:
+    from collections.abc import Callable
+
 T1 = TypeVar("T1")  # pylint: disable=invalid-name
 T2 = TypeVar("T2")  # pylint: disable=invalid-name
 
@@ -104,7 +108,7 @@ class Dimension(Generic[T1, T2]):
 
 
 @njit(cache=True)
-def calculate_checksum(value) -> int:
+def calculate_checksum(value: ndarray) -> int:
     """Calculate the byte checksum for the np arrays using numba.
 
     Returns:
@@ -144,7 +148,7 @@ class WfmFormat:  # pylint: disable=too-many-instance-attributes
     curve_buffer: np.ndarray = np.empty(0)
     postcharge_buffer: np.ndarray = np.empty(0)
     file_checksum: Optional[UnsignedLongLong] = None
-    meta_data: Dict[str, Union[str, Double, Long, UnsignedLong]] = {}  # noqa: RUF012
+    meta_data: Dict[str, str | Double | Long | UnsignedLong] = {}  # noqa: RUF012
 
     # Reading
     def unpack_wfm_file(
@@ -203,7 +207,7 @@ class WfmFormat:  # pylint: disable=too-many-instance-attributes
     def parse_tekmeta(  # pylint: disable=too-many-locals
         endian: Endian,
         filestream: TextIO,
-    ) -> Optional[Dict[str, Union[Long, Double, UnsignedLong]]]:
+    ) -> Optional[Dict[str, Long | Double | UnsignedLong]]:
         """Parse the metadata from the eof.
 
         Args:
@@ -263,10 +267,12 @@ class WfmFormat:  # pylint: disable=too-many-instance-attributes
 
                     meta_data[key.decode("utf_8")] = value
             else:
-                raise IOError("Unrecognizable post-amble prefix for waveform file.")
+                msg = "Unrecognizable post-amble prefix for waveform file."
+                raise IOError(msg)
         except (KeyError, ValueError) as e:
+            msg = "Metadata unreadable, post-amble is formatted in a way that is not parseable."
             raise IOError(
-                "Metadata unreadable, post-amble is formatted in a way that is not parseable.",
+                msg,
             ) from e
 
         return meta_data
@@ -429,7 +435,8 @@ class WfmFormat:  # pylint: disable=too-many-instance-attributes
                 header_size=len(self.header) + len(self.pixel_map) + len(self.summary_frame_type),
             )
         else:
-            raise AttributeError("Not enough info to generate static file info section.")
+            msg = "Not enough info to generate static file info section."
+            raise AttributeError(msg)
         # pylint: disable=pointless-string-statement
         """
         - digits_in_byte_count derived from the length from the bytes_till_eof.
@@ -502,7 +509,8 @@ class WfmFormat:  # pylint: disable=too-many-instance-attributes
                 num_acquired_fast_frames=len(self.update_specs),
             )
         else:
-            raise AttributeError("Not enough info to generate a header section.")
+            msg = "Not enough info to generate a header section."
+            raise AttributeError(msg)
         # pylint: disable=pointless-string-statement
         """
         - update_spec_cnt is allocated based on the length of the update specs provided (+1)
@@ -632,7 +640,8 @@ class WfmFormat:  # pylint: disable=too-many-instance-attributes
                 implicit_dimensions,
             )
         else:
-            raise AttributeError("Not enough info to generate implicit dimensions sections.")
+            msg = "Not enough info to generate implicit dimensions sections."
+            raise AttributeError(msg)
         # pylint: disable=pointless-string-statement
         """
         -Size derived from the length of the pre, post and curve buffers.
@@ -723,7 +732,7 @@ class WfmFormat:  # pylint: disable=too-many-instance-attributes
         real_point_spacing: int = 1,
         sweep_type: SweepTypes = SweepTypes.SWEEP_SAMPLE,
         type_of_base: BaseTypes = BaseTypes.BASE_TIME,
-    ):
+    ) -> None:
         """Describes how the waveform data was acquired and the meaning of the acquired points.
 
         Args:
@@ -812,14 +821,13 @@ class WfmFormat:  # pylint: disable=too-many-instance-attributes
         """
         first_instance = data_class.unpack(endian.struct, filestream, in_order=True)
         second_instance = data_class.unpack(endian.struct, filestream, in_order=True)
-        dimension = Dimension(first=first_instance, second=second_instance)
-        return dimension
+        return Dimension(first=first_instance, second=second_instance)
 
     # Reading
     @staticmethod
     def _unpack_data(
         dimensions: Type[StructuredInfo],
-        user_view: Type[Union[DimensionsUserViewVer12, DimensionsUserViewVer3]],
+        user_view: Type[DimensionsUserViewVer12 | DimensionsUserViewVer3],
         endian: Endian,
         filestream: TextIO,
     ) -> Tuple[Dimension, Dimension]:
@@ -927,7 +935,8 @@ class WfmFormat:  # pylint: disable=too-many-instance-attributes
             )
 
             return precharge_curve_buffer, charge_curve_buffer, postcharge_curve_buffer
-        raise AttributeError("No primary dimensions defined in file.")
+        msg = "No primary dimensions defined in file."
+        raise AttributeError(msg)
 
     # Reading
     @staticmethod
@@ -1024,7 +1033,7 @@ class WfmFormat:  # pylint: disable=too-many-instance-attributes
 
     # Writing
     @staticmethod
-    def _replace_dimension(dimension: Optional[Dimension], data_class) -> Dimension:
+    def _replace_dimension(dimension: Optional[Dimension], data_class: Any) -> Dimension:
         """Replace either the first or second dimension with new data.
 
         Args:

@@ -59,7 +59,8 @@ def write_file(
     try:
         file_extension = FileExtensions[path_extension.replace(".", "").upper()]
     except KeyError as e:
-        raise IOError(f"The {path_extension} extension cannot be written to.") from e
+        msg = f"The {path_extension} extension cannot be written to."
+        raise IOError(msg) from e
     # find the format based on the waveform extension
     format_class: AbstractedFile = find_class_format(file_extension, type(waveform))
     # using __init__ for instantiation due to pyright confusion
@@ -92,14 +93,15 @@ def read_file(file_path: str) -> DatumAlias:
     try:
         file_extension = FileExtensions[path_extension.replace(".", "").upper()]
     except KeyError as e:
-        raise IOError(f"The {path_extension} extension cannot be read from.") from e
+        msg = f"The {path_extension} extension cannot be read from."
+        raise IOError(msg) from e
     class_formats: List[AbstractedFile] = find_class_format_list(file_extension)
     for file_format in class_formats:
         with file_format(file_path, access_type(file_extension, write=False)) as fd:
             if fd.check_style():
-                waveform = fd.read_datum()
-                return waveform
-    raise TypeError("No class found which associates with this file extension and data format.")
+                return fd.read_datum()
+    msg = "No class found which associates with this file extension and data format."
+    raise TypeError(msg)
 
 
 def read_analog_file(file_path: str) -> AnalogWaveform:
@@ -190,7 +192,8 @@ def write_files_in_parallel(
             try:
                 result.get()
             except Exception as e:  # noqa: PERF203
-                raise ChildProcessError(f"Error on process {index}, view process stack.") from e
+                msg = f"Error on process {index}, view process stack."
+                raise ChildProcessError(msg) from e
 
 
 def _read_files(file_paths: str, file_queue: multiprocessing.Queue) -> None:
@@ -244,7 +247,8 @@ def read_files_in_parallel(file_paths: List[str], force_process_count: int = 4) 
             try:
                 result.get()
             except Exception as e:  # noqa: PERF203
-                raise ChildProcessError(f"Error on process {index}, view process stack.") from e
+                msg = f"Error on process {index}, view process stack."
+                raise ChildProcessError(msg) from e
 
     file_queue.put(None)
     return list(iter(file_queue.get, None))

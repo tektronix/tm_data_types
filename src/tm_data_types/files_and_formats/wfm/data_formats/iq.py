@@ -1,16 +1,14 @@
 # pyright: ignore [reportIncompatibleMethodOverride]
 """The functionality to read and write to a csv file when the waveform is complex."""
 
-import struct
-
 from typing import Any, Dict
 
 from tm_data_types.datum.data_types import RawSample
 from tm_data_types.datum.waveforms.iq_waveform import IQWaveform, IQWaveformMetaInfo
 from tm_data_types.files_and_formats.wfm.wfm import WFMFile
 from tm_data_types.files_and_formats.wfm.wfm_format import WfmFormat
-from tm_data_types.helpers.byte_data_types import Short, String8, UnsignedLong
-from tm_data_types.helpers.enums import StorageTypes, VersionNumber
+from tm_data_types.helpers.byte_data_types import Short
+from tm_data_types.helpers.enums import StorageTypes
 
 
 class WaveformFileWFMIQ(WFMFile[IQWaveform]):
@@ -37,38 +35,6 @@ class WaveformFileWFMIQ(WFMFile[IQWaveform]):
     ################################################################################################
     # Public Methods
     ################################################################################################
-
-    def check_style(self) -> bool:
-        """Check the style of the waveform data to see if it works in this format.
-
-        Checks metadata for IQ-specific fields. If metadata is empty, returns False
-        as IQ waveforms cannot be reliably detected without metadata.
-
-        Returns:
-            A boolean indicating whether the format supports the data provided.
-        """
-        # Read endian and version (same as parent)
-        (byte_order,) = struct.unpack(">2s", self.fd.read(2))
-        if byte_order in self._ENDIAN_PREFIX_LOOKUP:
-            endian_prefix = self._ENDIAN_PREFIX_LOOKUP[byte_order]
-        else:
-            self.fd.seek(0)
-            raise ValueError("Endian Format in wfm invalid.")
-
-        version_number = String8.unpack(endian_prefix.struct, self.fd)
-        enum_version_num = VersionNumber(version_number)
-
-        # Seek out the tekmeta
-        self.fd.seek(11)
-        curve_local = UnsignedLong.unpack(endian_prefix.struct, self.fd)
-        self.fd.seek(curve_local - 5 + (20 if enum_version_num == VersionNumber.THREE else 0))
-
-        # Parse metadata
-        meta_data = WfmFormat.parse_tekmeta(endian_prefix, self.fd)
-        self.fd.seek(0)
-
-        # First try standard metadata check
-        return self._check_metadata(meta_data)
 
     ################################################################################################
     # Private Methods
@@ -128,7 +94,8 @@ class WaveformFileWFMIQ(WFMFile[IQWaveform]):
             Returns an iq waveform created from the formatted data.
         """
         if type(waveform.i_axis_values) is not type(waveform.q_axis_values):
-            raise TypeError("I values are a different type than Q values.")
+            msg = "I values are a different type than Q values."
+            raise TypeError(msg)
 
         if not isinstance(waveform.i_axis_values, RawSample):
             explicit_data = RawSample(waveform.interleaved_iq_axis_values, as_type=Short)

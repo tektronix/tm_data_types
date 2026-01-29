@@ -11,13 +11,13 @@ from typing_extensions import Self
 
 from tm_data_types.helpers.byte_data_types import ByteData, Double
 
-PossibleTypes = Union[np.integer[Any], np.floating[Any]]
+PossibleTypes = np.integer[Any] | np.floating[Any]
 
 
 def _check_type(
-    as_type: Optional[Union[Type[ByteData], PossibleTypes, Type[PossibleTypes]]],
+    as_type: Optional[Type[ByteData] | PossibleTypes | Type[PossibleTypes]],
     measured_data: Optional[
-        Union[NDArray[PossibleTypes], "MeasuredData", List[Union[float, int]]]
+        Union[NDArray[PossibleTypes], "MeasuredData", List[float | int]]
     ] = None,
 ) -> PossibleTypes:
     """Convert types to np dtype, or grab the measured data dtype.
@@ -40,7 +40,8 @@ def _check_type(
     elif as_type is not None and isinstance(ByteData, type(as_type)) and as_type.np_repr:  # pyright: ignore [reportAttributeAccessIssue]
         dtype = np.dtype(as_type.np_repr)  # pyright: ignore [reportAttributeAccessIssue]
     else:
-        raise TypeError("No type can be gotten from the passed parameters.")
+        msg = "No type can be gotten from the passed parameters."
+        raise TypeError(msg)
     return dtype
 
 
@@ -63,8 +64,8 @@ def type_ratio(dtype_from: PossibleTypes, dtype_to: PossibleTypes) -> float:
 
 
 def type_max(
-    data_format: Union[Type[ByteData], PossibleTypes, Type[PossibleTypes]],
-) -> Union[float, int]:
+    data_format: Type[ByteData] | PossibleTypes | Type[PossibleTypes],
+) -> float | int:
     """Get the maximum extent of a dtype.
 
     Args:
@@ -78,12 +79,13 @@ def type_max(
         return int(np.iinfo(dtype).max)
     if issubclass(dtype.type, np.floating):
         return float(np.finfo(dtype).max)
-    raise TypeError("Invalid type for maximum possible value.")
+    msg = "Invalid type for maximum possible value."
+    raise TypeError(msg)
 
 
 def type_min(
-    data_format: Union[Type[ByteData], PossibleTypes, Type[PossibleTypes]],
-) -> Union[float, int]:
+    data_format: Type[ByteData] | PossibleTypes | Type[PossibleTypes],
+) -> float | int:
     """Get the minimum extent of a dtype.
 
     Args:
@@ -94,7 +96,8 @@ def type_min(
         return int(np.iinfo(dtype).min)
     if issubclass(dtype.type, np.floating):
         return float(np.finfo(dtype).min)
-    raise TypeError("Invalid type for minimum possible value.")
+    msg = "Invalid type for minimum possible value."
+    raise TypeError(msg)
 
 
 class MeasuredData(np.ndarray):
@@ -106,8 +109,8 @@ class MeasuredData(np.ndarray):
 
     def __new__(
         cls,
-        measured_data: Union["MeasuredData", NDArray[PossibleTypes], List[Union[int, float]]],
-        as_type: Optional[Union[Type[ByteData], PossibleTypes, Type[PossibleTypes]]] = None,
+        measured_data: Union["MeasuredData", NDArray[PossibleTypes], List[int | float]],
+        as_type: Optional[Type[ByteData] | PossibleTypes | Type[PossibleTypes]] = None,
     ) -> Self:
         """When a new instance of MeasuredData is created, retype it.
 
@@ -120,20 +123,20 @@ class MeasuredData(np.ndarray):
         """
         # if the provided data is a list but no conversion type is provided, error out
         if isinstance(measured_data, List) and as_type is None:
-            raise TypeError("No type specified for data.")
+            msg = "No type specified for data."
+            raise TypeError(msg)
 
         dtype = _check_type(as_type, measured_data)
 
         # if the previous type is a MeasuredData, retype it to whatever the current class is
         if isinstance(measured_data, MeasuredData):
             our_type_array = cls._convert_data_to_type(measured_data, dtype=dtype)
-            obj = super().__new__(
+            return super().__new__(
                 cls,
                 buffer=our_type_array,
                 shape=our_type_array.shape,
                 dtype=our_type_array.dtype,
             )
-            return obj
         # otherwise assume that the type is correct and use that without conversion
         if isinstance(measured_data, List):
             shape = len(measured_data)
@@ -141,8 +144,7 @@ class MeasuredData(np.ndarray):
         else:
             shape = measured_data.shape
         # needs astype, __new__ does some strange things converting from float64 to float32
-        obj = super().__new__(cls, buffer=measured_data.astype(dtype), shape=shape, dtype=dtype)
-        return obj
+        return super().__new__(cls, buffer=measured_data.astype(dtype), shape=shape, dtype=dtype)
 
     ################################################################################################
     # Public Methods
@@ -359,8 +361,7 @@ class FeatureScaled(MeasuredData):
             measured_data: Information provided through measurement of a device.
             dtype: The dtype to convert to.
         """
-        raw_sample_data = (measured_data * type_max(dtype)).astype(dtype)
-        return raw_sample_data
+        return (measured_data * type_max(dtype)).astype(dtype)
 
     @classmethod
     def _raw_sample_format_to_this_format(
@@ -374,9 +375,7 @@ class FeatureScaled(MeasuredData):
         """
         np_dtype = np.dtype(Double.np_repr)
         current_dtype: PossibleTypes = np.dtype(raw_sample_data.dtype)
-        measured_data = (raw_sample_data / type_max(current_dtype)).astype(np_dtype)
-
-        return measured_data
+        return (raw_sample_data / type_max(current_dtype)).astype(np_dtype)
 
 
 class Normalized(MeasuredData):
@@ -395,10 +394,10 @@ class Normalized(MeasuredData):
 
     def __new__(
         cls,
-        measured_data: Union[MeasuredData, NDArray[PossibleTypes], List[Union[float, int]]],
+        measured_data: MeasuredData | NDArray[PossibleTypes] | List[float | int],
         spacing: Optional[float] = None,
         offset: Optional[float] = None,
-        as_type: Optional[Union[Type[ByteData], Type[PossibleTypes], PossibleTypes]] = None,
+        as_type: Optional[Type[ByteData] | Type[PossibleTypes] | PossibleTypes] = None,
     ) -> Self:
         """Override the base new, utilizing the offset and spacing class variables temporarily.
 

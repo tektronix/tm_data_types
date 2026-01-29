@@ -3,7 +3,7 @@
 import struct
 
 from abc import ABC, abstractmethod
-from typing import Any, ClassVar, Dict
+from typing import Any, ClassVar, Dict, NoReturn, Optional, Tuple
 
 import numpy as np
 
@@ -87,24 +87,7 @@ class WFMFile(AbstractedFile[DATUM_TYPE_VAR], ABC):
         Returns:
             A boolean indicating whether the format supports the data provided.
         """
-        # lookup the endian type
-        (byte_order,) = struct.unpack(">2s", self.fd.read(2))
-
-        if byte_order in self._ENDIAN_PREFIX_LOOKUP:
-            endian_prefix = self._ENDIAN_PREFIX_LOOKUP[byte_order]
-        else:
-            raise ValueError("Endian Format in wfm invalid.")
-
-        version_number = String8.unpack(endian_prefix.struct, self.fd)
-        enum_version_num = VersionNumber(version_number)
-        # seek out the tekmeta
-        self.fd.seek(11)
-        curve_local = UnsignedLong.unpack(endian_prefix.struct, self.fd)
-        self.fd.seek(curve_local - 5 + (20 if enum_version_num == VersionNumber.THREE else 0))
-
-        # parse it and check to see if it can be put into the meta info dataclass
-        meta_data = WfmFormat.parse_tekmeta(endian_prefix, self.fd)
-        self.fd.seek(0)
+        meta_data, _ = self._get_metadata_for_check_style()
         return self._check_metadata(meta_data)
 
     # Reading
@@ -120,7 +103,8 @@ class WFMFile(AbstractedFile[DATUM_TYPE_VAR], ABC):
         if byte_order in self._ENDIAN_PREFIX_LOOKUP:
             endian_prefix = self._ENDIAN_PREFIX_LOOKUP[byte_order]
         else:
-            raise ValueError("Endian Format in wfm invalid.")
+            msg = "Endian Format in wfm invalid."
+            raise ValueError(msg)
         # figure out the version string
         version_value = String8.unpack(endian_prefix.struct, self.fd)
         version_number = VersionNumber(version_value)
@@ -135,7 +119,7 @@ class WFMFile(AbstractedFile[DATUM_TYPE_VAR], ABC):
         )
 
         # Convert bytes to strings for string-like metadata
-        def convert_bytes_to_str(value):
+        def convert_bytes_to_str(value):  # noqa: ANN001,ANN202
             if isinstance(value, bytes):
                 try:
                     return value.decode("utf-8")
@@ -163,6 +147,7 @@ class WFMFile(AbstractedFile[DATUM_TYPE_VAR], ABC):
 
         self._format_to_waveform_vertical_values(waveform, formatted_data)
 
+        # pylint: disable=unreachable
         return waveform
 
     # Writing
@@ -196,6 +181,7 @@ class WFMFile(AbstractedFile[DATUM_TYPE_VAR], ABC):
             formatted_data.meta_data = self.META_DATA_TYPE.remap(self._META_DATA_LOOKUP, {})
         self._waveform_vertical_values_to_format(waveform, formatted_data)
 
+        # pylint: disable=unreachable
         if waveform.trigger_index is None:
             trigger_index = waveform.normalized_vertical_values.size / 2
         else:
@@ -214,6 +200,33 @@ class WFMFile(AbstractedFile[DATUM_TYPE_VAR], ABC):
     # Private Methods
     ################################################################################################
 
+    def _get_metadata_for_check_style(
+        self,
+    ) -> Tuple[Optional[Dict[str, Long | Double | UnsignedLong]], Endian]:
+        """Get the metadata from the waveform meta info class for the check_style() method."""
+        # Read endian and version
+        (byte_order,) = struct.unpack(">2s", self.fd.read(2))
+        if byte_order in self._ENDIAN_PREFIX_LOOKUP:
+            endian_prefix = self._ENDIAN_PREFIX_LOOKUP[byte_order]
+        else:
+            self.fd.seek(0)
+            msg = "Endian Format in wfm invalid."
+            raise ValueError(msg)
+
+        version_number = String8.unpack(endian_prefix.struct, self.fd)
+        enum_version_num = VersionNumber(version_number)
+
+        # Seek out the tekmeta
+        self.fd.seek(11)
+        curve_local = UnsignedLong.unpack(endian_prefix.struct, self.fd)
+        self.fd.seek(curve_local - 5 + (20 if enum_version_num == VersionNumber.THREE else 0))
+
+        # Parse metadata
+        meta_data = WfmFormat.parse_tekmeta(endian_prefix, self.fd)
+        self.fd.seek(0)
+
+        return meta_data, endian_prefix
+
     # Reading
     @staticmethod
     def _check_metadata(meta_data: Dict[str, Any]) -> bool:  # noqa: ARG004
@@ -227,7 +240,9 @@ class WFMFile(AbstractedFile[DATUM_TYPE_VAR], ABC):
 
     # Reading
     @abstractmethod
-    def _format_to_waveform_vertical_values(self, waveform: Waveform, formatted_data: WfmFormat):
+    def _format_to_waveform_vertical_values(
+        self, waveform: Waveform, formatted_data: WfmFormat
+    ) -> NoReturn:
         """Convert the data from a formatted data class to an analog waveform class.
 
         Args:
@@ -241,7 +256,9 @@ class WFMFile(AbstractedFile[DATUM_TYPE_VAR], ABC):
 
     # Writing
     @abstractmethod
-    def _waveform_vertical_values_to_format(self, waveform: Waveform, formatted_data: WfmFormat):
+    def _waveform_vertical_values_to_format(
+        self, waveform: Waveform, formatted_data: WfmFormat
+    ) -> NoReturn:
         """Convert the data from a waveform class to a formatted data class.
 
         Args:
@@ -255,8 +272,7 @@ class WFMFile(AbstractedFile[DATUM_TYPE_VAR], ABC):
 
     def remap(self, data: dict[str, Any]) -> dict[str, Any]:
         """Remap the data to the correct format."""
-        result = self.remap_keys(data)
-        return result
+        return self.remap_keys(data)
 
     def remap_keys(self, data: dict) -> dict:
         """Remap keys according to the lookup dictionary."""

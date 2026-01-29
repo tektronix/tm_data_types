@@ -107,12 +107,11 @@ class WaveformMetaInfo(ExclusiveMetaInfo):
             This method is used internally to separate tekmeta-specific fields from
             standard waveform metadata fields.
         """
-        data = {
+        return {
             key: value
             for key, value in self.__dict__.items()
             if value is not None and key not in ExclusiveMetaInfo.__annotations__
         }
-        return data
 
     def set_custom_metadata(self, **kwargs: Any) -> None:
         """Set custom metadata fields in extended_metadata.
@@ -260,19 +259,22 @@ class WaveformMetaInfo(ExclusiveMetaInfo):
 
         # Provide more helpful error message
         if self.extended_metadata is None:
-            raise AttributeError(
+            msg = (
                 f"{type(self).__name__} object has no attribute {name!r}. "
                 f"To add custom metadata, set extended_metadata first: "
                 f"meta_info.extended_metadata = {{'{name}': your_value}}"
             )
+            raise AttributeError(msg)
         if name not in self.extended_metadata:
             available_keys = list(self.extended_metadata.keys()) if self.extended_metadata else []
-            raise AttributeError(
+            msg = (
                 f"{type(self).__name__} object has no attribute {name!r}. "
                 f"Available custom metadata keys: {available_keys}. "
                 f"To add this field use: meta_info.extended_metadata['{name}'] = your_value"
             )
-        raise AttributeError(f"{type(self).__name__} object has no attribute {name!r}")
+            raise AttributeError(msg)
+        msg = f"{type(self).__name__} object has no attribute {name!r}"
+        raise AttributeError(msg)
 
 
 class Waveform(Datum, ABC):
@@ -308,14 +310,13 @@ class Waveform(Datum, ABC):
         """
         trigger_location = self.trigger_index * self.x_axis_spacing
         # create an array with pre-applied ranges, spacing based on x_axis_spacing
-        x_axis_values = np.arange(
+        return np.arange(
             0 - trigger_location,
             (self.record_length * self.x_axis_spacing)
             - (self.x_axis_spacing / 2)
             - trigger_location,
             self.x_axis_spacing,
         )
-        return x_axis_values
 
     @property
     def record_length(self) -> int:

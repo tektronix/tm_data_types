@@ -18,6 +18,10 @@ Valid subsections within a version are:
 
 Things to be included in the next release go here.
 
+### Fixed
+
+- Updated `check_style()` logic to properly detect Digital and IQ waveform file types in addition to Analog waveforms.
+
 ### Changed
 
 - Dropped support for Python 3.9
