@@ -16,7 +16,7 @@ concurrency:
   group: pypi
 jobs:
   package-release:
-    uses: tektronix/python-package-ci-cd/.github/workflows/_reusable-package-release.yml@v1.8.2
+    uses: tektronix/python-package-ci-cd/.github/workflows/_reusable-package-release.yml@v1.8.5
     with:
       package-name: tm_data_types
       repo-name: tektronix/tm_data_types
