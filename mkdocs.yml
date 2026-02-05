@@ -98,6 +98,7 @@ plugins:
           paths: [src]
           options:
             # General options
+            inheritance_diagram_direction: LR
             show_inheritance_diagram: true
             show_source: false  # a link is included at the top of each page
             # Headings options
