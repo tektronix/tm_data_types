@@ -127,7 +127,7 @@ plugins:
             show_signature_annotations: true
             signature_crossrefs: true
             separate_signature: true
-          import:
+          inventories:
             - url: https://docs.python.org/3/objects.inv
               domains: [std, py]
             - url: https://typing-extensions.readthedocs.io/en/stable/objects.inv
