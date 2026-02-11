@@ -170,7 +170,7 @@ def read_write_read(
             atol=0.0005,
         ),
     )
-    if waveform_path.split(".")[-1] == temp_path.split(".")[-1]:
+    if waveform_path.rsplit(".", maxsplit=1)[-1] == temp_path.rsplit(".", maxsplit=1)[-1]:
         assert np.array_equal(getattr(re_read_waveform, vertical_data), read_wfm_values)
     else:
         re_read_values = getattr(re_read_waveform, vertical_data)
@@ -545,7 +545,7 @@ def test_transforms(tmp_path: Path) -> None:
 )
 def test_wfm_size(si_unit: str, length: int, tmp_path: Path) -> None:
     """Test how different waveform sizes function efficiently."""
-    if si_unit in {"1G"} and os.getenv("GITHUB_ACTIONS"):
+    if si_unit in {"1G"} and os.getenv("GITHUB_ACTIONS"):  # noqa: FURB171
         pytest.skip(f"Skipping {si_unit} test in GitHub Actions environment")
 
     waveform_path = tmp_path / f"test_length_{length}.wfm"

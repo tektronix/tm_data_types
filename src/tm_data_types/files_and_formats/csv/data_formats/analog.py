@@ -106,5 +106,5 @@ class WaveformFileCSVAnalog(CSVFile[AnalogWaveform]):
         return (
             y_axis_values[:, None],
             "%10.8e",
-            waveform.source_name if waveform.source_name else "CH1",
+            waveform.source_name or "CH1",
         )
