@@ -53,7 +53,7 @@ repos:
       - id: actionlint
         additional_dependencies: [pyflakes, shellcheck-py]
   - repo: https://github.com/commitizen-tools/commitizen
-    rev: dd972c939bcf5b90aa2f38abbcea5a36e8a797cb  # frozen: v4.13.7
+    rev: 7179a42b3544e953e3683a670056ad385892365d  # frozen: v4.13.8
     hooks:
       - id: commitizen
         stages: [commit-msg]
@@ -142,7 +142,7 @@ repos:
         files: ^(.*/)?(poetry\.lock|pyproject\.toml)$
 #        args: [--strict]  # TODO: enable this when poetry can be updated to v2+
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: fa93bc3224c614a0e9786d3e2d3d48edcca246eb  # frozen: v0.15.1
+    rev: 0839f92796ae388643a08a21640a029b322be5c2  # frozen: v0.15.2
     hooks:
       - id: ruff-check
         args: [--fix, --exit-non-zero-on-fix]
