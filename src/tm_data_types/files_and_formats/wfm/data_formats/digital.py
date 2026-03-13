@@ -8,6 +8,10 @@ from tm_data_types.datum.waveforms.digital_waveform import (
     DigitalWaveformMetaInfo,
 )
 from tm_data_types.files_and_formats.wfm.wfm import WFMFile
+from tm_data_types.files_and_formats.wfm.wfm_data_classes import (
+    WaveformHeader,
+    WaveformStaticFileInfo,
+)
 from tm_data_types.files_and_formats.wfm.wfm_format import WfmFormat
 from tm_data_types.helpers.byte_data_types import SignedChar
 from tm_data_types.helpers.enums import DataTypes
@@ -35,6 +39,46 @@ class WaveformFileWFMDigital(WFMFile[DigitalWaveform]):
     )
     DATUM_TYPE = DigitalWaveform
     META_DATA_TYPE = DigitalWaveformMetaInfo
+
+    ################################################################################################
+    # Public Methods
+    ################################################################################################
+
+    # Reading
+    def check_style(self) -> bool:
+        """Check the style of the waveform data to see if it works in this format.
+
+        Checks metadata first, and if metadata is empty, checks the header's data_type field.
+
+        Returns:
+            A boolean indicating whether the format supports the data provided.
+        """
+        meta_data, endian_prefix = self._get_metadata_for_check_style()
+
+        # First try standard metadata check
+        if self._check_metadata(meta_data):
+            return True
+
+        # If metadata is empty, check header data_type
+        if not meta_data:
+            try:
+                # File structure: [endian(2)][version(8)][file_info][header]...
+                # We're at position 0, need to skip endian and version (10 bytes total)
+                # Then read file_info and header
+                self.fd.seek(10)  # Skip endian (2) + version (8)
+                WaveformStaticFileInfo.unpack(endian_prefix.struct, self.fd, in_order=True)
+                header = WaveformHeader.unpack(endian_prefix.struct, self.fd, in_order=True)
+                # Check if data_type indicates digital
+                if header.data_type == DataTypes.DIGITAL.value:
+                    self.fd.seek(0)
+                    return True
+            except Exception:  # noqa: BLE001
+                # If we can't read the header, fall through to return False
+                return False
+            finally:
+                self.fd.seek(0)
+
+        return False
 
     ################################################################################################
     # Private Methods

@@ -59,7 +59,7 @@ class DigitalWaveform(Waveform):
     # Dunder Methods
     ################################################################################################
 
-    def __str__(self):
+    def __str__(self) -> str:
         """Returns a string representation of the class.
 
         Returns:

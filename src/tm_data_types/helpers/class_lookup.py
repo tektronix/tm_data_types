@@ -52,9 +52,9 @@ class CSVFormats(CustomFormatEnum):
 class WFMFormats(CustomFormatEnum):
     """The different formats that a wfm file can exist in."""
 
-    WAVEFORM = WaveformFileWFMAnalog  # Analog WFM waveform
-    WAVEFORMIQ = WaveformFileWFMIQ  # IQ WFM waveform
-    WAVEFORMDIGITAL = WaveformFileWFMDigital  # Digital WFM waveform
+    WAVEFORMDIGITAL = WaveformFileWFMDigital  # Digital WFM waveform (checked first)
+    WAVEFORMIQ = WaveformFileWFMIQ  # IQ WFM waveform (checked second)
+    WAVEFORM = WaveformFileWFMAnalog  # Analog WFM waveform (checked last, default fallback)
 
 
 class MATFormats(CustomFormatEnum):
@@ -82,7 +82,8 @@ def handle_extensions(
         }
         format_lookup = extension_lookup[extension]
     except KeyError as e:
-        raise KeyError(f"Extension {extension} cannot be written or read from.") from e
+        msg = f"Extension {extension} cannot be written or read from."
+        raise KeyError(msg) from e
     return format_lookup
 
 
@@ -116,12 +117,10 @@ def find_class_format_list(
     """
     format_lookup = handle_extensions(extension)
 
-    file_format = format_lookup.list_values()
-
-    return file_format
+    return format_lookup.list_values()
 
 
-def access_type(extension: FileExtensions, write: bool):
+def access_type(extension: FileExtensions, write: bool) -> str:
     """How the file should be accessed.
 
     Args:

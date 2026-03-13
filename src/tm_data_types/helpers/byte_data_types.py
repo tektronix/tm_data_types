@@ -25,7 +25,7 @@ class ByteData(ABC):  # noqa: B024
     # Dunder Methods
     ################################################################################################
 
-    def __len__(self):
+    def __len__(self) -> int:
         """Get the length of the datum."""
         return self.get_cls_length()
 
@@ -33,15 +33,14 @@ class ByteData(ABC):  # noqa: B024
     # Public Methods
     ################################################################################################
 
-    def get_value_summation(self):
+    def get_value_summation(self) -> int:
         """Sum the byte values of the datum."""
         # convert to byte
         representation = struct.pack(self.struct_repr, self)
         # sum
-        summation = sum(representation)
-        return summation
+        return sum(representation)
 
-    def pack(self, endian: str, filestream: TextIO):
+    def pack(self, endian: str, filestream: TextIO) -> None:
         """Pack the current value of the datum into the specified file.
 
         Args:
@@ -51,7 +50,7 @@ class ByteData(ABC):  # noqa: B024
         filestream.write(struct.pack(endian + self.struct_repr, self))
 
     @classmethod
-    def unpack(cls, endian: str, filestream: TextIO):
+    def unpack(cls, endian: str, filestream: TextIO) -> "ByteData":
         """Unpack a number of bytes based on the datum's length.
 
         Args:
@@ -62,7 +61,7 @@ class ByteData(ABC):  # noqa: B024
         return cls(info)
 
     @classmethod
-    def get_cls_length(cls):
+    def get_cls_length(cls) -> int:
         """Get the length of the datum, reflects the StructuredInfo class."""
         return cls.length
 
@@ -93,7 +92,7 @@ class String(ByteData, bytes):
         """Get the core schema for the class."""
         return core_schema.no_info_after_validator_function(cls, handler(bytes))
 
-    def __new__(cls, x):
+    def __new__(cls, x: Any) -> bytes:
         """When a new class is created, fill the datum with null determinations based on the length.
 
         Args:
@@ -107,16 +106,15 @@ class String(ByteData, bytes):
             pass
         return bytes.__new__(cls, x)
 
-    def __str__(self):
+    def __str__(self) -> str:
         """Remove the null terminations and return it."""
-        string_repr = self.decode("utf_8").rstrip("\x00")
-        return string_repr
+        return self.decode("utf_8").rstrip("\x00")
 
     ################################################################################################
     # Public Methods
     ################################################################################################
 
-    def get_value_summation(self):
+    def get_value_summation(self) -> int:
         """Sum the byte values of the datum."""
         return sum(self)
 

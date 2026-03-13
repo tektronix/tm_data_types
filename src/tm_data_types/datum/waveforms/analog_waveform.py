@@ -1,7 +1,7 @@
 """Handles information pertaining to analog waveforms."""
 
 from functools import cached_property
-from typing import Any, Optional, Type, Union
+from typing import Any, Optional, Type
 
 import numpy as np
 
@@ -126,7 +126,7 @@ class AnalogWaveform(Waveform):
 
     def transform_to_type(
         self,
-        as_type: Union[Type[ByteData], Type[PossibleTypes], PossibleTypes],
+        as_type: Type[ByteData] | Type[PossibleTypes] | PossibleTypes,
     ) -> "AnalogWaveform":
         """Convert the waveform to a new type.
 
@@ -174,8 +174,7 @@ class AnalogWaveform(Waveform):
             by the waveform.
         """
         # FOILed to support float64
-        extent = self.y_axis_spacing / self.y_axis_values.calculate_spacing()
-        return extent
+        return self.y_axis_spacing / self.y_axis_values.calculate_spacing()
 
     @y_axis_extent_magnitude.setter
     def y_axis_extent_magnitude(self, extent_magnitude: float) -> None:

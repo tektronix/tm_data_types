@@ -63,7 +63,7 @@ class WaveformFileCSVDigital(CSVFile[DigitalWaveform]):
         self,
         waveform: DigitalWaveform,
         values_matrix: np.ndarray,
-    ):
+    ) -> None:
         """Set the vertical values for the waveform using the csv data.
 
         Args:
@@ -86,8 +86,7 @@ class WaveformFileCSVDigital(CSVFile[DigitalWaveform]):
         Returns:
             The specific digital waveform headers to append to the csv output.
         """
-        output = f"Digital Type,{np.dtype(waveform.y_axis_byte_values.dtype).itemsize * 8}x1\n"
-        return output
+        return f"Digital Type,{np.dtype(waveform.y_axis_byte_values.dtype).itemsize * 8}x1\n"
 
     # Writing
     def _formatted_waveform_values(self, waveform: DigitalWaveform) -> Tuple[Digitized, str, str]:  # pyright: ignore [reportIncompatibleMethodOverride]

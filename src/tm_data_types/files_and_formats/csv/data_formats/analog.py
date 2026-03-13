@@ -87,8 +87,7 @@ class WaveformFileCSVAnalog(CSVFile[AnalogWaveform]):
         Returns:
             The specific analog waveform headers to append to the csv output.
         """
-        output = f"Vertical Units,{waveform.y_axis_units}\n"
-        return output
+        return f"Vertical Units,{waveform.y_axis_units}\n"
 
     # Writing
     def _formatted_waveform_values(self, waveform: AnalogWaveform) -> Tuple[Normalized, str, str]:  # pyright: ignore [reportIncompatibleMethodOverride]
@@ -107,5 +106,5 @@ class WaveformFileCSVAnalog(CSVFile[AnalogWaveform]):
         return (
             y_axis_values[:, None],
             "%10.8e",
-            waveform.source_name if waveform.source_name else "CH1",
+            waveform.source_name or "CH1",
         )
