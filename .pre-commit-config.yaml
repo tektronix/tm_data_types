@@ -40,7 +40,7 @@ repos:
       - id: remove-tabs
       - id: forbid-tabs
   - repo: https://github.com/python-jsonschema/check-jsonschema
-    rev: ec368acd16deee9c560c105ab6d27db4ee19a5ec  # frozen: 0.36.2
+    rev: ed81924a8b1cecdaa570b072528fa80c9c4d6ccd  # frozen: 0.37.1
     hooks:
       - id: check-readthedocs
       - id: check-dependabot
@@ -53,7 +53,7 @@ repos:
       - id: actionlint
         additional_dependencies: [pyflakes, shellcheck-py]
   - repo: https://github.com/commitizen-tools/commitizen
-    rev: dd972c939bcf5b90aa2f38abbcea5a36e8a797cb  # frozen: v4.13.7
+    rev: 4fbeae7861663ecf4b4989211eba41c1a3fb1227  # frozen: v4.13.9
     hooks:
       - id: commitizen
         stages: [commit-msg]
@@ -86,7 +86,7 @@ repos:
           - mdformat-web
           - mdformat-wikilink
   - repo: https://github.com/pappasam/toml-sort
-    rev: 8c5db1c8081310adb476e1661c4d5d1fb6dbd96e  # frozen: v0.24.3
+    rev: 2970ae9bb7124fe5117a27e10c10d2da051ce05a  # frozen: v0.24.4
     hooks:
       - id: toml-sort-fix
   - repo: local
@@ -142,7 +142,7 @@ repos:
         files: ^(.*/)?(poetry\.lock|pyproject\.toml)$
 #        args: [--strict]  # TODO: enable this when poetry can be updated to v2+
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: fa93bc3224c614a0e9786d3e2d3d48edcca246eb  # frozen: v0.15.1
+    rev: e05c5c0818279e5ac248ac9e954431ba58865e61  # frozen: v0.15.7
     hooks:
       - id: ruff-check
         args: [--fix, --exit-non-zero-on-fix]
