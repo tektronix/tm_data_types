@@ -67,8 +67,8 @@ class MATFile(AbstractedFile, Generic[DATUM_TYPE_VAR]):
     _WAVEFORM_PROPERTIES = bidict(
         {
             "source_name": "waveformSource",
-            "y_axis_units": "verticalUnits",  # FIXes: was 'horizontalUnits'
-            "x_axis_units": "horizontalUnits",  # FIXes: was 'verticalUnits'
+            "y_axis_units": "verticalUnits",  # FIX: was 'horizontalUnits'
+            "x_axis_units": "horizontalUnits",  # FIX: was 'verticalUnits'
             "trigger_index": "zeroIndex",
             "x_axis_spacing": "sampleInterval",
         },
