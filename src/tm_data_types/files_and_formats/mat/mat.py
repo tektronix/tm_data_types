@@ -63,7 +63,7 @@ class MATFile(AbstractedFile, Generic[DATUM_TYPE_VAR]):
         14: Matrix,
         16: String,
     }
-#
+
     _WAVEFORM_PROPERTIES = bidict(
         {
             "source_name": "waveformSource",
