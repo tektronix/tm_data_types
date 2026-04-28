@@ -48,12 +48,12 @@ repos:
       - id: check-github-workflows
         args: [--verbose]
   - repo: https://github.com/Mateusz-Grzelinski/actionlint-py
-    rev: 694e2c0dfb4253d51f3c6c54b8f9fec0a16764dc  # frozen: v1.7.11.24
+    rev: c04ed26e40637cab1aa9879c693832a9c120fb20  # frozen: v1.7.12.24
     hooks:
       - id: actionlint
         additional_dependencies: [pyflakes, shellcheck-py]
   - repo: https://github.com/commitizen-tools/commitizen
-    rev: 4fbeae7861663ecf4b4989211eba41c1a3fb1227  # frozen: v4.13.9
+    rev: 2ca29f9297911f8f5a4e8f97100b7832f045e8d3  # frozen: v4.13.10
     hooks:
       - id: commitizen
         stages: [commit-msg]
@@ -133,22 +133,22 @@ repos:
         pass_filenames: false
         files: ^(.*/)?(poetry\.lock|pyproject\.toml)$
         always_run: true
-        args: [--json, --ignore-code=CVE-2019-8341]
+        args: [--json]
       - id: poetry-check
         name: poetry-check
         entry: poetry check
         language: system
         pass_filenames: false
         files: ^(.*/)?(poetry\.lock|pyproject\.toml)$
-#        args: [--strict]  # TODO: enable this when poetry can be updated to v2+
+        args: [--strict]
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: aca6d4c8045a504e2812ea4bedff1d0a09e437bc  # frozen: v0.15.8
+    rev: d1b833175a5d08a925900115526febd8fe71c98e  # frozen: v0.15.11
     hooks:
       - id: ruff-check
         args: [--fix, --exit-non-zero-on-fix]
       - id: ruff-format
   - repo: https://github.com/PyCQA/docformatter
-    rev: e73b8ba0c1316be565983236c72e653ad44e6b66  # frozen: v1.7.7
+    rev: 0032269a0e65c068af9cd86c9a8859a0ddd568d6  # frozen: v1.7.8
     hooks:
       - id: docformatter
         additional_dependencies: [tomli]
