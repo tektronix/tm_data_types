@@ -151,5 +151,4 @@ repos:
     rev: 0032269a0e65c068af9cd86c9a8859a0ddd568d6  # frozen: v1.7.8
     hooks:
       - id: docformatter
-        language_version: python3.12
         additional_dependencies: [tomli]
