@@ -18,6 +18,10 @@ Valid subsections within a version are:
 
 Things to be included in the next release go here.
 
+### Fixed
+
+- Fixed MAT waveform property handling in mat.py, improving reliability when reading and propagating waveform metadata.([#150](https://github.com/tektronix/tm_data_types/issues/150))
+
 ---
 
 ## v0.4.0 (2026-02-27)
