@@ -28,7 +28,6 @@ updates:
     directory: /
     schedule:
       interval: weekly
-    versioning-strategy: increase-if-necessary
     groups:
       pre-commit-dependencies:
         patterns: ['*']
