@@ -38,6 +38,7 @@ documentation = "https://tm-data-types.readthedocs.io"
 homepage = "https://pypi.org/project/tm_data_types/"
 repository = "https://github.com/tektronix/tm_data_types"
 
+
 [tool.coverage.paths]
 source = [
   "src/tm_data_types",
@@ -76,7 +77,7 @@ classifiers = [
   "Topic :: Scientific/Engineering",
   "Topic :: System :: Hardware :: Hardware Drivers",
 ]
-version = "0.4.0"
+version = "0.4.1"
 
 [tool.poetry.group.dev.dependencies]
 docutils-stubs = "^0.0.22"
