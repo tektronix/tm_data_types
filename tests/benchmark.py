@@ -6,6 +6,7 @@ import timeit
 
 from collections.abc import Callable
 from dataclasses import asdict, dataclass
+from pathlib import Path
 from typing import List, Optional, Tuple
 
 import matplotlib.pyplot as plt
@@ -35,7 +36,7 @@ class Performance:
     reads_per_second: NDArray
 
 
-def write_files_serial(file_paths: List[str], datums: List[AnalogWaveform]) -> None:
+def write_files_serial(file_paths: List[str] | List[Path], datums: List[AnalogWaveform]) -> None:
     """Write to the provided file paths using the waveforms serially.
 
     Args:
@@ -46,7 +47,7 @@ def write_files_serial(file_paths: List[str], datums: List[AnalogWaveform]) -> N
         write_file(file_path, datum)
 
 
-def read_files_serial(file_paths: List[str]) -> None:
+def read_files_serial(file_paths: List[str] | List[Path]) -> None:
     """Read the provided file paths serially.
 
     Args:
