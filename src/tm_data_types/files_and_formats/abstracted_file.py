@@ -1,6 +1,7 @@
 """The base file type which abstracts all file formats."""
 
 from abc import ABC, abstractmethod
+from pathlib import Path
 from typing import Dict, Generic, Optional, TextIO, TypeVar
 
 from bidict import bidict
@@ -21,7 +22,7 @@ class AbstractedFile(ABC, Generic[DATUM_TYPE_VAR]):
 
     def __init__(
         self,
-        file_path: str,
+        file_path: str | Path,
         io_type: str,
         product: Optional[InstrumentSeries] = InstrumentSeries.TEKSCOPE,
     ) -> None:

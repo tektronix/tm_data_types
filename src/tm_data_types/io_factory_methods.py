@@ -3,6 +3,7 @@
 import multiprocessing
 import os
 
+from pathlib import Path
 from typing import List, Optional, TYPE_CHECKING
 
 from typing_extensions import TypeVar
@@ -27,7 +28,7 @@ DatumAlias = TypeVar("DatumAlias", bound=Datum, default=Datum)
 
 # pylint: disable=unused-argument
 def write_file(
-    path: str,
+    file_path: str | Path,
     waveform: Datum,
     product: InstrumentSeries = InstrumentSeries.TEKSCOPE,
     file_format: Optional[CSVFormats] = None,  # noqa: ARG001
@@ -50,12 +51,12 @@ def write_file(
             stored separately.
 
     Args:
-        path: The path file to write to.
+        file_path: The path file to write to.
         waveform: The waveform that is being written.
         product: The product being written to.
         file_format: A specialized file format we are writing as.
     """
-    _, path_extension = os.path.splitext(path)
+    _, path_extension = os.path.splitext(file_path)
     try:
         file_extension = FileExtensions[path_extension.replace(".", "").upper()]
     except KeyError as e:
@@ -64,12 +65,12 @@ def write_file(
     # find the format based on the waveform extension
     format_class: AbstractedFile = find_class_format(file_extension, type(waveform))
     # using __init__ for instantiation due to pyright confusion
-    format_class = format_class(path, access_type(file_extension, write=True), product)
+    format_class = format_class(file_path, access_type(file_extension, write=True), product)
     with format_class as fd:
         fd.write_datum(waveform)
 
 
-def read_file(file_path: str) -> DatumAlias:
+def read_file(file_path: str | Path) -> DatumAlias:
     """Read a waveform from a provided file.
 
     Process Overview:
@@ -104,7 +105,7 @@ def read_file(file_path: str) -> DatumAlias:
     raise TypeError(msg)
 
 
-def read_analog_file(file_path: str) -> AnalogWaveform:
+def read_analog_file(file_path: str | Path) -> AnalogWaveform:
     """Read a waveform from a provided file, type hinted as an AnalogWaveform.
 
     Args:
@@ -113,7 +114,7 @@ def read_analog_file(file_path: str) -> AnalogWaveform:
     return read_file(file_path)
 
 
-def read_iq_file(file_path: str) -> IQWaveform:
+def read_iq_file(file_path: str | Path) -> IQWaveform:
     """Read a waveform from a provided file, type hinted as an IQWaveform.
 
     Args:
@@ -131,7 +132,7 @@ def _write_files(
     """Write a list of waveforms to a list of provided files.
 
     Args:
-        file_paths: The path file to write to.
+        file_paths: The list of path files to write to.
         datums: The datum that is being written.
         product: The product being written to.
         file_format: A specialized file format we are writing as.
@@ -141,7 +142,7 @@ def _write_files(
 
 
 def write_files_in_parallel(
-    file_paths: List[str],
+    file_paths: List[str] | List[Path],
     datums: List[Datum],
     force_process_count: int = 4,
     product: InstrumentSeries = InstrumentSeries.TEKSCOPE,
@@ -160,7 +161,7 @@ def write_files_in_parallel(
     This method is particularly useful for saving multiple waveform files efficiently.
 
     Args:
-        file_paths: The path file to write to.
+        file_paths: The list of path files to write to.
         datums: The datum that is being written.
         force_process_count: The number of processes that will be created.
         product: The product being written to.
@@ -207,7 +208,9 @@ def _read_files(file_paths: str, file_queue: multiprocessing.Queue) -> None:
         file_queue.put((file_path, read_file(file_path)))
 
 
-def read_files_in_parallel(file_paths: List[str], force_process_count: int = 4) -> List[Datum]:
+def read_files_in_parallel(
+    file_paths: List[str] | List[Path], force_process_count: int = 4
+) -> List[Datum]:
     """Read a list of files in parallel.
 
     This method allows for the parallel reading of multiple waveform files.
