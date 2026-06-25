@@ -1,7 +1,6 @@
 """Factory methods to read and write to a generic file using generic data."""
 
 import multiprocessing
-import os
 
 from pathlib import Path
 from typing import List, Optional, TYPE_CHECKING
@@ -56,12 +55,15 @@ def write_file(
         product: The product being written to.
         file_format: A specialized file format we are writing as.
     """
-    _, path_extension = os.path.splitext(file_path)
+    file_path = Path(file_path) if isinstance(file_path, str) else file_path
+
+    # make sure the extension is supported
     try:
-        file_extension = FileExtensions[path_extension.replace(".", "").upper()]
+        file_extension = FileExtensions[file_path.suffix.lstrip(".").upper()]
     except KeyError as e:
-        msg = f"The {path_extension} extension cannot be written to."
+        msg = f"The {file_path.suffix} extension cannot be written to."
         raise IOError(msg) from e
+
     # find the format based on the waveform extension
     format_class: AbstractedFile = find_class_format(file_extension, type(waveform))
     # using __init__ for instantiation due to pyright confusion
@@ -90,12 +92,15 @@ def read_file(file_path: str | Path) -> DatumAlias:
     Args:
         file_path: The path file to read from.
     """
-    _, path_extension = os.path.splitext(file_path)
+    file_path = Path(file_path) if isinstance(file_path, str) else file_path
+
+    # ensure the extension is supported
     try:
-        file_extension = FileExtensions[path_extension.replace(".", "").upper()]
+        file_extension = FileExtensions[file_path.suffix.lstrip(".").upper()]
     except KeyError as e:
-        msg = f"The {path_extension} extension cannot be read from."
+        msg = f"The {file_path.suffix} extension cannot be read from."
         raise IOError(msg) from e
+
     class_formats: List[AbstractedFile] = find_class_format_list(file_extension)
     for file_format in class_formats:
         with file_format(file_path, access_type(file_extension, write=False)) as fd:
