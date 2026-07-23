@@ -71,8 +71,8 @@ from tm_data_types.helpers.instrument_series import Endian
 if TYPE_CHECKING:
     from collections.abc import Callable
 
-T1 = TypeVar("T1")  # pylint: disable=invalid-name
-T2 = TypeVar("T2")  # pylint: disable=invalid-name
+T1 = TypeVar("T1")
+T2 = TypeVar("T2")
 
 
 @dataclass
