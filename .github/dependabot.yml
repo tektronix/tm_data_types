@@ -17,6 +17,7 @@ updates:
     schedule:
       interval: weekly
     versioning-strategy: increase-if-necessary
+    exclude-paths: [docs/**, tests/**]
     groups:
       python-dependencies:
         patterns: ['*']
