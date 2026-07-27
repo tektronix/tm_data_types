@@ -86,11 +86,25 @@ def test_parallel(tmp_path: Path) -> None:
         )
         waveform_info[waveform_path.as_posix()] = waveform
 
+    # test file paths as strings
     write_files_in_parallel(list(waveform_info.keys()), list(waveform_info.values()))
 
     if read_info := read_files_in_parallel(list(waveform_info.keys())):
         for file_path, waveform in read_info:
             assert np.array_equal(waveform.y_axis_values, waveform_info[file_path].y_axis_values)
+    else:
+        msg = "No Files written/read."
+        raise IOError(msg)
+
+    # test file paths as Path objects
+    path_keys = [Path(key) for key in waveform_info]
+    write_files_in_parallel(list(path_keys), list(waveform_info.values()))
+
+    if read_info := read_files_in_parallel(list(path_keys)):
+        for file_path, waveform in read_info:
+            assert np.array_equal(
+                waveform.y_axis_values, waveform_info[file_path.as_posix()].y_axis_values
+            )
     else:
         msg = "No Files written/read."
         raise IOError(msg)
@@ -116,11 +130,20 @@ def test_wfm(
 
     waveform.y_axis_values = values
     waveform.y_axis_spacing = 1 / type_max(np.dtype(np.int16))
-    write_file(waveform_path.as_posix(), waveform)
 
+    # test write_file with string
+    write_file(waveform_path.as_posix(), waveform)
     with open(waveform_path, "rb+") as wfm:
         raw_test_data = wfm.read()
+    with open(golden_path, "rb+") as wfm:
+        golden_format_data = wfm.read()
 
+    assert raw_test_data == golden_format_data
+
+    # test write_file with Path object
+    write_file(waveform_path, waveform)
+    with open(waveform_path, "rb+") as wfm:
+        raw_test_data = wfm.read()
     with open(golden_path, "rb+") as wfm:
         golden_format_data = wfm.read()
 
@@ -129,9 +152,9 @@ def test_wfm(
 
 def read_write_read(
     vertical_data: str,
-    waveform_path: str,
-    data_path: str,
-    temp_path: str,
+    waveform_path: str | Path,
+    data_path: str | Path,
+    temp_path: str | Path,
 ) -> None:
     """Read a file, then write the waveform from the file, then read it again.
 
@@ -170,7 +193,16 @@ def read_write_read(
             atol=0.0005,
         ),
     )
-    if waveform_path.rsplit(".", maxsplit=1)[-1] == temp_path.rsplit(".", maxsplit=1)[-1]:
+
+    # Extract extensions
+    ext1 = (
+        waveform_path.rsplit(".", maxsplit=1)[-1]
+        if isinstance(waveform_path, str)
+        else waveform_path.suffix
+    )
+    ext2 = temp_path.rsplit(".", maxsplit=1)[-1] if isinstance(temp_path, str) else temp_path.suffix
+
+    if ext1 == ext2:
         assert np.array_equal(getattr(re_read_waveform, vertical_data), read_wfm_values)
     else:
         re_read_values = getattr(re_read_waveform, vertical_data)
@@ -207,6 +239,15 @@ def test_analog(tmp_path: Path) -> None:
                 temporary_path.as_posix(),
             )
 
+    # verify that Path objects are accepted in addition to strings
+    path_waveform = tmp_path / f"test_analog_pathlib.{extensions[0]}"
+    read_write_read(
+        "y_axis_values",
+        Path(waveform_path + extensions[0]),  # only need to test one file to see if it works
+        data_path,
+        path_waveform,
+    )
+
 
 def test_iq(tmp_path: Path) -> None:
     """Test to see if IQ waveforms will return the same data when saved and loaded."""
@@ -232,6 +273,12 @@ def test_iq(tmp_path: Path) -> None:
             temporary_path.as_posix(),
         )
 
+    # verify that Path objects are accepted in addition to strings
+    path_waveform = tmp_path / f"test_iq_pathlib.{extensions[0]}"
+    read_write_read(
+        "interleaved_iq_axis_values", Path(waveform_path + extensions[0]), data_path, path_waveform
+    )
+
 
 def test_digital(tmp_path: Path) -> None:
     """Test to see if digital waveforms will return the same data when saved and loaded."""
@@ -256,6 +303,12 @@ def test_digital(tmp_path: Path) -> None:
                 data_path,
                 temporary_path.as_posix(),
             )
+
+    # verify that Path objects are accepted in addition to strings
+    path_waveform = tmp_path / f"test_digital_pathlib.{extensions[0]}"
+    read_write_read(
+        "y_axis_byte_values", Path(waveform_path + extensions[0]), data_path, path_waveform
+    )
 
 
 def test_data() -> None:  # pylint: disable=too-many-locals

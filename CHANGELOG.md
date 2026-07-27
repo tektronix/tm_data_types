@@ -18,6 +18,10 @@ Valid subsections within a version are:
 
 Things to be included in the next release go here.
 
+### Added
+
+- All functions/methods/classes now accept pathlike objects, in addition to strings ([#33](https://github.com/tektronix/tm_data_types/issues/33))
+
 ---
 
 ## v0.4.1 (2026-05-21)

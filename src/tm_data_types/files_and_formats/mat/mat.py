@@ -111,7 +111,10 @@ class MATFile(AbstractedFile, Generic[DATUM_TYPE_VAR]):
         Returns:
             A waveform filled with information from the .wfm file.
         """
-        formatted_data = sio.loadmat(self.file_path)
+        file_path_str = (
+            self.file_path if isinstance(self.file_path, str) else self.file_path.as_posix()
+        )
+        formatted_data = sio.loadmat(file_path_str)
         return self._convert_from_formatted_data(formatted_data)
 
     # Writing
@@ -121,8 +124,11 @@ class MATFile(AbstractedFile, Generic[DATUM_TYPE_VAR]):
         Args:
             waveform: The waveform to pack into the .wfm file.
         """
+        file_path_str = (
+            self.file_path if isinstance(self.file_path, str) else self.file_path.as_posix()
+        )
         formatted_data = self._convert_to_formatted_data(waveform)
-        sio.savemat(self.file_path, formatted_data)
+        sio.savemat(file_path_str, formatted_data)
 
     ################################################################################################
     # Private Methods
