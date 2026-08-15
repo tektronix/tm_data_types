@@ -452,7 +452,7 @@ class WfmFormat:  # pylint: disable=too-many-instance-attributes
         """
 
     # pylint: disable=too-many-arguments
-    def setup_header(  # noqa: PLR0913
+    def setup_header(  # noqa: PLR0913,PLR0917
         self,
         waveform_type: WaveformTypes = WaveformTypes.SINGLE,
         number_of_waveforms: int = 1,
@@ -536,7 +536,7 @@ class WfmFormat:  # pylint: disable=too-many-instance-attributes
             pix_map_max_value=pixel_map_max,
         )
 
-    def setup_explicit_dimensions(  # noqa: PLR0913
+    def setup_explicit_dimensions(  # noqa: PLR0913,PLR0917
         self,
         scale: float = 1.0,
         offset: float = 0.0,
