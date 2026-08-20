@@ -609,9 +609,9 @@ def test_invalid_inputs() -> None:
 def test_csv_model_not_hardcoded_mso54(tmp_path: Path) -> None:
     """A generic waveform must not be labelled as an MSO54 in the CSV header.
 
-    When no instrument model is known the header should carry the generic
-    product name, and when the caller records an instrument via
-    set_custom_metadata(test_equipment=...) that value should be used.
+    When no instrument model is known the header should carry the generic product name, and when the
+    caller records an instrument via set_custom_metadata(test_equipment=...) that value should be
+    used.
     """
     values = np.array([1.0, 2.0, 3.0, 4.0], dtype=np.float32)
 
@@ -643,4 +643,5 @@ def _read_csv_model_line(path: Path) -> str:
     for line in path.read_text().splitlines():
         if line.startswith("Model,"):
             return line.split(",", 1)[1]
-    raise AssertionError("no Model line found in csv")
+    msg = "no Model line found in csv"
+    raise AssertionError(msg)
