@@ -180,10 +180,20 @@ class CSVFile(AbstractedFile, Generic[DATUM_TYPE_VAR]):
         Returns:
             The values to append to the output.
         """
-        if self.product.name != "TEKSCOPE":  # noqa: SIM108
+        if self.product.name != "TEKSCOPE":
             model = self.product.name
         else:
-            model = "MSO54"  # TODO: change this default model
+            # A generic TEKSCOPE waveform carries no product model of its own.
+            # Prefer the instrument recorded in the waveform metadata, which a
+            # caller can supply with
+            # meta_info.set_custom_metadata(test_equipment="..."). When no model
+            # is known, fall back to the generic product name rather than a
+            # specific one, so a waveform is never mislabelled as an MSO54.
+            model = self.product.name
+            meta_info = getattr(waveform, "meta_info", None)
+            if meta_info is not None:
+                extended = getattr(meta_info, "extended_metadata", None) or {}
+                model = extended.get("test_equipment") or model
         output = f"Model,{model}\n"
         output += f"Waveform Type,{self!s}\n"
         output += f"Zero Index,{waveform.trigger_index}\n"
