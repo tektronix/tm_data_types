@@ -26,6 +26,7 @@ class ExclusiveMetaInfo(EnforcedTypeDataClass):  # pylist: disable=too-few-publi
     ################################################################################################
 
     waveform_label: str = ""
+    model: str = ""
 
 
 @pydantic_dataclass(kw_only=True)
