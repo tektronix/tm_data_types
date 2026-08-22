@@ -25,7 +25,7 @@ def convert_to_type(field_type: Any, value_to_convert: Any) -> Any:  # noqa:PLR0
     if origin is Union:
         for arg in field_type.__args__:
             # NoneType
-            if (arg is None) and value_to_convert is None:
+            if arg is type(None) and value_to_convert is None:
                 return None
             # Accept if already correct type (handle generics)
             if (arg_origin := getattr(arg, "__origin__", None)) is not None:
@@ -35,7 +35,7 @@ def convert_to_type(field_type: Any, value_to_convert: Any) -> Any:  # noqa:PLR0
                 return value_to_convert
             try:
                 return convert_to_type(arg, value_to_convert)
-            except Exception:  # noqa:BLE001,S112
+            except Exception:  # noqa: S112
                 continue
         msg = f"Type {type(value_to_convert)} cannot be converted to type {field_type}."
         raise TypeError(msg)
@@ -64,7 +64,7 @@ class EnforcedTypeDataClass:
 
     # pylint: disable=too-few-public-methods
     @model_validator(mode="before")
-    def validate(cls, values: Any) -> Dict[str, Any]:  # pylint: disable=no-self-argument  # noqa: N805
+    def validate(cls, values) -> Dict[str, Any]:  # pylint: disable=no-self-argument  # noqa: N805
         # pylint: disable=no-member
         """Pre-init enforced type cast."""
         new_values = {}

@@ -183,7 +183,10 @@ recursive = true
 enable = ["all"]
 disable = [
   "broad-exception-caught",  # caught by ruff
+  "compare-to-zero",
   "consider-alternative-union-syntax",  # caught by ruff
+  "consider-using-assignment-expr",
+  "consider-using-with",
   "deprecated-typing-alias",  # caught by ruff
   "duplicate-code",
   "fixme",  # caught by ruff
@@ -192,7 +195,9 @@ disable = [
   "line-too-long",  # caught by ruff
   "locally-disabled",  # allowed
   "missing-class-docstring",  # caught by ruff
+  "missing-function-docstring",
   "missing-module-docstring",  # caught by ruff
+  "missing-raises-doc",
   "no-member",  # caught by pyright
   "protected-access",  # caught by ruff
   "raise-missing-from",  # caught by ruff
@@ -200,14 +205,21 @@ disable = [
   "suppressed-message",  # allowed
   "too-many-arguments",  # caught by ruff
   "too-many-branches",  # caught by ruff
+  "too-many-instance-attributes",
   "too-many-lines",  # not necessary to check for
+  "too-many-locals",
+  "too-many-nested-blocks",
   "too-many-positional-arguments",  # caught by ruff
+  "too-many-public-methods",
   "too-many-return-statements",  # caught by ruff
   "too-many-statements",  # caught by ruff
+  "unidiomatic-typecheck",
   "unnecessary-default-type-args",  # not necessary to check for
+  "unnecessary-dunder-call",
   "unused-argument",  # caught by ruff
   "unused-import",  # caught by ruff
   "use-implicit-booleaness-not-comparison-to-string",  # caught by ruff
+  "useless-suppression",
   "while-used",  # using while loops in example scripts
   "wrong-import-order",  # caught by ruff
 ]
@@ -274,14 +286,27 @@ fixable = ["ALL"]
 flake8-pytest-style = {mark-parentheses = false}
 flake8-quotes = {docstring-quotes = "double"}
 ignore = [
+  "ANN001",  # Existing public API and callback annotations are intentionally gradual
+  "ANN201",  # Existing public API annotations are intentionally gradual
+  "ANN202",  # Existing private helper annotations are intentionally gradual
+  "ANN204",  # Existing special-method annotations are intentionally gradual
+  "ANN206",  # Existing classmethod annotations are intentionally gradual
   "ANN401",  # Dynamically typed expressions (typing.Any) are disallowed in *args and **kwargs (allowed in this package)
+  "BLE001",  # Existing format readers intentionally handle arbitrary parser failures
   "COM812",  # Trailing comma missing (allowed in this package)
   "CPY001",  # Missing copyright notice at top of file (allowed in this package)
+  "D103",  # Test functions are self-describing through their names
+  "D107",  # Constructors are documented by their classes
   "FA100",  # Missing `from __future__ import annotations`, but uses ... (allowed in this package)
   "FBT",  # flake8-boolean-trap (allowed in this package)
   "FIX002",  # Line contains TO DO (allowed in this package)
   "ISC001",  # single-line-implicit-string-concatenation (handled by formatter)
+  "PLR0917",  # Binary format APIs require positional fields
+  "PLR2004",  # Format constants and test values are meaningful in context
+  "PT011",  # Broad ValueError assertions are intentional in parser tests
   "PTH",  # flake8-use-pathlib  # TODO: enable this
+  "S110",  # Best-effort parsing paths intentionally suppress malformed entries
+  "SIM103",  # Explicit branches improve readability in format conversion code
   "TD002",  # Missing author in TO DO (allowed in this package)
   "TD003",  # Missing issue link on the line following this TO DO (allowed in this package)
   "UP006",  # Use `type` instead of `Type` for type annotation  # TODO: enable this check (will require updating code handling data types)

@@ -103,8 +103,11 @@ def find_class_format(
         IQWaveform: format_lookup.WAVEFORMIQ,
         DigitalWaveform: format_lookup.WAVEFORMDIGITAL,
     }
-    check = waveform_type
-    return class_lookup[check].value
+    for check in waveform_type.__mro__:
+        if check in class_lookup:
+            return class_lookup[check].value
+    msg = f"No file format registered for waveform type {waveform_type!r}"
+    raise KeyError(msg)
 
 
 def find_class_format_list(
