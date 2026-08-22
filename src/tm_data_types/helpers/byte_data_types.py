@@ -33,7 +33,7 @@ class ByteData(ABC):  # noqa: B024
     # Public Methods
     ################################################################################################
 
-    def get_value_summation(self) -> int:
+    def get_value_summation(self):
         """Sum the byte values of the datum."""
         # convert to byte
         representation = struct.pack(self.struct_repr, self)
@@ -50,7 +50,7 @@ class ByteData(ABC):  # noqa: B024
         filestream.write(struct.pack(endian + self.struct_repr, self))
 
     @classmethod
-    def unpack(cls, endian: str, filestream: TextIO) -> "ByteData":
+    def unpack(cls, endian: str, filestream: TextIO):
         """Unpack a number of bytes based on the datum's length.
 
         Args:
@@ -61,7 +61,7 @@ class ByteData(ABC):  # noqa: B024
         return cls(info)
 
     @classmethod
-    def get_cls_length(cls) -> int:
+    def get_cls_length(cls):
         """Get the length of the datum, reflects the StructuredInfo class."""
         return cls.length
 
@@ -92,7 +92,7 @@ class String(ByteData, bytes):
         """Get the core schema for the class."""
         return core_schema.no_info_after_validator_function(cls, handler(bytes))
 
-    def __new__(cls, x: Any) -> bytes:
+    def __new__(cls, x):
         """When a new class is created, fill the datum with null determinations based on the length.
 
         Args:
@@ -114,7 +114,7 @@ class String(ByteData, bytes):
     # Public Methods
     ################################################################################################
 
-    def get_value_summation(self) -> int:
+    def get_value_summation(self):
         """Sum the byte values of the datum."""
         return sum(self)
 

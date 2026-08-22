@@ -11,7 +11,7 @@ from typing_extensions import Self
 
 from tm_data_types.helpers.byte_data_types import ByteData, Double
 
-PossibleTypes = np.integer[Any] | np.floating[Any]
+PossibleTypes = Union[np.integer[Any], np.floating[Any]]  # noqa: UP007
 
 
 def _check_type(

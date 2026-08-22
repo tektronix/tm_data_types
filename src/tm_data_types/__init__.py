@@ -8,10 +8,16 @@ from importlib.metadata import version
 from tm_data_types.datum.data_types import Normalized, RawSample
 from tm_data_types.datum.waveforms.analog_waveform import AnalogWaveform, AnalogWaveformMetaInfo
 from tm_data_types.datum.waveforms.digital_waveform import DigitalWaveform, DigitalWaveformMetaInfo
+from tm_data_types.datum.waveforms.fastframe_analog_waveform import (
+    FastFrameAnalogWaveform,
+    FrameTimingInfo,
+)
+from tm_data_types.datum.waveforms.fastframe_digital_waveform import FastFrameDigitalWaveform
 from tm_data_types.datum.waveforms.iq_waveform import IQWaveform, IQWaveformMetaInfo
 from tm_data_types.datum.waveforms.waveform import Waveform, WaveformMetaInfo
+from tm_data_types.files_and_formats.tss.tss_reader import TSSReader
 from tm_data_types.helpers.class_lookup import FileExtensions
-from tm_data_types.helpers.enums import SIBaseUnit
+from tm_data_types.helpers.enums import SIBaseUnit, SummaryFrameType
 from tm_data_types.io_factory_methods import (
     read_file,
     read_files_in_parallel,
@@ -27,12 +33,17 @@ __all__ = [
     "AnalogWaveformMetaInfo",
     "DigitalWaveform",
     "DigitalWaveformMetaInfo",
+    "FastFrameAnalogWaveform",
+    "FastFrameDigitalWaveform",
     "FileExtensions",
+    "FrameTimingInfo",
     "IQWaveform",
     "IQWaveformMetaInfo",
     "Normalized",
     "RawSample",
     "SIBaseUnit",
+    "SummaryFrameType",
+    "TSSReader",
     "Waveform",
     "WaveformMetaInfo",
     "read_file",
