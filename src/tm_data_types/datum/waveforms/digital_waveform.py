@@ -53,7 +53,7 @@ class DigitalWaveformMetaInfo(WaveformMetaInfo):  # pylint: disable=too-many-ins
     digital_probe_7_state: bytes = b"0x01"
 
 
-class DigitalWaveform(Waveform):
+class DigitalWaveform(Waveform):  # pylint: disable=too-many-instance-attributes
     """Class which represents a digital waveform with a y-axis and x-axis."""
 
     ################################################################################################
@@ -206,7 +206,7 @@ class DigitalWaveform(Waveform):
         """Get a specific frame's data without changing current_frame."""
         if self._frame_data is not None:
             return self._frame_data[idx]
-        if idx == 0:
+        if not idx:
             return np.asarray(self.y_axis_byte_values)
         frame_count = self.__dict__.get("_frame_count", 1)
         msg = f"Frame {idx} out of range [0, {frame_count})"
@@ -285,7 +285,7 @@ class DigitalWaveform(Waveform):
 
     @current_frame.setter
     def current_frame(self, value: int) -> None:
-        self.__setattr__("current_frame", value)
+        self.current_frame = value
 
     @cached_property
     def normalized_vertical_values(self) -> Digitized:

@@ -1,4 +1,5 @@
-# ruff: noqa: SLF001
+# ruff: noqa: SLF001,D103
+# pylint: disable=missing-function-docstring
 """Tests for FastFrameAnalogWaveform (Phase 2 API)."""
 
 from __future__ import annotations
@@ -80,14 +81,14 @@ def test_single_frame_passthrough() -> None:
     waveform = AnalogWaveform()
     waveform.y_axis_values = np.array([1, 2, 3], dtype=np.int16)
     assert waveform.frame(0) is waveform
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="Single-frame waveform"):
         waveform.frame(1)
 
 
 def test_frame_returns_analog_waveform_type() -> None:
     waveform = _synthetic_fastframe()
     frame = waveform.frame(1)
-    assert type(frame) is AnalogWaveform
+    assert isinstance(frame, AnalogWaveform)
     assert not isinstance(frame, FastFrameAnalogWaveform)
 
 

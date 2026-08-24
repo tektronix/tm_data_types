@@ -177,7 +177,7 @@ def test_frame_data_and_iter() -> None:
     frames = list(waveform)
     assert len(frames) == 100
     assert np.array_equal(frames[49], np.full(10, 49, dtype=np.int16))
-    assert waveform.current_frame == 0
+    assert not waveform.current_frame
 
 
 def test_set_frame_timing() -> None:
@@ -381,7 +381,7 @@ def test_ff_programmatic_roundtrip(tmp_path: Path) -> None:
         assert np.array_equal(waveform.frame_data(index), restored.frame_data(index))
 
 
-def _build_ten_mhz_sine_fastframe(
+def _build_ten_mhz_sine_fastframe(  # pylint: disable=too-many-locals
     frame_count: int,
     record_length: int,
     cycles_per_frame: float,

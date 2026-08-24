@@ -28,6 +28,7 @@ class WaveformFileWFMAnalog(WFMFile[AnalogWaveform]):
     META_DATA_TYPE = AnalogWaveformMetaInfo
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        """Initialize analog WFM reader/writer state."""
         super().__init__(*args, **kwargs)
         self._fastframe_read_result: Optional[FastFrameAnalogWaveform] = None
 
@@ -97,7 +98,7 @@ class WaveformFileWFMAnalog(WFMFile[AnalogWaveform]):
             waveform.y_axis_units = formatted_data.explicit_dimensions.first.units
 
     @staticmethod
-    def _read_fastframe_waveform(
+    def _read_fastframe_waveform(  # pylint: disable=too-many-locals
         waveform: AnalogWaveform,
         formatted_data: WfmFormat,
     ) -> FastFrameAnalogWaveform:
@@ -207,8 +208,7 @@ class WaveformFileWFMAnalog(WFMFile[AnalogWaveform]):
             Returns an analog waveform created from the formatted data.
         """
         if waveform.is_fastframe:
-            frame_data = waveform.all_frames
-            if frame_data is None:
+            if (frame_data := waveform.all_frames) is None:
                 msg = "FastFrame waveform is missing frame data."
                 raise ValueError(msg)
             formatted_data.setup_explicit_dimensions(

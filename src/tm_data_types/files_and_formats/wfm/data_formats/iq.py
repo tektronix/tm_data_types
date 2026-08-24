@@ -69,15 +69,8 @@ class WaveformFileWFMIQ(WFMFile[IQWaveform]):
         meta_data = WfmFormat.parse_tekmeta(endian_prefix, self.fd)
         self.fd.seek(0)
 
-        # First try standard metadata check
-        if self._check_metadata(meta_data):
-            return True
-
-        # If metadata is empty, we can't reliably detect IQ waveforms
-        # IQ is a recent feature that may not have clear file format indicators.
-        # We rely primarily on metadata for detection.
-        # Return False to let other formats (like Analog) handle it.
-        return False
+        # IQ detection is metadata-driven; if absent, other readers may handle the file.
+        return self._check_metadata(meta_data)
 
     ################################################################################################
     # Private Methods
@@ -136,7 +129,7 @@ class WaveformFileWFMIQ(WFMFile[IQWaveform]):
         Returns:
             Returns an iq waveform created from the formatted data.
         """
-        if type(waveform.i_axis_values) is not type(waveform.q_axis_values):
+        if waveform.i_axis_values.__class__ is not waveform.q_axis_values.__class__:
             msg = "I values are a different type than Q values."
             raise TypeError(msg)
 

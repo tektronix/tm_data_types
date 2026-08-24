@@ -24,7 +24,7 @@ class FrameTimingInfo:
     is_summary_frame: bool = False
 
 
-class FastFrameMixin:
+class FastFrameMixin:  # pylint: disable=too-many-instance-attributes
     """Shared frame metadata, backing storage views, and summary-frame logic."""
 
     frame_info: list[FrameTimingInfo]
@@ -85,8 +85,7 @@ class FastFrameMixin:
         if not self.is_fastframe:
             return None
 
-        flagged = [info.frame_index for info in self.frame_info if info.is_summary_frame]
-        if flagged:
+        if flagged := [info.frame_index for info in self.frame_info if info.is_summary_frame]:
             return flagged[0]
 
         if self.per_frame_summary_authoritative:
@@ -113,8 +112,7 @@ class FastFrameMixin:
         return summary_index is not None and index == summary_index
 
     def _require_backing_frames(self) -> list[np.ndarray]:
-        backing = self._backing_frames
-        if backing is None:
+        if (backing := self._backing_frames) is None:
             msg = (
                 f"FastFrame capture has {self.num_frames} frames but raw data was not "
                 "loaded during acquisition"

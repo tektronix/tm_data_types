@@ -3,7 +3,7 @@
 import struct
 
 from abc import ABC, abstractmethod
-from typing import Any, ClassVar, Dict
+from typing import Any, ClassVar
 
 import numpy as np
 
@@ -34,7 +34,7 @@ class WFMFile(AbstractedFile[DATUM_TYPE_VAR], ABC):
     ################################################################################################
 
     # a lookup for the byte formats provided by the .wfm file
-    _ENDIAN_PREFIX_LOOKUP: ClassVar[Dict[str, Endian]] = {
+    _ENDIAN_PREFIX_LOOKUP: ClassVar[dict[str, Endian]] = {
         ByteOrderFormat.INTEL.value: Endian(
             struct=">",
             from_byte="little",
@@ -137,7 +137,7 @@ class WFMFile(AbstractedFile[DATUM_TYPE_VAR], ABC):
         )
 
         # Convert bytes to strings for string-like metadata
-        def convert_bytes_to_str(value):
+        def convert_bytes_to_str(value: Any) -> Any:
             if isinstance(value, bytes):
                 try:
                     return value.decode("utf-8")
@@ -218,18 +218,21 @@ class WFMFile(AbstractedFile[DATUM_TYPE_VAR], ABC):
 
     # Reading
     @staticmethod
-    def _check_metadata(meta_data: Dict[str, Any]) -> bool:  # noqa: ARG004
+    def _check_metadata(meta_data: dict[str, Any]) -> bool:
         """Check if metadata can be used to construct a WaveformMetaInfo object."""
         try:
-            # Just try to construct with empty known fields - we'll handle the rest in read_datum
-            WaveformMetaInfo()
-        except Exception:
+            WaveformMetaInfo(**meta_data)
+        except (TypeError, ValueError):
             return False
         return True
 
     # Reading
     @abstractmethod
-    def _format_to_waveform_vertical_values(self, waveform: Waveform, formatted_data: WfmFormat):
+    def _format_to_waveform_vertical_values(
+        self,
+        waveform: Waveform,
+        formatted_data: WfmFormat,
+    ) -> None:
         """Convert the data from a formatted data class to an analog waveform class.
 
         Args:
@@ -243,7 +246,11 @@ class WFMFile(AbstractedFile[DATUM_TYPE_VAR], ABC):
 
     # Writing
     @abstractmethod
-    def _waveform_vertical_values_to_format(self, waveform: Waveform, formatted_data: WfmFormat):
+    def _waveform_vertical_values_to_format(
+        self,
+        waveform: Waveform,
+        formatted_data: WfmFormat,
+    ) -> None:
         """Convert the data from a waveform class to a formatted data class.
 
         Args:

@@ -1,4 +1,5 @@
-# ruff: noqa: SLF001
+# ruff: noqa: SLF001,D103
+# pylint: disable=missing-function-docstring
 """Tests for FastFrameDigitalWaveform (Phase 3 / TekHSI digital FastFrame)."""
 
 from __future__ import annotations
@@ -73,7 +74,7 @@ def test_isinstance_digital_subclass() -> None:
 def test_frame_returns_digital_waveform_with_bitstream() -> None:
     waveform = _synthetic_digital_fastframe(record_length=32)
     frame = waveform.frame(1)
-    assert type(frame) is DigitalWaveform
+    assert isinstance(frame, DigitalWaveform)
     assert not isinstance(frame, FastFrameDigitalWaveform)
     assert frame.digital_bitmask == waveform.digital_bitmask
     bitstream = frame.get_nth_bitstream(0)
@@ -121,7 +122,7 @@ def test_single_frame_digital_passthrough() -> None:
     waveform = DigitalWaveform()
     waveform.y_axis_byte_values = np.array([1, 2, 3], dtype=np.int8)
     assert waveform.frame(0) is waveform
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="Single-frame waveform"):
         waveform.frame(1)
 
 

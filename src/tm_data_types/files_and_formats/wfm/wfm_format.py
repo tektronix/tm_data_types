@@ -7,6 +7,7 @@ import struct
 
 from dataclasses import dataclass, replace
 from typing import (
+    Any,
     Callable,
     Dict,
     Generic,
@@ -66,8 +67,9 @@ from tm_data_types.helpers.enums import (
 )
 from tm_data_types.helpers.instrument_series import Endian
 
-T1 = TypeVar("T1")  # pylint: disable=invalid-name
-T2 = TypeVar("T2")  # pylint: disable=invalid-name
+T1 = TypeVar("T1")
+T2 = TypeVar("T2")
+CHECKSUM_NUMBA_THRESHOLD = 100_000_000.0
 
 
 @dataclass
@@ -103,7 +105,7 @@ class Dimension(Generic[T1, T2]):
 
 
 @njit(cache=True)
-def calculate_checksum(value) -> int:
+def calculate_checksum(value: np.ndarray) -> int:
     """Calculate the byte checksum for the np arrays using numba.
 
     Returns:
@@ -277,7 +279,7 @@ class WfmFormat:  # pylint: disable=too-many-instance-attributes
 
     # Writing
     # pylint: disable=too-many-branches
-    def pack_wfm_file(  # noqa: C901,PLR0912
+    def pack_wfm_file(  # noqa: C901,PLR0912  # pylint: disable=too-many-locals,too-many-nested-blocks
         self,
         endian: Endian,
         version_number: VersionNumber,
@@ -382,7 +384,7 @@ class WfmFormat:  # pylint: disable=too-many-instance-attributes
         summation = sum(version_number.value) + sum(endian.format)
         for value in self.__dict__.values():
             if isinstance(value, np.ndarray):
-                if len(value) > 100.0e6:
+                if len(value) > CHECKSUM_NUMBA_THRESHOLD:
                     summation += calculate_checksum(value)
                 else:
                     summation += int(np.add.reduce(value.view(np.uint8), dtype=np.uint64))
@@ -462,7 +464,7 @@ class WfmFormat:  # pylint: disable=too-many-instance-attributes
         """
 
     # pylint: disable=too-many-arguments
-    def setup_header(  # noqa: PLR0913
+    def setup_header(  # noqa: PLR0913,PLR0917
         self,
         waveform_type: WaveformTypes = WaveformTypes.SINGLE,
         number_of_waveforms: int = 1,
@@ -551,7 +553,7 @@ class WfmFormat:  # pylint: disable=too-many-instance-attributes
             pix_map_max_value=pixel_map_max,
         )
 
-    def setup_explicit_dimensions(  # noqa: PLR0913
+    def setup_explicit_dimensions(  # noqa: PLR0913,PLR0917
         self,
         scale: float = 1.0,
         offset: float = 0.0,
@@ -988,8 +990,7 @@ class WfmFormat:  # pylint: disable=too-many-instance-attributes
             CurveFormatsVer3.EXPLICIT_INT8.value: Char,
             CurveFormatsVer3.EXPLICIT_NO_DIMENSION: None,
         }
-        curve_type = curve_type_lookup[self.explicit_dimensions.first.format]
-        if curve_type is None:
+        if (curve_type := curve_type_lookup[self.explicit_dimensions.first.format]) is None:
             return []
 
         bytes_per_point = self.file_info.bytes_per_point
@@ -1025,6 +1026,7 @@ class WfmFormat:  # pylint: disable=too-many-instance-attributes
             )
         return remaining_blocks
 
+    # pylint: disable-next=too-many-locals
     def populate_fastframe_from_waveform(self, waveform: object) -> None:  # noqa: C901
         """Populate FastFrame metadata and curve blocks from a multi-frame waveform."""
         is_fastframe = getattr(waveform, "is_fastframe", False)
@@ -1037,8 +1039,7 @@ class WfmFormat:  # pylint: disable=too-many-instance-attributes
         postcharge_length = waveform.postcharge_length
         dtype = frame_data.dtype
 
-        frame_precharge = waveform.frame_precharge(0)
-        if frame_precharge is not None:
+        if (frame_precharge := waveform.frame_precharge(0)) is not None:
             self.precharge_buffer = frame_precharge
         elif precharge_length:
             self.precharge_buffer = np.zeros(precharge_length, dtype=dtype)
@@ -1046,8 +1047,7 @@ class WfmFormat:  # pylint: disable=too-many-instance-attributes
             self.precharge_buffer = np.empty(0, dtype=dtype)
 
         self.curve_buffer = frame_data[0]
-        frame_postcharge = waveform.frame_postcharge(0)
-        if frame_postcharge is not None:
+        if (frame_postcharge := waveform.frame_postcharge(0)) is not None:
             self.postcharge_buffer = frame_postcharge
         elif postcharge_length:
             self.postcharge_buffer = np.zeros(postcharge_length, dtype=dtype)
@@ -1169,6 +1169,7 @@ class WfmFormat:  # pylint: disable=too-many-instance-attributes
         curve_offset = 0
 
         # iterate through each class attribute
+        # pylint: disable=too-many-nested-blocks
         for (
             attribute_name,
             attribute_type,
@@ -1209,7 +1210,7 @@ class WfmFormat:  # pylint: disable=too-many-instance-attributes
 
     # Writing
     @staticmethod
-    def _replace_dimension(dimension: Optional[Dimension], data_class) -> Dimension:
+    def _replace_dimension(dimension: Optional[Dimension], data_class: Any) -> Dimension:
         """Replace either the first or second dimension with new data.
 
         Args:

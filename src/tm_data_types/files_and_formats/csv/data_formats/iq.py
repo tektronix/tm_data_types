@@ -45,7 +45,7 @@ class WaveformFileCSVIQ(CSVFile[IQWaveform]):
     ################################################################################################
 
     # Reading
-    def _check_file_contents(self):
+    def _check_file_contents(self) -> bool:
         """Check the contents of the file and find info that dictates if the waveform is IQ.
 
         Returns:

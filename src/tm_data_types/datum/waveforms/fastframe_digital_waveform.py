@@ -33,7 +33,7 @@ def _apply_digital_frame_metadata(
         dest.trigger_index = source.trigger_index
 
 
-class FastFrameDigitalWaveform(DigitalWaveform, FastFrameMixin):
+class FastFrameDigitalWaveform(DigitalWaveform, FastFrameMixin):  # pylint: disable=too-many-instance-attributes
     """Multi-frame digital acquisition with TekHSI-compatible frame access."""
 
     def __init__(self) -> None:
@@ -121,8 +121,7 @@ class FastFrameDigitalWaveform(DigitalWaveform, FastFrameMixin):
 
     def get_summary_frame(self) -> DigitalWaveform:
         """Return the summary frame as a ``DigitalWaveform``."""
-        summary_index = self.summary_frame_index
-        if summary_index is None:
+        if (summary_index := self.summary_frame_index) is None:
             msg = "Waveform has no summary frame"
             raise ValueError(msg)
         return self.frame(summary_index)

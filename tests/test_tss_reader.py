@@ -1,5 +1,8 @@
 """Tests for TSS archive reading."""
 
+# ruff: noqa: D103
+# pylint: disable=missing-function-docstring
+
 from pathlib import Path
 
 import pytest

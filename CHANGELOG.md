@@ -26,6 +26,7 @@ Valid subsections within a version are:
     - Iteration over a FastFrame waveform yields per-frame arrays without mutating `current_frame`.
     - `y_axis_values` returns a view of the currently selected frame; direct assignment on FastFrame waveforms is rejected and points users to `fill_frame`.
 - Added `read_file` / `write_file` support for multi-frame `.wfm` files, including the batch metadata layout (update specs followed by curve specs) and per-frame precharge/charge/postcharge blocks.
+- Added `.tss` archive support via `TSSReader`, including archive iteration, metadata inspection, extraction, and direct waveform reads from embedded `.wfm` files.
 - Added test suite `tests/test_fastframe.py` (parser, API, read path, write path, and full round-trip phases) plus `tests/test_fastframe_analog_waveform.py` and `tests/test_fastframe_digital_waveform.py`.
 - Added FastFrame reference fixture under `tests/waveforms/fastframe/`.
 

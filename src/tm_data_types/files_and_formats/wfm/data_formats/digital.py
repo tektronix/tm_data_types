@@ -51,6 +51,7 @@ class WaveformFileWFMDigital(WFMFile[DigitalWaveform]):
     META_DATA_TYPE = DigitalWaveformMetaInfo
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        """Initialize digital WFM reader/writer state."""
         super().__init__(*args, **kwargs)
         self._fastframe_read_result: Optional[FastFrameDigitalWaveform] = None
 
@@ -113,7 +114,7 @@ class WaveformFileWFMDigital(WFMFile[DigitalWaveform]):
                 if header.data_type == DataTypes.DIGITAL.value:
                     self.fd.seek(0)
                     return True
-            except Exception:
+            except (OSError, struct.error, ValueError, TypeError):
                 # If we can't read the header, fall through to return False
                 pass
             finally:
@@ -164,7 +165,7 @@ class WaveformFileWFMDigital(WFMFile[DigitalWaveform]):
             waveform.y_axis_units = formatted_data.explicit_dimensions.first.units
 
     @staticmethod
-    def _read_fastframe_waveform(
+    def _read_fastframe_waveform(  # pylint: disable=too-many-locals
         waveform: DigitalWaveform,
         formatted_data: WfmFormat,
     ) -> FastFrameDigitalWaveform:
@@ -272,8 +273,7 @@ class WaveformFileWFMDigital(WFMFile[DigitalWaveform]):
             Returns a digital waveform created from the formatted data.
         """
         if waveform.is_fastframe:
-            frame_data = waveform.all_frames
-            if frame_data is None:
+            if (frame_data := waveform.all_frames) is None:
                 msg = "FastFrame waveform is missing frame data."
                 raise ValueError(msg)
             formatted_data.setup_explicit_dimensions(

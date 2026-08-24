@@ -45,7 +45,7 @@ def _apply_frame_metadata(
         dest.trigger_index = source.trigger_index
 
 
-class FastFrameAnalogWaveform(AnalogWaveform, FastFrameMixin):
+class FastFrameAnalogWaveform(AnalogWaveform, FastFrameMixin):  # pylint: disable=too-many-instance-attributes
     """Multi-frame oscilloscope acquisition with TekHSI-compatible frame access."""
 
     def __init__(self) -> None:
@@ -133,8 +133,7 @@ class FastFrameAnalogWaveform(AnalogWaveform, FastFrameMixin):
 
     def get_summary_frame(self) -> AnalogWaveform:
         """Return the summary frame as an ``AnalogWaveform``."""
-        summary_index = self.summary_frame_index
-        if summary_index is None:
+        if (summary_index := self.summary_frame_index) is None:
             msg = "Waveform has no summary frame"
             raise ValueError(msg)
         return self.frame(summary_index)

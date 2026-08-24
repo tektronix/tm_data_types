@@ -62,7 +62,7 @@ class AnalogWaveformMetaInfo(WaveformMetaInfo):
     real_data_start_index: Optional[int] = None
 
 
-class AnalogWaveform(Waveform):
+class AnalogWaveform(Waveform):  # pylint: disable=too-many-instance-attributes,too-many-public-methods
     """Class which represents an analog waveform with a y-axis and x-axis."""
 
     ################################################################################################
@@ -213,7 +213,7 @@ class AnalogWaveform(Waveform):
         """Get a specific frame's data without changing current_frame."""
         if self._frame_data is not None:
             return self._frame_data[idx]
-        if idx == 0:
+        if not idx:
             return np.asarray(self.y_axis_values)
         frame_count = self.__dict__.get("_frame_count", 1)
         msg = f"Frame {idx} out of range [0, {frame_count})"

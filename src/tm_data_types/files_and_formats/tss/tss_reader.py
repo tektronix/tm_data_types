@@ -4,17 +4,21 @@ TSS files are ZIP archives containing waveform files (``.wfm``) and other associ
 """
 
 import contextlib
+import shutil
 import sys
 import tempfile
 import zipfile
 
 from collections.abc import Iterator
 from pathlib import Path
+from types import TracebackType
 
 from typing_extensions import Self
 
 from tm_data_types.datum.datum import Datum
 from tm_data_types.io_factory_methods import read_file
+
+MIN_MAIN_ARGS = 2
 
 
 class TSSReader:
@@ -53,7 +57,7 @@ class TSSReader:
             raise FileNotFoundError(msg)
 
         self._zip: zipfile.ZipFile | None = None
-        self._temp_dir: tempfile.TemporaryDirectory[str] | None = None
+        self._temp_dir: Path | None = None
 
     def __enter__(self) -> Self:
         """Open the TSS archive when entering context manager."""
@@ -64,14 +68,19 @@ class TSSReader:
             raise zipfile.BadZipFile(msg) from exc
         return self
 
-    def __exit__(self, exc_type, exc_val, exc_tb) -> None:
+    def __exit__(
+        self,
+        exc_type: type[BaseException] | None,
+        exc_val: BaseException | None,
+        exc_tb: TracebackType | None,
+    ) -> None:
         """Close the TSS archive and clean up temporary files."""
         if self._zip:
             self._zip.close()
             self._zip = None
 
         if self._temp_dir:
-            self._temp_dir.cleanup()
+            shutil.rmtree(self._temp_dir, ignore_errors=True)
             self._temp_dir = None
 
     def iter_files(self, extension: str | None = None) -> Iterator[str]:
@@ -107,6 +116,7 @@ class TSSReader:
             ZipInfo object containing file metadata (size, date, etc.).
 
         Raises:
+            RuntimeError: If the archive has not been opened.
             KeyError: If the file doesn't exist in the archive.
         """
         if self._zip is None:
@@ -130,6 +140,7 @@ class TSSReader:
             Path to the extracted file.
 
         Raises:
+            RuntimeError: If the archive has not been opened.
             KeyError: If the file doesn't exist in the archive.
             OSError: If the file cannot be written to disk.
         """
@@ -163,9 +174,11 @@ class TSSReader:
             Waveform object (``AnalogWaveform``, ``DigitalWaveform``, or ``IQWaveform``).
 
         Raises:
+            RuntimeError: If the archive has not been opened.
             KeyError: If the file doesn't exist in the archive.
             OSError: If the file cannot be read.
             TypeError: If the waveform type cannot be determined.
+            ValueError: If waveform contents cannot be converted.
         """
         if self._zip is None:
             msg = "TSS archive not open. Use 'with TSSReader(...)' context manager."
@@ -176,16 +189,16 @@ class TSSReader:
             raise KeyError(msg)
 
         if self._temp_dir is None:
-            self._temp_dir = tempfile.TemporaryDirectory(prefix="tss_reader_")
+            self._temp_dir = Path(tempfile.mkdtemp(prefix="tss_reader_"))
 
-        temp_file_path = Path(self._temp_dir.name) / Path(archive_path).name
+        temp_file_path = self._temp_dir / Path(archive_path).name
 
         with self._zip.open(archive_path) as source, open(temp_file_path, "wb") as target:
             target.write(source.read())
 
         try:
             return read_file(str(temp_file_path))
-        except Exception:
+        except (OSError, RuntimeError, TypeError, ValueError):
             if temp_file_path.exists():
                 temp_file_path.unlink()
             raise
@@ -193,7 +206,7 @@ class TSSReader:
 
 def main() -> None:
     """List and read waveforms from a TSS archive (CLI entry point)."""
-    if len(sys.argv) < 2:
+    if len(sys.argv) < MIN_MAIN_ARGS:
         sys.exit(1)
 
     tss_path = sys.argv[1]
@@ -203,15 +216,18 @@ def main() -> None:
             for file_name in sorted(tss.iter_files()):
                 tss.get_file_info(file_name)
 
-            wfm_files = list(tss.iter_files(extension=".wfm"))
-            if wfm_files:
+            if wfm_files := list(tss.iter_files(extension=".wfm")):
                 for wfm_file in sorted(wfm_files):
-                    with contextlib.suppress(Exception):
+                    with contextlib.suppress(
+                        OSError,
+                        RuntimeError,
+                        TypeError,
+                        ValueError,
+                        KeyError,
+                    ):
                         tss.read_waveform(wfm_file)
-            else:
-                pass
 
-    except Exception:
+    except (zipfile.BadZipFile, OSError, RuntimeError, TypeError, ValueError):
         sys.exit(1)
 
 
