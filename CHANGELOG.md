@@ -18,6 +18,20 @@ Valid subsections within a version are:
 
 Things to be included in the next release go here.
 
+---
+
+## v0.5.0 (2026-08-24)
+
+### Merged Pull Requests
+
+- feat: add FastFrame waveform support ([#217](https://github.com/tektronix/tm_data_types/pull/217))
+- python-deps(deps-dev): update wheel requirement ([#216](https://github.com/tektronix/tm_data_types/pull/216))
+- pre-commit-deps(deps): bump the pre-commit-dependencies group with 2 updates ([#215](https://github.com/tektronix/tm_data_types/pull/215))
+- pre-commit-deps(deps): bump the pre-commit-dependencies group across 1 directory with 4 updates ([#196](https://github.com/tektronix/tm_data_types/pull/196))
+- python-deps(deps-dev): update pylint requirement ([#210](https://github.com/tektronix/tm_data_types/pull/210))
+- python-deps(deps-dev): update twine requirement ([#209](https://github.com/tektronix/tm_data_types/pull/209))
+- python-deps(deps): bump the python-dependencies group across 1 directory with 36 updates ([#207](https://github.com/tektronix/tm_data_types/pull/207))
+
 ### Added
 
 - Added FastFrame (`.wfm`) read, write, and round-trip support for analog and digital waveforms.
