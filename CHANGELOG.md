@@ -16,6 +16,8 @@ Valid subsections within a version are:
 
 ## Unreleased
 
+Things to be included in the next release go here.
+
 ### Added
 
 - Added FastFrame (`.wfm`) read, write, and round-trip support for analog and digital waveforms.
