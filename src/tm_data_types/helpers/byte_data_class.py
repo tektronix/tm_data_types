@@ -2,6 +2,7 @@
 
 import struct
 
+from types import NoneType
 from typing import Any, Dict, List, Optional, TextIO, Type, TypeVar, Union
 
 from pydantic import model_validator
@@ -25,7 +26,7 @@ def convert_to_type(field_type: Any, value_to_convert: Any) -> Any:  # noqa:PLR0
     if origin is Union:
         for arg in field_type.__args__:
             # NoneType
-            if (arg is None) and value_to_convert is None:
+            if arg is NoneType and value_to_convert is None:
                 return None
             # Accept if already correct type (handle generics)
             if (arg_origin := getattr(arg, "__origin__", None)) is not None:
@@ -35,7 +36,7 @@ def convert_to_type(field_type: Any, value_to_convert: Any) -> Any:  # noqa:PLR0
                 return value_to_convert
             try:
                 return convert_to_type(arg, value_to_convert)
-            except Exception:  # noqa:BLE001,S112
+            except (TypeError, ValueError, AttributeError):
                 continue
         msg = f"Type {type(value_to_convert)} cannot be converted to type {field_type}."
         raise TypeError(msg)
@@ -48,7 +49,7 @@ def convert_to_type(field_type: Any, value_to_convert: Any) -> Any:  # noqa:PLR0
     # Special case for bytes to str
     # Handle str to bytes conversion with encoding
     if isinstance(value_to_convert, str) and field_type is bytes:
-        if value_to_convert == "":
+        if not value_to_convert:
             return b""  # Empty string becomes empty bytes
         return value_to_convert.encode("utf-8", errors="ignore")
     return field_type(value_to_convert)
@@ -64,8 +65,11 @@ class EnforcedTypeDataClass:
 
     # pylint: disable=too-few-public-methods
     @model_validator(mode="before")
-    def validate(cls, values: Any) -> Dict[str, Any]:  # pylint: disable=no-self-argument  # noqa: N805
-        # pylint: disable=no-member
+    @classmethod
+    def validate(
+        cls,
+        values: Dict[str, Any],
+    ) -> Dict[str, Any]:
         """Pre-init enforced type cast."""
         new_values = {}
         # iterate through the parent objects

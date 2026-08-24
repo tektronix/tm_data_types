@@ -8,6 +8,7 @@ import struct
 from dataclasses import dataclass, replace
 from typing import (
     Any,
+    Callable,
     Dict,
     Generic,
     get_args,
@@ -16,14 +17,12 @@ from typing import (
     TextIO,
     Tuple,
     Type,
-    TYPE_CHECKING,
     TypeVar,
 )
 
 import numpy as np
 
 from numba import njit
-from numpy import ndarray
 
 from tm_data_types.files_and_formats.wfm.wfm_data_classes import (
     CurveInformation,
@@ -68,11 +67,9 @@ from tm_data_types.helpers.enums import (
 )
 from tm_data_types.helpers.instrument_series import Endian
 
-if TYPE_CHECKING:
-    from collections.abc import Callable
-
 T1 = TypeVar("T1")
 T2 = TypeVar("T2")
+CHECKSUM_NUMBA_THRESHOLD = 100_000_000.0
 
 
 @dataclass
@@ -108,7 +105,7 @@ class Dimension(Generic[T1, T2]):
 
 
 @njit(cache=True)
-def calculate_checksum(value: ndarray) -> int:
+def calculate_checksum(value: np.ndarray) -> int:
     """Calculate the byte checksum for the np arrays using numba.
 
     Returns:
@@ -147,6 +144,7 @@ class WfmFormat:  # pylint: disable=too-many-instance-attributes
     precharge_buffer: np.ndarray = np.empty(0)
     curve_buffer: np.ndarray = np.empty(0)
     postcharge_buffer: np.ndarray = np.empty(0)
+    fastframe_extra_blocks: List[Tuple[np.ndarray, np.ndarray, np.ndarray]] = []  # noqa: RUF012
     file_checksum: Optional[UnsignedLongLong] = None
     meta_data: Dict[str, str | Double | Long | UnsignedLong] = {}  # noqa: RUF012
 
@@ -199,6 +197,8 @@ class WfmFormat:  # pylint: disable=too-many-instance-attributes
         self.precharge_buffer, self.curve_buffer, self.postcharge_buffer = (
             self._get_curve_information(filestream)
         )
+        if self.is_fastframe():
+            self.fastframe_extra_blocks = self._read_remaining_fastframe_blocks(filestream)
         with contextlib.suppress(struct.error):
             self.file_checksum = UnsignedLongLong.unpack(endian.struct, filestream)
         self.meta_data = self.parse_tekmeta(endian, filestream)
@@ -279,7 +279,7 @@ class WfmFormat:  # pylint: disable=too-many-instance-attributes
 
     # Writing
     # pylint: disable=too-many-branches
-    def pack_wfm_file(  # noqa: C901,PLR0912
+    def pack_wfm_file(  # noqa: C901,PLR0912  # pylint: disable=too-many-locals,too-many-nested-blocks
         self,
         endian: Endian,
         version_number: VersionNumber,
@@ -376,17 +376,29 @@ class WfmFormat:  # pylint: disable=too-many-instance-attributes
             self.postcharge_buffer,
         ):
             attribute.tofile(filestream)
+        for precharge_buffer, curve_buffer, postcharge_buffer in self.fastframe_extra_blocks:
+            precharge_buffer.tofile(filestream)
+            curve_buffer.tofile(filestream)
+            postcharge_buffer.tofile(filestream)
 
         summation = sum(version_number.value) + sum(endian.format)
         for value in self.__dict__.values():
             if isinstance(value, np.ndarray):
-                if len(value) > 100.0e6:  # noqa: PLR2004
+                if len(value) > CHECKSUM_NUMBA_THRESHOLD:
                     summation += calculate_checksum(value)
                 else:
                     summation += int(np.add.reduce(value.view(np.uint8), dtype=np.uint64))
 
             elif isinstance(value, List):
-                summation += sum(frame.get_value_summation() for frame in value)
+                if value and isinstance(value[0], tuple):
+                    for precharge, charge, postcharge in value:
+                        for buffer in (precharge, charge, postcharge):
+                            if isinstance(buffer, np.ndarray) and len(buffer):
+                                summation += int(
+                                    np.add.reduce(buffer.view(np.uint8), dtype=np.uint64),
+                                )
+                else:
+                    summation += sum(frame.get_value_summation() for frame in value)
             elif not isinstance(value, Dict):
                 summation += value.get_value_summation()
 
@@ -431,7 +443,7 @@ class WfmFormat:  # pylint: disable=too-many-instance-attributes
                 vertical_zoom_scale_factor=zoom_scale[1],
                 vertical_zoom_position=zoom_position[1],
                 waveform_label=waveform_label,
-                number_of_frames=max(len(self.curve_specs) - 1, 0),
+                number_of_frames=len(self.update_specs),
                 header_size=len(self.header) + len(self.pixel_map) + len(self.summary_frame_type),
             )
         else:
@@ -487,7 +499,10 @@ class WfmFormat:  # pylint: disable=too-many-instance-attributes
         """
         # If there was no requested fast frames set, just set it to the number of current frames
         if not number_requested_fast_frames:
-            number_requested_fast_frames = len(self.update_specs)
+            number_requested_fast_frames = len(self.update_specs) + 1 if self.update_specs else 0
+
+        if self.update_specs:
+            waveform_type = WaveformTypes.FASTFRAME
 
         if None not in (self.explicit_dimensions, self.implicit_dimensions):
             self.header = WaveformHeader(
@@ -504,9 +519,11 @@ class WfmFormat:  # pylint: disable=too-many-instance-attributes
                 gen_purpose_counter=general_purpose_counter,
                 accumulate_wfm_cnt=accumulated_waveform_count,
                 target_accumulation_cnt=target_accumulation_count,
-                curve_ref_cnt=curve_reference_count,
+                curve_ref_cnt=len(self.curve_specs) + 1
+                if self.curve_specs
+                else curve_reference_count,
                 num_requested_fast_frames=number_requested_fast_frames,
-                num_acquired_fast_frames=len(self.update_specs),
+                num_acquired_fast_frames=len(self.update_specs) + 1 if self.update_specs else 0,
             )
         else:
             msg = "Not enough info to generate a header section."
@@ -865,16 +882,15 @@ class WfmFormat:  # pylint: disable=too-many-instance-attributes
         Returns:
             Both the update frame and curve frame lists.
         """
-        if self.header is not None:
-            # update frame info
+        if self.header is not None and self.file_info is not None:
+            additional_frames = self.file_info.number_of_frames
             update_spec = [
                 UpdateSpecifications.unpack(endian.struct, filestream, in_order=True)
-                for _ in range(self.header.num_acquired_fast_frames)
+                for _ in range(additional_frames)
             ]
-            # curve frame info
             curve_spec = [
                 CurveInformation.unpack(endian.struct, filestream, in_order=True)
-                for _ in range(self.header.num_acquired_fast_frames)
+                for _ in range(additional_frames)
             ]
             return update_spec, curve_spec
         return [], []
@@ -938,6 +954,161 @@ class WfmFormat:  # pylint: disable=too-many-instance-attributes
         msg = "No primary dimensions defined in file."
         raise AttributeError(msg)
 
+    def is_fastframe(self) -> bool:
+        """Return True when the unpacked file contains multiple FastFrame acquisitions."""
+        if self.header is None:
+            return False
+        return (
+            self.header.waveform_type == WaveformTypes.FASTFRAME.value
+            or self.header.num_acquired_fast_frames > 1
+        )
+
+    def fastframe_total_frames(self) -> int:
+        """Return the total number of FastFrame acquisitions."""
+        if self.header is None:
+            return 1
+        if self.header.num_acquired_fast_frames > 0:
+            return self.header.num_acquired_fast_frames
+        return len(self.update_specs) + 1
+
+    def _read_remaining_fastframe_blocks(
+        self,
+        filestream: TextIO,
+    ) -> List[Tuple[np.ndarray, np.ndarray, np.ndarray]]:
+        """Read precharge, charge, and postcharge for frames 1..N-1."""
+        if self.explicit_dimensions is None or self.curve_info is None or self.file_info is None:
+            return []
+
+        curve_type_lookup = {
+            CurveFormatsVer3.EXPLICIT_INT16.value: Short,
+            CurveFormatsVer3.EXPLICIT_INT32.value: Long,
+            CurveFormatsVer3.EXPLICIT_UINT32.value: UnsignedLong,
+            CurveFormatsVer3.EXPLICIT_UINT64.value: UnsignedLongLong,
+            CurveFormatsVer3.EXPLICIT_FP32.value: Float,
+            CurveFormatsVer3.EXPLICIT_FP64.value: Double,
+            CurveFormatsVer3.EXPLICIT_UINT8.value: UnsignedChar,
+            CurveFormatsVer3.EXPLICIT_INT8.value: Char,
+            CurveFormatsVer3.EXPLICIT_NO_DIMENSION: None,
+        }
+        if (curve_type := curve_type_lookup[self.explicit_dimensions.first.format]) is None:
+            return []
+
+        bytes_per_point = self.file_info.bytes_per_point
+        precharge_buffer_length = (
+            self.curve_info.data_start_offset - self.curve_info.precharge_start_offset
+        ) // bytes_per_point
+        charge_buffer_length = (
+            self.curve_info.postcharge_start_offset - self.curve_info.data_start_offset
+        ) // bytes_per_point
+        postcharge_buffer_length = (
+            self.curve_info.postcharge_stop_offset - self.curve_info.postcharge_start_offset
+        ) // bytes_per_point
+
+        remaining_blocks: List[Tuple[np.ndarray, np.ndarray, np.ndarray]] = []
+        for _ in range(len(self.update_specs)):
+            precharge_curve_buffer = self.get_curve_data(
+                precharge_buffer_length,
+                curve_type,
+                filestream,
+            )
+            charge_curve_buffer = self.get_curve_data(
+                charge_buffer_length,
+                curve_type,
+                filestream,
+            )
+            postcharge_curve_buffer = self.get_curve_data(
+                postcharge_buffer_length,
+                curve_type,
+                filestream,
+            )
+            remaining_blocks.append(
+                (precharge_curve_buffer, charge_curve_buffer, postcharge_curve_buffer),
+            )
+        return remaining_blocks
+
+    # pylint: disable-next=too-many-locals
+    def populate_fastframe_from_waveform(self, waveform: object) -> None:  # noqa: C901
+        """Populate FastFrame metadata and curve blocks from a multi-frame waveform."""
+        is_fastframe = getattr(waveform, "is_fastframe", False)
+        frame_data = getattr(waveform, "all_frames", None)
+        if not is_fastframe or frame_data is None:
+            return
+
+        frame_count = waveform.frame_count
+        precharge_length = waveform.precharge_length
+        postcharge_length = waveform.postcharge_length
+        dtype = frame_data.dtype
+
+        if (frame_precharge := waveform.frame_precharge(0)) is not None:
+            self.precharge_buffer = frame_precharge
+        elif precharge_length:
+            self.precharge_buffer = np.zeros(precharge_length, dtype=dtype)
+        else:
+            self.precharge_buffer = np.empty(0, dtype=dtype)
+
+        self.curve_buffer = frame_data[0]
+        if (frame_postcharge := waveform.frame_postcharge(0)) is not None:
+            self.postcharge_buffer = frame_postcharge
+        elif postcharge_length:
+            self.postcharge_buffer = np.zeros(postcharge_length, dtype=dtype)
+        else:
+            self.postcharge_buffer = np.empty(0, dtype=dtype)
+
+        tt_offsets = waveform.tt_offsets
+        gmt_fract = waveform.frame_gmt_fract
+        gmt_sec = waveform.frame_gmt_sec
+        self.update_specifications = UpdateSpecifications(
+            real_point_offset=0,
+            trigger_time_offset=tt_offsets[0] if tt_offsets is not None else 0.0,
+            fractional_second=gmt_fract[0] if gmt_fract is not None else 0.0,
+            gmt_second=gmt_sec[0] if gmt_sec is not None else 0,
+        )
+
+        self.update_specs = []
+        self.curve_specs = []
+        self.fastframe_extra_blocks = []
+        for index in range(1, frame_count):
+            self.update_specs.append(
+                UpdateSpecifications(
+                    real_point_offset=0,
+                    trigger_time_offset=tt_offsets[index] if tt_offsets is not None else 0.0,
+                    fractional_second=gmt_fract[index] if gmt_fract is not None else 0.0,
+                    gmt_second=gmt_sec[index] if gmt_sec is not None else 0,
+                ),
+            )
+            self.curve_specs.append(
+                CurveInformation(
+                    state_flags=81,
+                    check_sum_type=0,
+                    check_sum=0,
+                    precharge_start_offset=0,
+                    data_start_offset=precharge_length * dtype.itemsize,
+                    postcharge_start_offset=(precharge_length + self.curve_buffer.size)
+                    * dtype.itemsize,
+                    postcharge_stop_offset=(
+                        precharge_length + self.curve_buffer.size + postcharge_length
+                    )
+                    * dtype.itemsize,
+                    end_of_curve_buffer_offset=(
+                        precharge_length + self.curve_buffer.size + postcharge_length
+                    )
+                    * dtype.itemsize,
+                ),
+            )
+            precharge = waveform.frame_precharge(index)
+            if precharge is None and precharge_length:
+                precharge = np.zeros(precharge_length, dtype=dtype)
+            elif precharge is None:
+                precharge = np.empty(0, dtype=dtype)
+            postcharge = waveform.frame_postcharge(index)
+            if postcharge is None and postcharge_length:
+                postcharge = np.zeros(postcharge_length, dtype=dtype)
+            elif postcharge is None:
+                postcharge = np.empty(0, dtype=dtype)
+            self.fastframe_extra_blocks.append((precharge, frame_data[index], postcharge))
+
+        self.setup_curve_information()
+
     # Reading
     @staticmethod
     def get_curve_data(length: int, data_type: Type[ByteData], filestream: TextIO) -> np.ndarray:
@@ -984,7 +1155,7 @@ class WfmFormat:  # pylint: disable=too-many-instance-attributes
             self.setup_file_info()
 
     # Writing
-    def _find_offsets(self) -> Tuple[int, int]:
+    def _find_offsets(self) -> Tuple[int, int]:  # noqa: C901,PLR0912
         """Determine the total byte length and where the curve is located dynamically.
 
         Returns:
@@ -998,6 +1169,7 @@ class WfmFormat:  # pylint: disable=too-many-instance-attributes
         curve_offset = 0
 
         # iterate through each class attribute
+        # pylint: disable=too-many-nested-blocks
         for (
             attribute_name,
             attribute_type,
@@ -1006,6 +1178,11 @@ class WfmFormat:  # pylint: disable=too-many-instance-attributes
             if attribute_value is not None and attribute_name not in "meta_data":
                 if isinstance(attribute_value, np.ndarray):
                     byte_count += len(attribute_value) * attribute_value.dtype.itemsize
+                elif attribute_name == "fastframe_extra_blocks":
+                    for precharge, charge, postcharge in attribute_value:
+                        for buffer in (precharge, charge, postcharge):
+                            if len(buffer):
+                                byte_count += len(buffer) * buffer.dtype.itemsize
                 elif isinstance(attribute_value, List):
                     byte_count += (
                         len(attribute_value) * get_args(attribute_type)[0].get_cls_length()
@@ -1025,7 +1202,7 @@ class WfmFormat:  # pylint: disable=too-many-instance-attributes
 
             if (
                 attribute_value is not None
-                and attribute_name not in {"file_checksum", "meta_data"}
+                and attribute_name not in {"file_checksum", "meta_data", "fastframe_extra_blocks"}
                 and not isinstance(attribute_value, np.ndarray)
             ):
                 curve_offset = byte_count

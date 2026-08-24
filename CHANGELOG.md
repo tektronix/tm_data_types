@@ -18,6 +18,24 @@ Valid subsections within a version are:
 
 Things to be included in the next release go here.
 
+### Added
+
+- Added FastFrame (`.wfm`) read, write, and round-trip support for analog and digital waveforms.
+    - New `FastFrameAnalogWaveform` and `FastFrameDigitalWaveform` classes in `tm_data_types.datum.waveforms`.
+    - New shared FastFrame utilities in `fastframe_common.py`.
+    - New `AnalogWaveform.create_fastframe(...)` factory for allocating a contiguous 2D frame buffer with configurable `frame_count`, `record_length`, `dtype`, precharge/postcharge lengths, and axis metadata.
+    - New `fill_frame(index, values)`, `frame_data(index)`, `set_frame_timing(...)`, `current_frame`, `frame_count`, `is_fastframe`, `tt_offsets`, and `frame_gmt_sec` APIs on FastFrame waveforms.
+    - Iteration over a FastFrame waveform yields per-frame arrays without mutating `current_frame`.
+    - `y_axis_values` returns a view of the currently selected frame; direct assignment on FastFrame waveforms is rejected and points users to `fill_frame`.
+- Added `read_file` / `write_file` support for multi-frame `.wfm` files, including the batch metadata layout (update specs followed by curve specs) and per-frame precharge/charge/postcharge blocks.
+- Added `.tss` archive support via `TSSReader`, including archive iteration, metadata inspection, extraction, and direct waveform reads from embedded `.wfm` files.
+- Added test suite `tests/test_fastframe.py` (parser, API, read path, write path, and full round-trip phases) plus `tests/test_fastframe_analog_waveform.py` and `tests/test_fastframe_digital_waveform.py`.
+- Added FastFrame reference fixture under `tests/waveforms/fastframe/`.
+
+### Changed
+
+- Single-frame `AnalogWaveform` behavior is preserved (`frame_count == 1`, `is_fastframe is False`); existing single-frame read/write paths are unchanged.
+
 ---
 
 ## v0.4.1 (2026-05-21)
