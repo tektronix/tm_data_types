@@ -604,3 +604,44 @@ def test_invalid_inputs() -> None:
         match=r"CSV data not parseable.",
     ):
         read_file(f"{waveform_dir}/{invalid_format}")
+
+
+def test_csv_model_not_hardcoded_mso54(tmp_path: Path) -> None:
+    """A generic waveform must not be labelled as an MSO54 in the CSV header.
+
+    When no instrument model is known the header should carry the generic product name, and when the
+    caller records an instrument via set_custom_metadata(test_equipment=...) that value should be
+    used.
+    """
+    values = np.array([1.0, 2.0, 3.0, 4.0], dtype=np.float32)
+
+    # No instrument model supplied.
+    waveform = AnalogWaveform()
+    waveform.meta_info = AnalogWaveformMetaInfo()
+    waveform.y_axis_values = values
+    waveform.x_axis_spacing = 1.0
+    waveform.trigger_index = 0.0
+    generic_path = tmp_path / "generic.csv"
+    write_file(generic_path.as_posix(), waveform)
+    model_line = _read_csv_model_line(generic_path)
+    assert model_line != "MSO54"
+
+    # Instrument model supplied through metadata.
+    waveform_with_model = AnalogWaveform()
+    waveform_with_model.meta_info = AnalogWaveformMetaInfo()
+    waveform_with_model.meta_info.set_custom_metadata(test_equipment="DPO71254C")
+    waveform_with_model.y_axis_values = values
+    waveform_with_model.x_axis_spacing = 1.0
+    waveform_with_model.trigger_index = 0.0
+    model_path = tmp_path / "with_model.csv"
+    write_file(model_path.as_posix(), waveform_with_model)
+    assert _read_csv_model_line(model_path) == "DPO71254C"
+
+
+def _read_csv_model_line(path: Path) -> str:
+    """Return the value on the CSV 'Model,<value>' header line."""
+    for line in path.read_text().splitlines():
+        if line.startswith("Model,"):
+            return line.split(",", 1)[1]
+    msg = "no Model line found in csv"
+    raise AssertionError(msg)
