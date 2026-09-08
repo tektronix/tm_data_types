@@ -108,7 +108,7 @@ class String(ByteData, bytes):
 
     def __str__(self) -> str:
         """Remove the null terminations and return it."""
-        return self.decode("utf_8").rstrip("\x00")
+        return self.split(b"\x00", 1)[0].decode("utf-8")
 
     ################################################################################################
     # Public Methods

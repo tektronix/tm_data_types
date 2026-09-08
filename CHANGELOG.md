@@ -18,6 +18,10 @@ Valid subsections within a version are:
 
 Things to be included in the next release go here.
 
+### Fixed
+
+- Fixed `UnicodeDecodeError` when converting WFM waveforms with non-UTF-8 padding bytes after null-terminated axis units to CSV ([#211](https://github.com/tektronix/tm_data_types/issues/211)).
+
 ---
 
 ## v0.5.0 (2026-08-24)
