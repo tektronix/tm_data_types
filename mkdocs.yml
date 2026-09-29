@@ -128,6 +128,17 @@ plugins:
             show_signature_annotations: true
             signature_crossrefs: true
             separate_signature: true
+          inventories:
+            - url: https://docs.python.org/3/objects.inv
+              domains: [std, py]
+            - url: https://typing-extensions.readthedocs.io/en/stable/objects.inv
+              domains: [std, py]
+            - url: https://pyvisa.readthedocs.io/en/stable/objects.inv
+              domains: [std, py]
+            - url: https://packaging.pypa.io/en/stable/objects.inv
+              domains: [std, py]
+            - url: https://requests.readthedocs.io/en/stable/objects.inv
+              domains: [std, py]
   - spellcheck:
       known_words: known_words.txt
       skip_files: [CHANGELOG.md, reference/*]
