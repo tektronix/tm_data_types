@@ -91,7 +91,7 @@ plugins:
   - mermaid2:
       javascript: https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.3.0/mermaid.min.js
   - mkdocstrings:  # additional customization takes place in docs/generate_api_pages.py
-      enable_inventory: true
+      enable_inventory: false
       custom_templates: docs/_templates/mkdocstrings
       handlers:
         python:  # see https://mkdocstrings.github.io/python/usage/
@@ -128,17 +128,6 @@ plugins:
             show_signature_annotations: true
             signature_crossrefs: true
             separate_signature: true
-          inventories:
-            - url: https://docs.python.org/3/objects.inv
-              domains: [std, py]
-            - url: https://typing-extensions.readthedocs.io/en/stable/objects.inv
-              domains: [std, py]
-            - url: https://pyvisa.readthedocs.io/en/stable/objects.inv
-              domains: [std, py]
-            - url: https://packaging.pypa.io/en/stable/objects.inv
-              domains: [std, py]
-            - url: https://requests.readthedocs.io/en/stable/objects.inv
-              domains: [std, py]
   - spellcheck:
       known_words: known_words.txt
       skip_files: [CHANGELOG.md, reference/*]
