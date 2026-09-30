@@ -169,26 +169,31 @@ def write_files_in_parallel(
     if len(file_paths) != len(datums):
         msg = "The number of files paths must be equal to the number of waveforms to write."
         raise IndexError(msg)
+    if not file_paths:
+        return
     process_count = min(force_process_count, len(file_paths))
     with multiprocessing.Pool(process_count) as process_pool:
+        results = []
         previous_index = 0
         for index in range(process_count):
             end_index = min(
                 round((index + 1) * (len(file_paths) / process_count)) + 1,
                 len(file_paths),
             )
-            result = process_pool.apply_async(
-                _write_files,
-                args=(
-                    file_paths[previous_index:end_index],
-                    datums[previous_index:end_index],
-                    product,
-                    file_format,
-                ),
+            results.append(
+                process_pool.apply_async(
+                    _write_files,
+                    args=(
+                        file_paths[previous_index:end_index],
+                        datums[previous_index:end_index],
+                        product,
+                        file_format,
+                    ),
+                )
             )
             previous_index = end_index
 
-        for index in range(process_count):
+        for index, result in enumerate(results):
             try:
                 result.get()
             except Exception as e:  # noqa: PERF203
@@ -196,18 +201,19 @@ def write_files_in_parallel(
                 raise ChildProcessError(msg) from e
 
 
-def _read_files(file_paths: str, file_queue: multiprocessing.Queue) -> None:
+def _read_files(file_paths: List[str]) -> List[tuple[str, Datum]]:
     """Read a waveform from a provided file.
 
     Args:
         file_paths: The file paths to read from.
-        file_queue: The queue to put the read data into.
+        A list of file paths and their read waveforms.
     """
-    for file_path in file_paths:
-        file_queue.put((file_path, read_file(file_path)))
+    return [(file_path, read_file(file_path)) for file_path in file_paths]
 
 
-def read_files_in_parallel(file_paths: List[str], force_process_count: int = 4) -> List[Datum]:
+def read_files_in_parallel(
+    file_paths: List[str], force_process_count: int = 4
+) -> List[tuple[str, Datum]]:
     """Read a list of files in parallel.
 
     This method allows for the parallel reading of multiple waveform files.
@@ -223,32 +229,32 @@ def read_files_in_parallel(file_paths: List[str], force_process_count: int = 4) 
         file_paths: A list of file paths to read from.
         force_process_count: The number of processes that should be created for this operation.
     """
+    if not file_paths:
+        return []
     process_count = min(force_process_count, len(file_paths))
     with multiprocessing.Pool(process_count) as process_pool:
+        results = []
         previous_index = 0
-        manager = multiprocessing.Manager()
-        file_queue = manager.Queue()
         for index in range(process_count):
             end_index = min(
                 round((index + 1) * (len(file_paths) / process_count)) + 1,
                 len(file_paths),
             )
 
-            result = process_pool.apply_async(
-                _read_files,
-                args=(
-                    file_paths[previous_index:end_index],
-                    file_queue,
-                ),
+            results.append(
+                process_pool.apply_async(
+                    _read_files,
+                    args=(file_paths[previous_index:end_index],),
+                )
             )
             previous_index = end_index
 
-        for index in range(process_count):
+        read_info = []
+        for index, result in enumerate(results):
             try:
-                result.get()
+                read_info.extend(result.get())
             except Exception as e:  # noqa: PERF203
                 msg = f"Error on process {index}, view process stack."
                 raise ChildProcessError(msg) from e
 
-    file_queue.put(None)
-    return list(iter(file_queue.get, None))
+    return read_info
