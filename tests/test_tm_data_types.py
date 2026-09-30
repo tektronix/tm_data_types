@@ -84,16 +84,37 @@ def test_parallel(tmp_path: Path) -> None:
             y_offset=0.0,
             y_position=0.0,
         )
+        waveform.y_axis_spacing = 1 / type_max(np.dtype(np.int16))
         waveform_info[waveform_path.as_posix()] = waveform
 
     write_files_in_parallel(list(waveform_info.keys()), list(waveform_info.values()))
 
-    if read_info := read_files_in_parallel(list(waveform_info.keys())):
-        for file_path, waveform in read_info:
-            assert np.array_equal(waveform.y_axis_values, waveform_info[file_path].y_axis_values)
-    else:
-        msg = "No Files written/read."
-        raise IOError(msg)
+    read_info = read_files_in_parallel(list(waveform_info))
+
+    assert len(read_info) == file_count
+
+    for file_path, waveform in read_info:
+        assert file_path in waveform_info
+        assert waveform.y_axis_values.size == 10
+        assert np.array_equal(waveform.y_axis_values, waveform_info[file_path].y_axis_values)
+
+
+def test_parallel_preserves_all_zero_waveform(tmp_path: Path) -> None:
+    """Check that parallel I/O preserves the record length of an all-zero waveform."""
+    waveform_path = tmp_path / "all_zero.wfm"
+    values = np.zeros(10, dtype=np.int16)
+
+    waveform = AnalogWaveform()
+    waveform.y_axis_values = values
+    waveform.meta_info = AnalogWaveformMetaInfo(y_offset=0.0, y_position=0.0)
+    waveform.y_axis_spacing = 1 / type_max(np.dtype(np.int16))
+
+    write_files_in_parallel([waveform_path.as_posix()], [waveform])
+    result = read_files_in_parallel([waveform_path.as_posix()])
+
+    assert result
+    _, read_waveform = result[0]
+    assert np.array_equal(read_waveform.y_axis_values, values)
 
 
 @pytest.mark.parametrize(
