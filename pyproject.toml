@@ -9,8 +9,7 @@ authors = [
 dependencies = [
   "bidict~=0.23.1",
   "numba~=0.68.0; python_version >= '3.10' and python_version < '3.14'",
-  "numpy~=2.1; python_version >= '3.10' and python_version < '3.12'",
-  "numpy~=2.5; python_version >= '3.12' and python_version < '3.14'",
+  "numpy>=1.25,<2.5",
   "pydantic~=2.7",
   "python-dateutil~=2.8",
   "scipy~=1.18; python_version >= '3.12' and python_version < '3.14'",
@@ -81,11 +80,7 @@ version = "0.5.0"
 docutils-stubs = "^0.0.22"
 matplotlib = "^3.8"
 nodeenv = "^1.9.1"
-numpy = [
-  # This is required to be duplicated in the "main" and "dev" groups to ensure that the correct version is used in both cases
-  {python = ">=3.10,<3.12", version = "^2.1"},
-  {python = ">=3.12,<3.14", version = "^2.5"},
-]
+numpy = ">=1.25,<2.5"
 pip = "^26.0"
 poetry = "^2.2.0"
 poetry-audit-plugin = "^1.0.0"
