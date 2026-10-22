@@ -1,5 +1,5 @@
 beautifulsoup4==4.15.0 ; python_version >= "3.10" and python_version < "3.16"
-certifi==2026.6.17 ; python_version >= "3.10" and python_version < "3.16"
+certifi==2026.10.19 ; python_version >= "3.10" and python_version < "3.16"
 chardet==6.0.0.post1 ; python_version >= "3.10" and python_version < "3.16"
 charset-normalizer==3.4.9 ; python_version >= "3.10" and python_version < "3.16"
 colorama==0.4.6 ; python_version >= "3.10" and python_version < "3.16"
