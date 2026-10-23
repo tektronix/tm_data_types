@@ -150,7 +150,7 @@ ignore-patterns = [
   "^\\.vscode",
   "^temp_.*\\..*",
 ]
-jobs = 0
+jobs = 1
 load-plugins = """
 pylint.extensions.check_elif,
 pylint.extensions.code_style,
