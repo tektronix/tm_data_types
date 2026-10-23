@@ -133,7 +133,8 @@ repos:
         pass_filenames: false
         files: ^(.*/)?(poetry\.lock|pyproject\.toml)$
         always_run: true
-        args: [--json, --ignore-package, nltk]
+        # NLTK 3.10.3 is affected by this path-traversal advisory; ignore only this CVE.
+        args: [--json, --ignore-code=CVE-2026-81726]
       - id: poetry-check
         name: poetry-check
         entry: poetry check

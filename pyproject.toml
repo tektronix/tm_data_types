@@ -359,6 +359,9 @@ python =  # PYTHON VERSION MARKER
 [testenv]
 package = wheel
 install_command = python -I -m pip install --upgrade --upgrade-strategy=eager {opts} {packages}
+allowlist_externals =
+    pre-commit
+    twine
 deps =
     poetry
 passenv =

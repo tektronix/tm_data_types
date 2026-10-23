@@ -1,7 +1,7 @@
 """The different formats which are wrapped by a MeasuredData class."""
 
 from abc import abstractmethod
-from decimal import Decimal
+from decimal import Decimal  # pylint: disable=no-name-in-module,useless-suppression
 from typing import Any, List, Optional, Type, Union
 
 import numpy as np
