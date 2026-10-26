@@ -368,7 +368,7 @@ passenv =
     GITHUB_ACTIONS
 setenv =
     COVERAGE_FILE = .coverage_{envname}
-    DOC_PYTHON_VERSION = python3.11  # Keep this in sync with .readthedocs.yml and any CI scripts
+    DOC_PYTHON_VERSION = python3.14  # Keep this in sync with .readthedocs.yml and any CI scripts
     # Skip pre-commit checks that are not needed
     SKIP = file-contents-sorter
 commands_pre =
