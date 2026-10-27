@@ -358,17 +358,19 @@ python =  # PYTHON VERSION MARKER
 
 [testenv]
 package = wheel
-install_command = python -I -m pip install --upgrade --upgrade-strategy=eager {opts} {packages}
 allowlist_externals =
     pre-commit
     twine
 deps =
     poetry
+    poetry-audit-plugin
+    safety~=3.7.0  # TODO: Remove this version pin once the issue with safety is resolved
+    -rtests/requirements.txt
 passenv =
     GITHUB_ACTIONS
 setenv =
     COVERAGE_FILE = .coverage_{envname}
-    DOC_PYTHON_VERSION = python3.14  # Keep this in sync with .readthedocs.yml and any CI scripts
+    DOC_PYTHON_VERSION = python3.11  # Keep this in sync with .readthedocs.yml and any CI scripts
     # Skip pre-commit checks that are not needed
     SKIP = file-contents-sorter
 commands_pre =
