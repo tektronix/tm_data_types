@@ -371,9 +371,14 @@ passenv =
 setenv =
     COVERAGE_FILE = .coverage_{envname}
     DOC_PYTHON_VERSION = python3.11  # Keep this in sync with .readthedocs.yml and any CI scripts
+    # Keep pip/poetry temp files on the same filesystem as .tox to avoid cross-drive uninstall errors.
+    TEMP = {tox_root}/.tmp_{envname}
+    TMP = {tox_root}/.tmp_{envname}
+    TMPDIR = {tox_root}/.tmp_{envname}
     # Skip pre-commit checks that are not needed
     SKIP = file-contents-sorter
 commands_pre =
+    python -c "import os; os.makedirs('.tmp_{envname}', exist_ok=True)"
     python -m poetry install --no-root --without=main
 commands =
     !tests: python -c "import shutil; shutil.rmtree('.dist/{envname}', ignore_errors=True)"
