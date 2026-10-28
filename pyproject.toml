@@ -8,14 +8,12 @@ authors = [
 ]
 dependencies = [
   "bidict~=0.23.1",
-  "numba~=0.60.0; python_version >= '3.10' and python_version < '3.13'",
-  "numba~=0.61.0; python_version >= '3.13'",
-  "numpy~=1.24; python_version >= '3.10' and python_version < '3.13'",
-  "numpy~=2.1; python_version >= '3.13'",
+  "certifi>=2026.7.22",
+  "numba~=0.68.0",
+  "numpy~=2.0",
   "pydantic~=2.7",
   "python-dateutil~=2.8",
-  "scipy~=1.14; python_version >= '3.13'",
-  "scipy~=1.9; python_version >= '3.10' and python_version < '3.13'",
+  "scipy~=1.9",
 ]
 description = "Read and write common Test & Measurement data types."
 dynamic = ["classifiers", "version"]
@@ -29,7 +27,7 @@ maintainers = [
 ]
 name = "tm_data_types"
 readme = "README.md"
-requires-python = ">=3.10,<3.14"  # PYTHON VERSION MARKER
+requires-python = ">=3.11,<3.16"  # PYTHON VERSION MARKER
 
 [project.urls]
 "Bug Tracker" = "https://github.com/tektronix/tm_data_types/issues"
@@ -82,11 +80,6 @@ version = "0.5.0"
 docutils-stubs = "^0.0.22"
 matplotlib = "^3.8"
 nodeenv = "^1.9.1"
-numpy = [
-  # This is required to be duplicated in the "main" and "dev" groups to ensure that the correct version is used in both cases
-  {python = ">=3.9,<3.13", version = "^1.24"},
-  {python = ">=3.13", version = "^2.1"},
-]
 pip = "^26.0"
 poetry = "^2.2.0"
 poetry-audit-plugin = "^1.0.0"
@@ -131,6 +124,7 @@ tomli = "^2.0.1"
 
 [tool.poetry.group.tests.dependencies]
 coverage = "^7.5.0"
+dnspython = ">=2.9.0,<3.0"
 linkchecker = "^10.0.0"
 pytest = "^9.0.2"
 pytest-cov = "^7.0.0"
@@ -157,7 +151,7 @@ ignore-patterns = [
   "^\\.vscode",
   "^temp_.*\\..*",
 ]
-jobs = 0
+jobs = 1
 load-plugins = """
 pylint.extensions.check_elif,
 pylint.extensions.code_style,
@@ -176,7 +170,7 @@ pylint.extensions.set_membership,
 pylint.extensions.typing,
 pylint.extensions.while_used
 """
-py-version = "3.10"  # PYTHON VERSION MARKER
+py-version = "3.11"  # PYTHON VERSION MARKER
 recursive = true
 
 [tool.pylint."messages control"]
@@ -226,7 +220,7 @@ ignore = [
   "temp_*.py",
 ]
 pythonPlatform = "All"
-pythonVersion = "3.10"  # PYTHON VERSION MARKER
+pythonVersion = "3.11"  # PYTHON VERSION MARKER
 reportCallInDefaultInitializer = "error"
 reportImplicitOverride = "error"
 reportImplicitStringConcatenation = "error"
@@ -263,7 +257,7 @@ line-length = 100
 namespace-packages = ["docs/**", "examples/**", "scripts/**", "tests/**"]
 output-format = "concise"
 src = ["docs", "examples", "scripts", "src", "tests"]
-target-version = "py310"  # always generate Python 3.10 compatible code  # PYTHON VERSION MARKER
+target-version = "py311"  # always generate Python 3.11 compatible code  # PYTHON VERSION MARKER
 
 [tool.ruff.lint]
 allowed-confusables = []
@@ -348,29 +342,39 @@ legacy_tox_ini = """
 [tox]
 requires = tox>4
 isolated_build = True
-envlist = py310,py311,py312,py313,tests,docs,doctests  # PYTHON VERSION MARKER
+envlist = py311,py312,py313,py314,py315,tests,docs,doctests  # PYTHON VERSION MARKER
 skip_missing_interpreters = True
 labels =
-  basic = py310,py311,py312,py313,tests  # PYTHON VERSION MARKER
+  basic = py311,py312,py313,py314,py315,tests  # PYTHON VERSION MARKER
   documentation = docs,doctests
 
 [gh-actions]
 python =  # PYTHON VERSION MARKER
-    3.10: py310
     3.11: py311
     3.12: py312
     3.13: py313
+    3.14: py314
+    3.15: py315
 
 [testenv]
 package = wheel
-install_command = python -I -m pip install --upgrade --upgrade-strategy=eager {opts} {packages}
+allowlist_externals =
+    pre-commit
+    twine
 deps =
     poetry
+    poetry-audit-plugin
+    safety~=3.7.0  # TODO: Remove this version pin once the issue with safety is resolved
+    -rtests/requirements.txt
 passenv =
     GITHUB_ACTIONS
 setenv =
     COVERAGE_FILE = .coverage_{envname}
     DOC_PYTHON_VERSION = python3.11  # Keep this in sync with .readthedocs.yml and any CI scripts
+    # Keep pip/poetry temp files on the same filesystem as the tox environment.
+    TEMP = {env_tmp_dir}
+    TMP = {env_tmp_dir}
+    TMPDIR = {env_tmp_dir}
     # Skip pre-commit checks that are not needed
     SKIP = file-contents-sorter
 commands_pre =

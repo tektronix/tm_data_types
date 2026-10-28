@@ -18,6 +18,14 @@ Valid subsections within a version are:
 
 Things to be included in the next release go here.
 
+### Removed
+
+- **BREAKING**: Dropped support for Python 3.10. The minimum supported Python version is now 3.11.
+
+### Security
+
+- Updated `dnspython` (test dependency, pulled in transitively via `linkchecker`) from `2.8.0` to `2.9.0` to resolve a high-severity excessive CPU use vulnerability in `dns.name.from_wire_parser()` ([GHSA-45c3-73f7-pv4m](https://github.com/advisories/GHSA-45c3-73f7-pv4m)). The fixed release requires Python >=3.11, which is why Python 3.10 support was dropped.
+
 ### Fixed
 
 - Fixed `UnicodeDecodeError` when converting WFM waveforms with non-UTF-8 padding bytes after null-terminated axis units to CSV ([#211](https://github.com/tektronix/tm_data_types/issues/211)).
