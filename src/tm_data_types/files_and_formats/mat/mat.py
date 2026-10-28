@@ -241,7 +241,7 @@ class MATFile(AbstractedFile, Generic[DATUM_TYPE_VAR]):
         for key, value in self._WAVEFORM_PROPERTIES.items():
             try:
                 formatted_data[value] = float(getattr(waveform, key))
-            except ValueError:  # noqa: PERF203
+            except ValueError:
                 formatted_data[value] = str(getattr(waveform, key))
             except TypeError:
                 # if None

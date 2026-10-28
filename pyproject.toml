@@ -27,7 +27,7 @@ maintainers = [
 ]
 name = "tm_data_types"
 readme = "README.md"
-requires-python = ">=3.10,<3.16"  # PYTHON VERSION MARKER
+requires-python = ">=3.11,<3.16"  # PYTHON VERSION MARKER
 
 [project.urls]
 "Bug Tracker" = "https://github.com/tektronix/tm_data_types/issues"
@@ -124,6 +124,7 @@ tomli = "^2.0.1"
 
 [tool.poetry.group.tests.dependencies]
 coverage = "^7.5.0"
+dnspython = ">=2.9.0,<3.0"
 linkchecker = "^10.0.0"
 pytest = "^9.0.2"
 pytest-cov = "^7.0.0"
@@ -169,7 +170,7 @@ pylint.extensions.set_membership,
 pylint.extensions.typing,
 pylint.extensions.while_used
 """
-py-version = "3.10"  # PYTHON VERSION MARKER
+py-version = "3.11"  # PYTHON VERSION MARKER
 recursive = true
 
 [tool.pylint."messages control"]
@@ -219,7 +220,7 @@ ignore = [
   "temp_*.py",
 ]
 pythonPlatform = "All"
-pythonVersion = "3.10"  # PYTHON VERSION MARKER
+pythonVersion = "3.11"  # PYTHON VERSION MARKER
 reportCallInDefaultInitializer = "error"
 reportImplicitOverride = "error"
 reportImplicitStringConcatenation = "error"
@@ -256,7 +257,7 @@ line-length = 100
 namespace-packages = ["docs/**", "examples/**", "scripts/**", "tests/**"]
 output-format = "concise"
 src = ["docs", "examples", "scripts", "src", "tests"]
-target-version = "py310"  # always generate Python 3.10 compatible code  # PYTHON VERSION MARKER
+target-version = "py311"  # always generate Python 3.11 compatible code  # PYTHON VERSION MARKER
 
 [tool.ruff.lint]
 allowed-confusables = []
@@ -341,15 +342,14 @@ legacy_tox_ini = """
 [tox]
 requires = tox>4
 isolated_build = True
-envlist = py310,py311,py312,py313,py314,py315,tests,docs,doctests  # PYTHON VERSION MARKER
+envlist = py311,py312,py313,py314,py315,tests,docs,doctests  # PYTHON VERSION MARKER
 skip_missing_interpreters = True
 labels =
-  basic = py310,py311,py312,py313,py314,py315,tests  # PYTHON VERSION MARKER
+  basic = py311,py312,py313,py314,py315,tests  # PYTHON VERSION MARKER
   documentation = docs,doctests
 
 [gh-actions]
 python =  # PYTHON VERSION MARKER
-    3.10: py310
     3.11: py311
     3.12: py312
     3.13: py313
