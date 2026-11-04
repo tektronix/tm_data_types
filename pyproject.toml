@@ -124,7 +124,6 @@ tomli = "^2.0.1"
 
 [tool.poetry.group.tests.dependencies]
 coverage = "^7.5.0"
-dnspython = ">=2.9.0,<3.0"
 linkchecker = "^10.0.0"
 pytest = "^9.0.2"
 pytest-cov = "^7.0.0"
@@ -370,10 +369,6 @@ passenv =
 setenv =
     COVERAGE_FILE = .coverage_{envname}
     DOC_PYTHON_VERSION = python3.11  # Keep this in sync with .readthedocs.yml and any CI scripts
-    # Keep pip/poetry temp files on the same filesystem as the tox environment.
-    TEMP = {env_tmp_dir}
-    TMP = {env_tmp_dir}
-    TMPDIR = {env_tmp_dir}
     # Skip pre-commit checks that are not needed
     SKIP = file-contents-sorter
 commands_pre =
