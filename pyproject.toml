@@ -13,7 +13,7 @@ dependencies = [
   "numpy~=2.0",
   "pydantic~=2.7",
   "python-dateutil~=2.8",
-  "scipy~=1.9",
+  "scipy>=1.13,<2",
 ]
 description = "Read and write common Test & Measurement data types."
 dynamic = ["classifiers", "version"]
@@ -358,13 +358,12 @@ python =  # PYTHON VERSION MARKER
 
 [testenv]
 package = wheel
-allowlist_externals =
-    pre-commit
-    twine
 deps =
     poetry
     poetry-audit-plugin
+    pre-commit
     safety~=3.7.0  # TODO: Remove this version pin once the issue with safety is resolved
+    twine
     -rtests/requirements.txt
 passenv =
     GITHUB_ACTIONS
@@ -381,9 +380,9 @@ commands_pre =
     python -m poetry install --no-root --without=main
 commands =
     !tests: python -c "import shutil; shutil.rmtree('.dist/{envname}', ignore_errors=True)"
-    !tests: poetry build --output=.dist/{envname}
-    !tests: twine check --strict .dist/{envname}/*
-    !tests: pre-commit run --all-files
+    !tests: python -m poetry build --output=.dist/{envname}
+    !tests: python -m twine check --strict .dist/{envname}/*
+    !tests: python -m pre_commit run --all-files
     # !tests: pytest -vv --doctest-modules --doctest-report=ndiff --showlocals --junitxml={tox_root}/.results_{envname}/results_doctests.xml --self-contained-html --html={tox_root}/.results_{envname}/results_doctests.html src
     pytest -vv -k "not test_docs" --showlocals --cov --junitxml={tox_root}/.results_{envname}/results.xml --cov-report=term --cov-report=xml:{tox_root}/.coverage_{envname}.xml --cov-report=html:{tox_root}/.results_{envname}/html --self-contained-html --html={tox_root}/.results_{envname}/results.html
 
@@ -405,10 +404,10 @@ basepython = {env:DOC_PYTHON_VERSION}
 deps =
     -rdocs/requirements.txt
 commands_pre =
-    nodeenv --python-virtualenv --clean-src
+    python -m nodeenv --node=22.14.0 --python-virtualenv --clean-src
 commands =
     python -c "import shutil; shutil.rmtree('.results_{envname}', ignore_errors=True)"
-    mkdocs --verbose build --site-dir .results_{envname}
+    python -m mkdocs --verbose build --site-dir .results_{envname}
 
 [testenv:doctests]
 basepython = {env:DOC_PYTHON_VERSION}
@@ -416,13 +415,13 @@ deps =
     -rdocs/requirements.txt
     -rtests/requirements.txt
 commands_pre =
-    nodeenv --python-virtualenv --clean-src
+    python -m nodeenv --node=22.14.0 --python-virtualenv --clean-src
 commands =
     pytest -v -k "test_docs" --showlocals --junitxml={tox_root}/.results_{envname}/results.xml --self-contained-html --html={tox_root}/.results_{envname}/results.html
 
 [testenv:export-reqs]
 commands =
-    poetry export --without-hashes --without-urls --all-extras --only=docs --output=docs/requirements.txt
-    poetry export --without-hashes --without-urls --all-extras --only=tests --output=tests/requirements.txt
-    - pre-commit run -a requirements-txt-fixer
+    python -m poetry export --without-hashes --without-urls --all-extras --only=docs --output=docs/requirements.txt
+    python -m poetry export --without-hashes --without-urls --all-extras --only=tests --output=tests/requirements.txt
+    - python -m pre_commit run -a requirements-txt-fixer
 """
