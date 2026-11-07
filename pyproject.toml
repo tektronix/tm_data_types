@@ -371,6 +371,13 @@ setenv =
     DOC_PYTHON_VERSION = python3.11  # Keep this in sync with .readthedocs.yml and any CI scripts
     # Skip pre-commit checks that are not needed
     SKIP = file-contents-sorter
+    # Keep pip/poetry temp files on the same drive as the tox environment (`{envtmpdir}` is
+    # under `.tox`, alongside the installed packages). This avoids cross-drive moves during
+    # `pip uninstall`'s stash step, which on some Windows CI runners (checkout on D:, default
+    # TEMP on C:) fail with `OSError: [WinError 17]` and a subsequent
+    # `PermissionError: [WinError 5]`.
+    TEMP = {envtmpdir}
+    TMP = {envtmpdir}
 commands_pre =
     python -m poetry install --no-root --without=main
 commands =
