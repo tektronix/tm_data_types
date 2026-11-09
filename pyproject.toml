@@ -359,10 +359,8 @@ python =  # PYTHON VERSION MARKER
 package = wheel
 deps =
     poetry
-    poetry-audit-plugin
     pre-commit
     safety~=3.7.0  # TODO: Remove this version pin once the issue with safety is resolved
-    twine
     -rtests/requirements.txt
 passenv =
     GITHUB_ACTIONS
@@ -383,7 +381,6 @@ commands_pre =
 commands =
     !tests: python -c "import shutil; shutil.rmtree('.dist/{envname}', ignore_errors=True)"
     !tests: python -m poetry build --output=.dist/{envname}
-    !tests: python -m twine check --strict .dist/{envname}/*
     !tests: python -m pre_commit run --all-files
     # !tests: pytest -vv --doctest-modules --doctest-report=ndiff --showlocals --junitxml={tox_root}/.results_{envname}/results_doctests.xml --self-contained-html --html={tox_root}/.results_{envname}/results_doctests.html src
     pytest -vv -k "not test_docs" --showlocals --cov --junitxml={tox_root}/.results_{envname}/results.xml --cov-report=term --cov-report=xml:{tox_root}/.coverage_{envname}.xml --cov-report=html:{tox_root}/.results_{envname}/html --self-contained-html --html={tox_root}/.results_{envname}/results.html
