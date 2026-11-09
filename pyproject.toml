@@ -13,7 +13,7 @@ dependencies = [
   "numpy~=2.0",
   "pydantic~=2.7",
   "python-dateutil~=2.8",
-  "scipy>=1.13,<2",
+  "scipy~=1.13",
 ]
 description = "Read and write common Test & Measurement data types."
 dynamic = ["classifiers", "version"]
@@ -359,8 +359,6 @@ python =  # PYTHON VERSION MARKER
 package = wheel
 deps =
     poetry
-    pre-commit
-    safety~=3.7.0  # TODO: Remove this version pin once the issue with safety is resolved
     -rtests/requirements.txt
 passenv =
     GITHUB_ACTIONS
@@ -369,19 +367,13 @@ setenv =
     DOC_PYTHON_VERSION = python3.11  # Keep this in sync with .readthedocs.yml and any CI scripts
     # Skip pre-commit checks that are not needed
     SKIP = file-contents-sorter
-    # Keep pip/poetry temp files on the same drive as the tox environment (`{envtmpdir}` is
-    # under `.tox`, alongside the installed packages). This avoids cross-drive moves during
-    # `pip uninstall`'s stash step, which on some Windows CI runners (checkout on D:, default
-    # TEMP on C:) fail with `OSError: [WinError 17]` and a subsequent
-    # `PermissionError: [WinError 5]`.
-    TEMP = {envtmpdir}
-    TMP = {envtmpdir}
 commands_pre =
     python -m poetry install --no-root --without=main
 commands =
     !tests: python -c "import shutil; shutil.rmtree('.dist/{envname}', ignore_errors=True)"
-    !tests: python -m poetry build --output=.dist/{envname}
-    !tests: python -m pre_commit run --all-files
+    !tests: poetry build --output=.dist/{envname}
+    !tests: twine check --strict .dist/{envname}/*
+    !tests: pre-commit run --all-files
     # !tests: pytest -vv --doctest-modules --doctest-report=ndiff --showlocals --junitxml={tox_root}/.results_{envname}/results_doctests.xml --self-contained-html --html={tox_root}/.results_{envname}/results_doctests.html src
     pytest -vv -k "not test_docs" --showlocals --cov --junitxml={tox_root}/.results_{envname}/results.xml --cov-report=term --cov-report=xml:{tox_root}/.coverage_{envname}.xml --cov-report=html:{tox_root}/.results_{envname}/html --self-contained-html --html={tox_root}/.results_{envname}/results.html
 
@@ -406,7 +398,7 @@ commands_pre =
     python -m nodeenv --node=22.14.0 --python-virtualenv --clean-src
 commands =
     python -c "import shutil; shutil.rmtree('.results_{envname}', ignore_errors=True)"
-    python -m mkdocs --verbose build --site-dir .results_{envname}
+    mkdocs --verbose build --site-dir .results_{envname}
 
 [testenv:doctests]
 basepython = {env:DOC_PYTHON_VERSION}
@@ -420,7 +412,7 @@ commands =
 
 [testenv:export-reqs]
 commands =
-    python -m poetry export --without-hashes --without-urls --all-extras --only=docs --output=docs/requirements.txt
+    poetry export --without-hashes --without-urls --all-extras --only=docs --output=docs/requirements.txt
     python -m poetry export --without-hashes --without-urls --all-extras --only=tests --output=tests/requirements.txt
     - python -m pre_commit run -a requirements-txt-fixer
 """
