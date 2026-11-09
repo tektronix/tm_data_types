@@ -359,7 +359,6 @@ python =  # PYTHON VERSION MARKER
 package = wheel
 deps =
     poetry
-    -rtests/requirements.txt
 passenv =
     GITHUB_ACTIONS
 setenv =
