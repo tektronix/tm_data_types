@@ -395,7 +395,7 @@ basepython = {env:DOC_PYTHON_VERSION}
 deps =
     -rdocs/requirements.txt
 commands_pre =
-    python -m nodeenv --node=22.14.0 --python-virtualenv --clean-src
+    nodeenv --python-virtualenv --clean-src
 commands =
     python -c "import shutil; shutil.rmtree('.results_{envname}', ignore_errors=True)"
     mkdocs --verbose build --site-dir .results_{envname}
@@ -413,6 +413,6 @@ commands =
 [testenv:export-reqs]
 commands =
     poetry export --without-hashes --without-urls --all-extras --only=docs --output=docs/requirements.txt
-    python -m poetry export --without-hashes --without-urls --all-extras --only=tests --output=tests/requirements.txt
-    - python -m pre_commit run -a requirements-txt-fixer
+    poetry export --without-hashes --without-urls --all-extras --only=tests --output=tests/requirements.txt
+    - pre-commit run -a requirements-txt-fixer
 """
