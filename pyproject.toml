@@ -406,7 +406,7 @@ deps =
     -rdocs/requirements.txt
     -rtests/requirements.txt
 commands_pre =
-    python -m nodeenv --node=22.14.0 --python-virtualenv --clean-src
+    nodeenv --python-virtualenv --clean-src
 commands =
     pytest -v -k "test_docs" --showlocals --junitxml={tox_root}/.results_{envname}/results.xml --self-contained-html --html={tox_root}/.results_{envname}/results.html
 
