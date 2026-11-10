@@ -10,7 +10,10 @@ from collections.abc import Generator
 from importlib import import_module
 from typing import Any, Optional, Set, Tuple
 
-import tomli
+try:
+    import tomllib
+except ModuleNotFoundError:
+    import tomli as tomllib
 
 from mkdocs_macros.plugin import MacrosPlugin
 
@@ -236,7 +239,7 @@ def define_env(env: MacrosPlugin) -> None:
     with (pathlib.Path(f"{pathlib.Path(__file__).parents[1]}") / "pyproject.toml").open(
         "rb"
     ) as file_handle:
-        pyproject_data = tomli.load(file_handle)
+        pyproject_data = tomllib.load(file_handle)
         package_version = "v" + pyproject_data["tool"]["poetry"]["version"]
     git_ref = "main" if os.getenv("READTHEDOCS_VERSION") == "latest" else package_version
 

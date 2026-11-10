@@ -196,7 +196,7 @@ def write_files_in_parallel(
         for index, result in enumerate(results):
             try:
                 result.get()
-            except Exception as e:  # noqa: PERF203
+            except Exception as e:
                 msg = f"Error on process {index}, view process stack."
                 raise ChildProcessError(msg) from e
 
@@ -253,7 +253,7 @@ def read_files_in_parallel(
         for index, result in enumerate(results):
             try:
                 read_info.extend(result.get())
-            except Exception as e:  # noqa: PERF203
+            except Exception as e:
                 msg = f"Error on process {index}, view process stack."
                 raise ChildProcessError(msg) from e
 

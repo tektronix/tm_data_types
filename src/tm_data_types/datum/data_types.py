@@ -1,7 +1,8 @@
 """The different formats which are wrapped by a MeasuredData class."""
 
+import decimal
+
 from abc import abstractmethod
-from decimal import Decimal
 from typing import Any, List, Optional, Type, Union
 
 import numpy as np
@@ -58,8 +59,8 @@ def type_ratio(dtype_from: PossibleTypes, dtype_to: PossibleTypes) -> float:
     Returns:
         The ratio between the two dtypes.
     """
-    old_dtype_range = Decimal(type_max(dtype_from)) - Decimal(type_min(dtype_from))
-    new_dtype_range = Decimal(type_max(dtype_to)) - Decimal(type_min(dtype_to))
+    old_dtype_range = decimal.Decimal(type_max(dtype_from)) - decimal.Decimal(type_min(dtype_from))
+    new_dtype_range = decimal.Decimal(type_max(dtype_to)) - decimal.Decimal(type_min(dtype_to))
     return float(new_dtype_range / old_dtype_range)
 
 

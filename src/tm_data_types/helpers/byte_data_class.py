@@ -109,7 +109,7 @@ class StructuredInfo(EnforcedTypeDataClass):
     def __len__(self) -> int:
         """Sum the number of bytes for all annotations in this dataclass."""
         total_length = 0
-        for value in self.__annotations__.values():
+        for value in type(self).__annotations__.values():
             total_length += value.length
         return total_length
 
@@ -176,16 +176,17 @@ class StructuredInfo(EnforcedTypeDataClass):
             msg = "Requested custom order unpacking, but order not provided"
             raise IndexError(msg)
 
+        annotations = type(self).__annotations__
         if not in_order and order:  # noqa: SIM108
             packing = order
         else:
             # this only works because dictionaries preserve order
-            packing = self.__annotations__.keys()
+            packing = annotations.keys()
 
         value = []
 
         for key in packing:
-            if key in self.__annotations__:
+            if key in annotations:
                 attribute_value = getattr(self, key)
                 value.append(attribute_value)
                 struct_repr_str += attribute_value.struct_repr
@@ -195,7 +196,7 @@ class StructuredInfo(EnforcedTypeDataClass):
     def get_value_summation(self) -> int:
         """Sum each byte for all annotations in this dataclass."""
         total_summation = 0
-        for key in self.__annotations__:
+        for key in type(self).__annotations__:
             value = getattr(self, key)
             total_summation += value.get_value_summation()
         return total_summation
