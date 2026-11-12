@@ -22,8 +22,6 @@ Things to be included in the next release go here.
 
 - Dropped support for Python 3.10 and added support for Python 3.14 and 3.15; the project now supports Python 3.11-3.15 ([#232](https://github.com/tektronix/tm_data_types/pull/232)).
 - Simplified the `numpy`, `numba`, and `scipy` dependency constraints by removing the per-Python-version conditional pins now that a single `numpy~=2.0` constraint (and compatible `numba~=0.68.0` / `scipy~=1.13`) can be used across all supported Python versions ([#232](https://github.com/tektronix/tm_data_types/pull/232)).
-- Updated CI/CD workflows, `pyproject.toml` tool configuration (ruff, pylint, pyright), and `tox` environments to reflect the new supported Python version range ([#232](https://github.com/tektronix/tm_data_types/pull/232)).
-- Updated `docs/macros.py` to prefer the standard library `tomllib` over `tomli` when available ([#232](https://github.com/tektronix/tm_data_types/pull/232)).
 
 ### Fixed
 
