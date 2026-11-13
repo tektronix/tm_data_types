@@ -18,6 +18,11 @@ Valid subsections within a version are:
 
 Things to be included in the next release go here.
 
+### Changed
+
+- Dropped support for Python 3.10 and added support for Python 3.14 and 3.15; the project now supports Python 3.11-3.15 ([#232](https://github.com/tektronix/tm_data_types/pull/232)).
+- Simplified the `numpy`, `numba`, and `scipy` dependency constraints by removing the per-Python-version conditional pins now that a single `numpy~=2.0` constraint (and compatible `numba~=0.68.0` / `scipy~=1.13`) can be used across all supported Python versions ([#232](https://github.com/tektronix/tm_data_types/pull/232)).
+
 ### Fixed
 
 - Fixed `UnicodeDecodeError` when converting WFM waveforms with non-UTF-8 padding bytes after null-terminated axis units to CSV ([#211](https://github.com/tektronix/tm_data_types/issues/211)).
