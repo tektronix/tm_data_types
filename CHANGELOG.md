@@ -18,6 +18,18 @@ Valid subsections within a version are:
 
 Things to be included in the next release go here.
 
+---
+
+## v0.6.0 (2026-11-16)
+
+### Merged Pull Requests
+
+- Document Python support and dependency updates in changelog ([#240](https://github.com/tektronix/tm_data_types/pull/240))
+- Update NumPy 2.x dependency compatibility matrix ([#232](https://github.com/tektronix/tm_data_types/pull/232))
+- gh-actions(deps): bump the gh-actions-dependencies group with 12 updates ([#225](https://github.com/tektronix/tm_data_types/pull/225))
+- fix: stop fixed-width string decoding at first NUL ([#220](https://github.com/tektronix/tm_data_types/pull/220))
+- pre-commit-deps(deps): bump the pre-commit-dependencies group with 2 updates ([#218](https://github.com/tektronix/tm_data_types/pull/218))
+
 ### Changed
 
 - Dropped support for Python 3.10 and added support for Python 3.14 and 3.15; the project now supports Python 3.11-3.15 ([#232](https://github.com/tektronix/tm_data_types/pull/232)).
