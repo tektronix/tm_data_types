@@ -180,10 +180,28 @@ class CSVFile(AbstractedFile, Generic[DATUM_TYPE_VAR]):
         Returns:
             The values to append to the output.
         """
-        if self.product.name != "TEKSCOPE":  # noqa: SIM108
+        model = ""
+        if self.product.name != "TEKSCOPE":
             model = self.product.name
-        else:
-            model = "MSO54"  # TODO: change this default model
+        elif waveform.meta_info is not None:
+            meta = waveform.meta_info
+            if getattr(meta, "model", None):
+                model = getattr(meta, "model")
+            elif getattr(meta, "model_number", None):
+                model = getattr(meta, "model_number")
+            elif getattr(meta, "instrument_model", None):
+                model = getattr(meta, "instrument_model")
+            elif getattr(meta, "test_equipment", None):
+                model = getattr(meta, "test_equipment")
+            elif hasattr(meta, "extended_metadata") and isinstance(meta.extended_metadata, dict):
+                model = (
+                    meta.extended_metadata.get("model")
+                    or meta.extended_metadata.get("model_number")
+                    or meta.extended_metadata.get("instrument_model")
+                    or meta.extended_metadata.get("Model")
+                    or ""
+                )
+
         output = f"Model,{model}\n"
         output += f"Waveform Type,{self!s}\n"
         output += f"Zero Index,{waveform.trigger_index}\n"
